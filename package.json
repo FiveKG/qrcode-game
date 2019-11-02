@@ -8,8 +8,12 @@
   },
   "dependencies": {
     "egg": "^2.15.1",
-    "egg-cluster": "^1.25.0",
-    "egg-scripts": "^2.11.0"
+    "egg-scripts": "^2.11.0",
+    "egg-validate": "^2.0.2",
+    "jsonwebtoken": "^8.5.1",
+    "koa-proxy": "^1.0.0-alpha.3",
+    "moment": "^2.24.0",
+    "shortid": "^2.2.15"
   },
   "devDependencies": {
     "autod": "^3.0.1",
@@ -26,7 +30,7 @@
   "scripts": {
     "start": "egg-scripts start --daemon --title=egg-server-admin-site",
     "stop": "egg-scripts stop --title=egg-server-admin-site",
-    "dev": "egg-bin dev",
+    "dev": "egg-bin dev --port=6005",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",

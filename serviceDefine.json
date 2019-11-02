@@ -1,0 +1,52 @@
+{
+    "name": "扫码游戏平台--管理后台",
+    "apis": [
+        {
+            "name": "登录",
+            "summary": "用于后台登录" ,
+            "remark": [
+                
+            ],
+            "isFunctionPoint" : false,
+            "url": "/api/account/login",
+            "type": "POST",
+            "requireRole" : [ "*" ],
+            "req": {
+                "type": "object",
+                "itemProperties": {
+                    "user_name":    { "type": "string" , "desc": "登录名",    "is_require": true },
+                    "user_pwd":    { "type": "string" , "desc": "密码",    "is_require": true }
+                }
+            },
+            "res": {
+                "200": { 
+                    "type": "object" , "desc": "登录成功，响应结构是 jwt 的token ，以及用户的id ， 类型 ",
+                    "itemProperties": {
+                        "user_id":    { "type": "string" , "desc": "用户id",    "is_require": true },
+                        "token":      { "type": "string" , "desc": "jwt token", "is_require": true }
+                    }
+                }
+            }
+        },
+        {
+            "name" : "主键值生成接口" ,
+            "summary": "用于生成主键值，实现 post 接口的幂等性" ,
+            "remark": [
+                "使用 https://github.com/dylang/shortid 模块 ， 生成主键值"
+            ],
+            "isFunctionPoint" : true,
+            "url" : "/api/common/generate_key",
+            "type" : "GET",
+            "requireRole" : [ "?" ],
+            "req": {
+                
+            },
+            "res": {
+                "200": { 
+                    "type":"string" , "desc": "生成的主键值",
+                    "itemProperties": { }
+                }
+            }
+        }
+    ]
+}
