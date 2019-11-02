@@ -1,3 +1,4 @@
+//@ts-check
 'use strict';
 
 /**
@@ -5,5 +6,11 @@
  */
 module.exports = app => {
   const { router, controller } = app;
-  router.get('/', controller.home.index);
+  /** ----------------------------Api---------------------------- */
+  //获取主键值
+  router.get('/api/common/generate_key', controller.tool.getPrimaryKey);
+  //登录验证
+  router.post('/api/account/login', controller.v1.sysUser.login);
+
+  /** ----------------------------Page---------------------------- */
 };
