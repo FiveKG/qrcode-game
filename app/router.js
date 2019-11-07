@@ -13,4 +13,5 @@ module.exports = app => {
   router.post('/api/account/login', controller.v1.sysUser.login);
 
   /** ----------------------------Page---------------------------- */
+  router.get('/index', controller.v1.index.index);
 };

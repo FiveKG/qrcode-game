@@ -10,6 +10,7 @@
     "egg": "^2.15.1",
     "egg-scripts": "^2.11.0",
     "egg-validate": "^2.0.2",
+    "egg-view-nunjucks": "^2.2.0",
     "jsonwebtoken": "^8.5.1",
     "koa-proxy": "^1.0.0-alpha.3",
     "moment": "^2.24.0",
@@ -30,7 +31,7 @@
   "scripts": {
     "start": "egg-scripts start --daemon --title=egg-server-admin-site",
     "stop": "egg-scripts stop --title=egg-server-admin-site",
-    "dev": "egg-bin dev --port=6005",
+    "dev": "egg-bin dev",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",
