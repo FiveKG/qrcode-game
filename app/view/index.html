@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>扫码游戏平台--管理后台</title>
+		<link rel="stylesheet" href="./static/admin/layui/css/layui.css">
+		<link rel="stylesheet" href="./static/admin/css/admin.css">
+	</head>
+
+	<body class="layui-layout-body">
+		<div class="layui-layout layui-layout-admin">
+			<div class="layui-header">
+				<div class="layui-logo" style="background-color: #00B5F9; color: #FFFFFF;">LOGO</div>
+				<!-- 显示/隐藏菜单 -->
+				<!-- 头部区域（可配合layui已有的水平导航） -->
+				<ul class="layui-nav layui-layout-left">
+					<li class="layui-nav-item">
+						<a href="">?</a>
+					</li>
+				</ul>
+				<ul class="layui-nav layui-layout-right">
+					<li class="layui-nav-item">
+						<a href="javascript:;">
+							<img src="http://t.cn/RCzsdCq" class="layui-nav-img"> woni
+						</a>
+						<dl class="layui-nav-child">
+							<dd>
+								<a href="">基本资料</a>
+							</dd>
+							<dd>
+								<a href="">安全设置</a>
+							</dd>
+							<dd>
+								<a href="">注销</a>
+							</dd>
+						</dl>
+					</li>
+				</ul>
+			</div>
+
+			<div class="layui-side layui-bg-cyan">
+				<div class="layui-side-scroll">
+					<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+					<ul class="layui-nav layui-nav-tree layui-bg-cyan" lay-filter="test">
+						<li data-name="" class="layui-nav-item">
+							<a href="javascript:;" lay-tips="用户管理" lay-direction="2">
+								<i class="layui-icon layui-icon-user"></i>
+								<cite>用户管理</cite>
+							</a>
+							<dl class="layui-nav-child">
+								<dd data-name="">
+									<a href="javascript:;">用户展示</a>
+								</dd>
+								<dd data-name="">
+									<a href="javascript:;">用户日志</a>
+								</dd>
+							</dl>
+						</li>
+						<li data-name="" class="layui-nav-item">
+							<a href="javascript:;" lay-tips="游戏管理" lay-direction="2">
+								<i class="layui-icon layui-icon-cellphone"></i>
+								<cite>游戏管理</cite>
+							</a>
+							<dl class="layui-nav-child">
+								<dd data-name="">
+									<a href="javascript:;">会话</a>
+								</dd>
+								<dd>
+									<a href="javascript:;">每日统计</a>
+								</dd>
+								<dd data-name="">
+									<a href="">游戏展示</a>
+								</dd>
+							</dl>
+						</li>
+						<li data-name="" class="layui-nav-item">
+							<a href="javascript:;" lay-tips="支付管理" lay-direction="2">
+								<i class="layui-icon layui-icon-rmb"></i>
+								<cite>支付管理</cite>
+							</a>
+							<dl class="layui-nav-child">
+								<dd data-name="">
+									<a href="javascript:;">订单管理</a>
+								</dd>
+								<dd>
+									<a href="javascript:;">充值记录</a>
+								</dd>
+								<dd data-name="">
+									<a href="javascript:;">余额变动</a>
+								</dd>
+							</dl>
+						</li>
+						<li data-name="" class="layui-nav-item">
+							<a href="javascript:;" lay-tips="二维码" lay-direction="2">
+								<i class="layui-icon layui-icon-link"></i>
+								<cite>二维码</cite>
+							</a>
+							<dl class="layui-nav-child">
+								<dd data-name="">
+									<a href="javascript:;">扫码记录</a>
+								</dd>
+								<dd data-name="">
+									<a href="javascript:;">二维码展示</a>
+								</dd>
+							</dl>
+						</li>
+						<li data-name="" class="layui-nav-item">
+							<a href="javascript:;" lay-tips="店铺管理" lay-direction="2">
+								<i class="layui-icon layui-icon-cart-simple"></i>
+								<cite>店铺管理</cite>
+							</a>
+							<dl class="layui-nav-child">
+								<dd data-name="">
+									<a href="javascript:;">连锁品牌</a>
+								</dd>
+								<dd data-name="">
+									<a href="javascript:;">店铺展示</a>
+								</dd>
+							</dl>
+						</li>
+						<li data-name="" class="layui-nav-item">
+							<a href="javascript:;" lay-tips="经销商" lay-direction="2">
+								<i class="layui-icon layui-icon-vercode"></i>
+								<cite>经销商</cite>
+							</a>
+							<dl class="layui-nav-child">
+								<dd data-name="">
+									<a href="javascript:;">经销商展示</a>
+								</dd>
+							</dl>
+						</li>
+						<li data-name="" class="layui-nav-item">
+							<a href="javascript:;" lay-tips="其他" lay-direction="2">
+								<i class="layui-icon layui-icon-note"></i>
+								<cite>其他</cite>
+							</a>
+							<dl class="layui-nav-child">
+								<dd data-name="">
+									<a href="javascript:;">核销记录</a>
+								</dd>
+								<dd data-name="">
+									<a href="javascript:;">优惠券</a>
+								</dd>
+							</dl>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="layui-body" style="overflow: hidden;">
+
+				<!-- 内容主体区域 -->
+				<div style="height: 100%; overflow: hidden;">
+					<div class="layui-tab" lay-allowClose="true" lay-filter="tab-control">
+						<ul class="layui-tab-title">
+							<li class="layui-this">
+								<i class="layui-icon layui-icon-home"></i>
+								<span>我的主页</span>
+							</li>
+							<li>用户管理</li>
+						</ul>
+						<div class="layui-tab-content" style="height: 100px;">
+							<div class="layui-tab-item layui-show">=====================</div>
+							<div class="layui-tab-item">内容2</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- 辅助元素，一般用于移动设备下遮罩 -->
+				<div class="layadmin-body-shade" layadmin-event="shade"></div>
+			</div>
+
+			<div class="layui-footer">
+				<!-- 底部固定区域 -->
+				© woni - 测试所用
+			</div>
+		</div>
+		<script src="./static/admin/layui/layui.js"></script>
+		<script src="./static/admin/js/main.js"></script>
+	</body>
+
+</html>
