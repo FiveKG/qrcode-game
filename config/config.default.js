@@ -19,16 +19,37 @@ module.exports = appInfo => {
 
   // add your middleware config here
   config.middleware = [
-    "requestInspect",
+    //"requestInspect",
     "requestProxy",
   ];
 
-  //关闭安全威胁csrf的防范
+  // 配置项目启动的端口
+  config.cluster = {
+    listen: {
+      port: 6005
+    }
+  };
+
+  // 设置安全插件
   config.security = {
     csrf: {
-      enable: false
+      useSession: false,
+      enable: false,
+      ignoreJSON: false,
+      cookieName: 'csrfToken',
+      sessionName: 'csrfToken',
+      headerName: 'x-csrf-token',
+      bodyName: '_csrf',
+      queryNAme: '_csrf'
     },
-    domainWhiteList: ["*"]
+    domainWhiteList: ['http://localhost:6005']
+  };
+
+  // 配置跨域
+  config.cors = {
+    origin: "*",
+    allowMethods: 'GET,HEADER,PUT,POST,DELETE,PATCH',
+    credentials: true
   };
 
   config.requestProxy = {
@@ -43,6 +64,29 @@ module.exports = appInfo => {
   config.token = {
     secret: process.env.JWT_SECRET,
     expiresIn: 60, // 60
+  };
+
+  // 设置模板
+  config.view = {
+    root: [
+      path.join(appInfo.baseDir, 'app/view')
+    ].join(','),
+    defaultViewEngine: 'nunjucks',
+    mapping: {
+      '.njk': 'nunjucks',
+      '.html': 'nunjucks'
+    }
+  };
+
+  // 设置网站图标
+  // config.siteFile = {
+  //   '/favicon.ico': fs.readFileSync(path.join(appInfo.baseDir, 'app/public/k12_logo.ico'))
+  // };
+
+  // 设置静态资源地址
+  config.static = {
+    prefix: '/',
+    dir: ['app/public']
   };
 
   config.logger = {
