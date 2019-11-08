@@ -1,4 +1,3 @@
-// @ts-check
 'use strict';
 
 const moment = require('moment');
@@ -27,8 +26,8 @@ module.exports = {
      * @param {Number} code 
      */
     messageByCode(code) {
-        
-        return '';
+        const explainCode = require('../tool/explainCode.json');
+        return explainCode[code] || false;
     },
     /**
      * @description 生成主键

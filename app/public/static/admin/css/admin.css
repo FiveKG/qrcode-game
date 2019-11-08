@@ -39,3 +39,8 @@
     color: #00B5F9;
     border-bottom: 3px solid #00B5F9;
 }
+.main-bg {
+    background: url('../images/YourExclusive.jpg') no-repeat;
+    background-size: 100% 100%;
+    z-index: -1;
+}
