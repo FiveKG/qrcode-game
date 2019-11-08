@@ -7,6 +7,7 @@
     "declarations": true
   },
   "dependencies": {
+    "@yz/egg-postgres": "^1.0.12",
     "egg": "^2.15.1",
     "egg-scripts": "^2.11.0",
     "egg-validate": "^2.0.2",

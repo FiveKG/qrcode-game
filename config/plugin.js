@@ -10,4 +10,8 @@ module.exports = {
     enable: true,
     package: 'egg-view-nunjucks',
   },
+  pg: {
+    enable: true,
+    package: '@yz/egg-postgres',
+  },
 };
