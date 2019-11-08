@@ -26,7 +26,7 @@ module.exports = appInfo => {
   // 配置项目启动的端口
   config.cluster = {
     listen: {
-      port: 6005
+      port: 7005
     }
   };
 
