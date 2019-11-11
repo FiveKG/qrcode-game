@@ -1,6 +1,6 @@
 'use strict';
 
-const moment = require('moment');
+const dateFns = require('date-fns');
 const shortid = require('shortid');
 const jwt = require('jsonwebtoken');
 
@@ -64,9 +64,9 @@ module.exports = {
         return this.ctx.request.path;
     },
     /**
-     * @description 返回当前时间戳
+     * @description 返回当前时间
      */
-    getTimestamp() {
-        return moment().format('YYYY-MM-DD HH:mm:ss');
-    }
+    getNow() {
+        return dateFns.format(new Date(), 'YYYY-MM-DDTHH:mm:ssZ');
+    },    
 }
