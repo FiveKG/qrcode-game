@@ -8,13 +8,13 @@
   },
   "dependencies": {
     "@yz/egg-postgres": "^1.0.12",
+    "date-fns": "^2.7.0",
     "egg": "^2.15.1",
     "egg-scripts": "^2.11.0",
     "egg-validate": "^2.0.2",
     "egg-view-nunjucks": "^2.2.0",
     "jsonwebtoken": "^8.5.1",
     "koa-proxy": "^1.0.0-alpha.3",
-    "moment": "^2.24.0",
     "shortid": "^2.2.15"
   },
   "devDependencies": {
