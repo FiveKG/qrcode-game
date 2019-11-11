@@ -6,7 +6,7 @@ layui.use(['layer', 'form', 'element', 'jquery'], function() {
         tabAdd: function (id, url, text) {
             element.tabAdd('main-tab', {
                 title: text,
-                content: '<iframe data-frameid="'+id+'" scrolling="auto" frameborder="0" src="'+url+'.html" style="width:100%;"></iframe>',
+                content: '<iframe data-frameid="'+id+'" scrolling="auto" frameborder="0" src="'+url+'" width="100%" height="100%" name="iframe" class="iframe"></iframe>',
                 id: id
             })
             active.tabChange(id);
