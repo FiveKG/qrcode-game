@@ -17,4 +17,5 @@ module.exports = app => {
 
   /** ----------------------------Page---------------------------- */
   router.get('/index', controller.v1.index.index);
+  router.get('/page/welcome', controller.v1.index.welcome);
 };

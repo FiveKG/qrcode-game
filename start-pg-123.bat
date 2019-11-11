@@ -1,7 +1,8 @@
 set DB_HOST=DB_HOST
-set DB_PORT=5432
-set DB_USER=postgres
+set DB_PORT=12432
+set DB_USER=DB_USER
 set DB_PWD=DB_PWD
 set DB_NAME=DB_USER_db
 set JWT_SECRET=JWT_SECRET
 set PROXY_HOST=http://DB_HOST:54324
+npm run dev
