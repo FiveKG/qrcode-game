@@ -15,6 +15,9 @@ module.exports = app => {
   //获取主键值
   router.get('/api/common/generate_key', controller.tool.getPrimaryKey);
 
+  //获取用户列表
+  router.post('/api/account/search', controller.v1.sysUser.getSysUser);
+
   /** ----------------------------Page---------------------------- */
   router.get('/index', controller.v1.index.index);
   router.get('/page/welcome', controller.v1.index.welcome);
