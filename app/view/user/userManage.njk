@@ -67,6 +67,7 @@
 				var table = layui.table;
 
 				const active = {
+					//table重载
 					tableReload: function (params) {
 						table.reload('userTable', {
 							where: {
@@ -104,7 +105,7 @@
 						,{field:'last_login', title:'最后登录时间', width:120}
 						,{field:'account_balance', title:'账户余额', width:90}
 						,{field:'last_ip', title:'最后登录IP', width:160}
-						,{fixed:'right', width:200, align:'center', toolbar: '#barUser'}
+						,{fixed:'right', title: "操作", width:200, align:'center', toolbar: '#barUser'}
 					]]
 					,id: 'userTable'
 					,page: true
@@ -115,6 +116,27 @@
 					console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
 					active.tableReload(data.field);
 					return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+				});
+
+				//监听行工具事件
+				table.on('tool(user-table)', function(obj){
+					var layEvent = obj.event; //获得 lay-event 对应的值
+					if(layEvent === 'detail'){ //查看
+						layer.msg('查看');
+					} else if(layEvent === 'del'){ //删除
+						layer.confirm('真的删除行么', function(index){
+							obj.del();
+							layer.close(index);
+							//向服务端发送删除指令
+						});
+					} else if(layEvent === 'edit'){ //编辑
+						layer.msg('编辑');
+						//同步更新缓存对应的值
+						obj.update({
+							username: '123'
+							,title: 'xxx'
+						});
+					}
 				});
 			});
 		</script>
