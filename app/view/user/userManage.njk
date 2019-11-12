@@ -10,8 +10,114 @@
 	</head>
 
 	<body>
-		<h1>用户展示</h1>
+		<div class="page-content-wrap">
+			<form class="layui-form" action="" lay-filter="user-from">
+				<div class="layui-inline">
+					<label class="layui-form-label">用户ID</label>
+					<div class="layui-input-inline">
+						<input type="tel" name="user_id" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">用户名</label>
+					<div class="layui-input-inline">
+						<input type="text" name="user_name" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">用户类型</label>
+					<div class="layui-input-inline">
+						<select name="user_type" lay-search="">
+							<option value="">全部用户</option>
+							<option value="common">普通用户</option>
+							<option value="admin">管理员</option>
+							<option value="shop">店铺管理员</option>
+							<option value="agent">代理商</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">状态</label>
+					<div class="layui-input-inline">
+						<select name="is_enable" lay-search="">
+							<option value="1">启用</option>
+							<option value="-1">禁用</option>
+						</select>
+					</div>
+					<button class="layui-btn table-search" lay-submit lay-filter="user-from">搜索</button>
+				</div>
+			</form>
+			<table class="layui-hide" id="userTable" lay-filter="user-table"></table>
+		</div>
+		<script type="text/html" id="toolUser">
+			<div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button>
+				<button class="layui-btn layui-btn-danger layui-btn-sm layui-icon layui-icon-delete delBtn" title="删除" data-url="批量删除api" data-table-id="userTable"></button>
+			</div>
+		</script>
+		<script type="text/html" id="barUser">
+			<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+		</script>
 		<script src="/static/admin/layui/layui.js"></script>
+		<script src="/static/admin/js/common.js"></script>
+		<script>
+			layui.use(['table'], function() {
+				var table = layui.table;
+
+				const active = {
+					tableReload: function (params) {
+						table.reload('userTable', {
+							where: {
+								"search": params
+							}
+						});
+					}
+				}
+
+				var form = layui.form;
+				//初始渲染
+				table.render({
+					elem: '#userTable'
+					,url:'/api/account/search'
+					,method: 'post'
+					,toolbar: '#toolUser' //开启头部工具栏，并为其绑定左侧模板
+					,title: '用户数据表'
+					,parseData: function(res) {
+						return {
+							"code": res['code'],
+							"msg": res['message'],
+							"count": res['data']['total'],
+							"data": res['data']['list']
+						}
+					}
+					,cols: [[
+						{type: 'checkbox', fixed: 'left'}
+						,{field:'user_id', title:'ID', width:120}
+						,{field:'user_name', title:'用户名', width:120}
+						,{field:'user_type', title:'用户类型', width:120}
+						,{field:'open_id', title:'微信ID'}
+						,{field:'user_nick_name', title:'昵称', width:120}
+						,{field:'is_enable', title:'状态', width:60}
+						,{field:'add_time', title:'添加时间', width:120}
+						,{field:'last_login', title:'最后登录时间', width:120}
+						,{field:'account_balance', title:'账户余额', width:90}
+						,{field:'last_ip', title:'最后登录IP', width:160}
+						,{fixed:'right', width:200, align:'center', toolbar: '#barUser'}
+					]]
+					,id: 'userTable'
+					,page: true
+				});
+				
+				//监听表单提交
+				form.on('submit(user-from)', function(data){
+					console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+					active.tableReload(data.field);
+					return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+				});
+			});
+		</script>
 	</body>
 
 </html>

@@ -42,7 +42,7 @@ module.exports = appInfo => {
       bodyName: '_csrf',
       queryNAme: '_csrf'
     },
-    domainWhiteList: ['http://localhost:6005']
+    domainWhiteList: ['http://localhost:7005']
   };
 
   // 配置跨域
