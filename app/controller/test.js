@@ -17,7 +17,7 @@ class TestController extends Controller {
     }
     async test3() {
         const { ctx } = this;
-        const result = await ctx.curl('/data/user_log?log_type=lt.13', {
+        const result = await ctx.curl('data/sys_user?limit=15&offset=1', {
             method: 'GET',
             dataType: 'json',
         });
