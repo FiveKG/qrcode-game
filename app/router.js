@@ -10,10 +10,14 @@ module.exports = app => {
   router.get('/api/test/code', controller.test.test1);
   router.get('/api/test/test2', controller.test.test2);
   router.get('/api/test/test3', controller.test.test3);
+  router.get('/api/test/test4',controller.test2.echo);
 
   /** ----------------------------Api---------------------------- */
   //获取主键值
   router.get('/api/common/generate_key', controller.tool.getPrimaryKey);
+
+  /** ----------------------------Api-account---------------------------- */
+  router.post('/api/account/login',controller.account.login)
 
   /** ----------------------------Page---------------------------- */
   router.get('/index', controller.v1.index.index);
