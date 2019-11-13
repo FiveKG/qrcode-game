@@ -123,6 +123,7 @@
 					var layEvent = obj.event; //获得 lay-event 对应的值
 					if(layEvent === 'detail'){ //查看
 						layer.msg('查看');
+						//弹出层引入用户详情页面
 					} else if(layEvent === 'del'){ //删除
 						layer.confirm('真的删除行么', function(index){
 							obj.del();
@@ -131,7 +132,8 @@
 						});
 					} else if(layEvent === 'edit'){ //编辑
 						layer.msg('编辑');
-						//同步更新缓存对应的值
+						//弹出层引入用户修改页面
+						//同步更新缓存对应的值 也可以直接重载表格
 						obj.update({
 							username: '123'
 							,title: 'xxx'
