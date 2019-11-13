@@ -52,7 +52,7 @@
 		<script type="text/html" id="toolUser">
 			<div class="layui-btn-container">
 				<button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button>
-				<button class="layui-btn layui-btn-danger layui-btn-sm layui-icon layui-icon-delete delBtn" title="删除" data-url="批量删除api" data-table-id="userTable"></button>
+				<button class="layui-btn layui-btn-danger layui-btn-sm layui-icon layui-icon-delete" title="删除"lay-event="del"></button>
 			</div>
 		</script>
 		<script type="text/html" id="barUser">
@@ -63,9 +63,10 @@
 		<script src="/static/admin/layui/layui.js"></script>
 		<script src="/static/admin/js/common.js"></script>
 		<script>
-			layui.use(['table'], function() {
+			layui.use(['table', 'dialog', 'jquery'], function() {
 				var table = layui.table;
-
+				var dialog = layui.dialog;
+				var $ = layui.jquery;
 				const active = {
 					//table重载
 					tableReload: function (params) {
@@ -139,6 +140,39 @@
 							,title: 'xxx'
 						});
 					}
+				});
+
+				//监听事件
+				table.on('toolbar(user-table)', function(obj){
+					var checkStatus = table.checkStatus(obj.config.id);
+					console.log(checkStatus);
+					switch(obj.event){
+						case 'add':
+							layer.msg('添加');
+						break;
+						case 'del':
+							let data = checkStatus['data'];
+							if (data.length > 0) {
+							let ids = [];
+								$.each(data, function (i, tem) {
+									ids.push(tem['user_id']);
+								});
+								dialog.confirm({
+									message:'您确定要删除选中项',
+									success:function(){
+										staticActive.delBatch(ids, '删除API');
+										layer.msg('删除了')
+									},
+									cancel:function(){
+										layer.msg('取消了')
+									}
+								})
+								return false;
+							} else {
+								layer.msg('没有选中行');
+							}
+						break;
+					};
 				});
 			});
 		</script>
