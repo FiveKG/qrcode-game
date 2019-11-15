@@ -19,6 +19,28 @@ class ToolController extends Controller {
         const { ctx } = this;
         ctx.body = await ctx.helper.getPrimaryKey();
     }
+
+    async getCaptcha(){
+        const {ctx,logger,app,config} = this;
+
+        try{
+        const reqData = ctx.query;
+        logger.debug('请求参数：%j', reqData);
+
+        const captcha_random = reqData.captcha_random;
+        const {data,text}=await ctx.helper.getCaptcha();
+        if (data) {
+            await app.redis.set(captcha_random.toString(),text.toString(),'EX',config.redis_expiration);
+            ctx.body = await ctx.helper.renderSuccess(0, '', data);    
+        } else {
+            ctx.body = await ctx.helper.renderError(500, '系统出错');
+        }
+        }catch(err){
+            logger.error(err)
+            throw err
+        }
+        
+    }
 }
 
 module.exports = ToolController;
