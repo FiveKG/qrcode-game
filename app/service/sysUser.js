@@ -120,18 +120,32 @@ class SysUserService extends Service {
      * user_name:string,
      * user_pwd:string,       
      * }} login_data
-     * @returns {Promise<boolean>} 
+     * @returns {Promise<{
+     * verify_result : boolean,
+     * user_pwd      : string,
+     * user_name     : string,
+     * user_type     : string,
+     * open_id       : string,
+     * user_nick_name: string,
+     * wx_url        : string,
+     * is_enable     : string
+     * }>} 
      */
     async login(login_data){
         const { logger,ctx,app} = this;
         try {
-            const sql     = `select user_pwd from sys_user where user_name = $1;`;
-            const {rows}  = await app.pg.query(sql,[login_data.user_name]);
-            const sql_pwd = rows.pop().user_pwd;
-
+            const sql           = `select user_pwd,user_name,user_type,open_id,user_nick_name,wx_url,is_enable from sys_user where user_name = $1;`;
+            const {rows}        = await app.pg.query(sql,[login_data.user_name]);
+            const sql_result    = rows.pop()
+            const sql_pwd       = sql_result.user_pwd;
             const verify_result = await ctx.helper.verifyPwd(sql_pwd,login_data.user_pwd)
 
-            return verify_result
+            const result = {
+                verify_result: verify_result,
+                ...sql_result
+            }
+            
+            return result
         } catch (err) {
             logger.error(err)
             throw err

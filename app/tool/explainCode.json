@@ -1,7 +1,10 @@
 {
     "500001": "用户状态不可用",
     "500002": "权限不足",
-    "400":"Bad Request",
-    "401":"Unauthorized",
-    "204":"No Content"
+    "400000":"Bad Request,验证码错误",
+    "400001":"Unauthorized,密码错误",
+    "400002":"Disable,账户不可用",
+    "400003":"Forbidden,未验证用户",
+    "400006":"Not Acceptable,权限不足",
+    "200004":"No Content,服务器成功处理，但未返回内容"
 }
