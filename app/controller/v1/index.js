@@ -3,6 +3,10 @@
 const Controller = require('egg').Controller;
 
 class IndexController extends Controller {
+    async login(){
+        const { ctx } = this;
+        await ctx.render('login.html');
+    }
     async index() {
         const { ctx } = this;
         await ctx.render('index.html');
@@ -15,6 +19,7 @@ class IndexController extends Controller {
         const { ctx } = this;
         await ctx.render('/user/userManage.njk');
     }
+    
 }
 
 module.exports = IndexController;

@@ -1,3 +1,4 @@
+//@ts-check
 'use strict';
 
 /** @type Egg.EggPlugin */
@@ -13,5 +14,9 @@ module.exports = {
   pg: {
     enable: true,
     package: '@yz/egg-postgres',
+  },
+  redis:{
+    enable: true,
+    package: 'egg-redis',
   },
 };

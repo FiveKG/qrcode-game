@@ -1,12 +1,35 @@
 ### test pxg
 GET http://localhost:7758/exchange/get_eth_account?account_name=tbgjoin
 
-###check eth address
+###login
 POST  http://localhost:7005/api/account/login
 content-type: application/json
 
 {
     "user_name":"13",
     "user_pwd":"121"
+}
+
+
+###register
+POST  http://localhost:7005/api/account/register
+content-type: application/json; charset=UTF-8
+
+{
+    "user_id":"asdfada2",
+    "user_pwd":"123",
+    "user_type":"admin",
+    "user_nick_name":"nick_name2"
+}
+
+###getCaptcha
+GET  http://localhost:7005/api/tool/get_captcha
+content-type: application/json; charset=UTF-8
+
+{
+    "user_name":"asdfada2",
+    "user_pwd":"123",
+    "user_type":"admin",
+    "user_nick_name":"nick_name2"
 }
 
