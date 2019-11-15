@@ -11,14 +11,14 @@ const upash = require('upash');
 upash.install('argon2', require('@phc/argon2'));
 
 module.exports = {
-    renderSuccess(code, message, data) {
+    renderSuccess(code, message='', data={}) {
         let msg = message;
         if (this.messageByCode(code)) {
             msg = this.messageByCode(code);
         }
         return resData(true, msg, data, code);
     },
-    renderError(code, message) {
+    renderError(code, message='') {
         let msg = message;
         if (this.messageByCode(code)) {
             msg = this.messageByCode(code);
@@ -113,14 +113,20 @@ module.exports = {
 
     /**
      * 
-     * @param {string} user_name
-     * @returns {Promise<String>} 
+     * @param {Object} option
      */
-    async setCookies(user_name){
-        const token = await this.generateToken({user_name})
+    async setJWTToken(option){
+        const token = await this.generateToken(option)
         const {jwt_key,cookies_options} = this.config.cookies
         this.ctx.cookies.set(jwt_key,token,cookies_options)
-        return token
+    },
+    /**
+     * @returns {Promise<string>}
+     */
+    async getJWTToken(){
+        const {jwt_key,cookies_options} = this.config.cookies
+        const jwtToken = this.ctx.cookies.get(jwt_key,cookies_options)
+        return jwtToken
     }
     
 }
