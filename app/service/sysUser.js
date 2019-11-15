@@ -1,3 +1,4 @@
+//@ts-check
 'use strict';
 
 const Service = require('egg').Service;
@@ -75,6 +76,65 @@ class SysUserService extends Service {
         } catch (e) {
             logger.error(e);
             return null;
+        }
+    }
+
+    /**
+     *      
+     * @param {{
+     * user_id       : string,
+     * user_pwd      : string,
+     * user_type     : string,
+     * user_nick_name: string
+     * }} register_data 
+     * @returns {Promise<boolean>}
+     */
+    async register(register_data){
+        const { logger,ctx } = this;
+        try{
+            const encrypt_pwd = await ctx.helper.encryptPwd(register_data.user_pwd);
+            let sql = `INSERT INTO public."sys_user"
+            ("user_id"
+            ,"user_pwd"
+            ,"user_type"
+            ,"user_nick_name"
+            )VALUES($1,$2,$3,$4)`
+        const {rowCount} = await this.app.pg.query(sql,[register_data.user_id,encrypt_pwd,register_data.user_type,register_data.user_nick_name]);
+        if(rowCount){
+            logger.debug(`${register_data.user_id}创建账号成功`)
+            return true
+        }
+        else{
+            logger.debug(`${register_data.user_id}创建账号失败`)
+            return false
+        }
+        }catch(err){
+            logger.error(err)
+            throw err
+        }
+    }
+
+    /**
+     * 
+     * @param {{
+     * user_name:string,
+     * user_pwd:string,       
+     * }} login_data
+     * @returns {Promise<boolean>} 
+     */
+    async login(login_data){
+        const { logger,ctx,app} = this;
+        try {
+            const sql     = `select user_pwd from sys_user where user_name = $1;`;
+            const {rows}  = await app.pg.query(sql,[login_data.user_name]);
+            const sql_pwd = rows.pop().user_pwd;
+
+            const verify_result = await ctx.helper.verifyPwd(sql_pwd,login_data.user_pwd)
+
+            return verify_result
+        } catch (err) {
+            logger.error(err)
+            throw err
         }
     }
 }

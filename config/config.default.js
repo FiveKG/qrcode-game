@@ -19,8 +19,9 @@ module.exports = appInfo => {
 
   // add your middleware config here
   config.middleware = [
-    //"requestInspect",
+    "requestInspect",
     "requestProxy",
+
   ];
 
   // 配置项目启动的端口
@@ -52,6 +53,11 @@ module.exports = appInfo => {
     credentials: true
   };
 
+  config.requestInspect={
+    enable: true,
+    ignore:['/api/account/register','/login','/api/tool/get_captcha*','/api/account/login']
+  };  
+  
   config.requestProxy = {
     host: process.env.PROXY_HOST, // target host that matched path will be proxy to
     match: /^\/data\//,
@@ -116,9 +122,33 @@ module.exports = appInfo => {
     agent: false,
   };
 
+  config.redis = {
+    client: {             // instanceName. See below
+        port: process.env.REDIS_PORT,          // Redis port
+        host: process.env.REDIS_HOST,   // Redis host
+        password: process.env.REDIS_PWD,
+        db: process.env.REDIS_DB,
+    }
+  }
+  config.set_redis={
+    redis_expiration:60*2,
+  }
   // add your user config here
   const userConfig = {
-    // myAppName: 'egg',
+    redis_expiration:60*2,
+
+    //设置cookies
+    cookies:{
+      jwt_key    : 'jwtToken',
+      cookies_options: {
+      maxAge   : 2*24*3600*1000,
+      path     : '/',              //设置键值对生效的 URL 路径，默认设置在根路径上（/），也就是当前域名下的所有 URL 都可以访问这个 Cookie。
+      httpOnly : true,             //设置键值对是否可以被 js 访问，默认为 true，不允许被 js 访问。
+      overwrite: true,             //设置 key 相同的键值对如何处理，如果设置为 true，则后设置的值会覆盖前面设置的，否则将会发送两个 set-cookie 响应头。
+      signed   : false,            //设置是否对 Cookie 进行签名
+      encrypt  : false             //设置是否对 Cookie 进行加密
+        }
+      }
   };
 
   return {
