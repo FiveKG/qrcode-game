@@ -43,15 +43,15 @@ module.exports = appInfo => {
       bodyName: '_csrf',
       queryNAme: '_csrf'
     },
-    domainWhiteList: ['http://localhost:7005']
+    domainWhiteList: ['.127.0.0.1:7005']//当字符串以 . 开头，例如 .test.com 时，代表 referrer 白名单为 test.com 的所有子域名，包括 test.com 自身。当字符串不以 . 开头，例如 sub.test.com，代表 referrer 白名单为 sub.test.com 这一个域名
   };
 
-  // 配置跨域
-  config.cors = {
-    origin: "*",
-    allowMethods: 'GET,HEADER,PUT,POST,DELETE,PATCH',
-    credentials: true
-  };
+  // // 配置跨域
+  // config.cors = {
+  //   origin: "*",
+  //   allowMethods: 'GET,HEADER,PUT,POST,DELETE,PATCH',
+  //   credentials: true
+  // };
 
   config.requestInspect={
     enable: true,

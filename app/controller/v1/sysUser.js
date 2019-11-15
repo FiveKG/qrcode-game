@@ -59,35 +59,50 @@ class SysUserController extends Controller {
             if(parseInt(reqData.captcha).toString()==='NaN')
             {
                 logger.debug('wrong captcha,this captcha is not a number');
-                ctx.body = await ctx.helper.messageByCode(400);
+                ctx.body = await ctx.helper.renderError(400000);
             }
              
-            //todo 验证验证码
+            // 验证验证码,del redis 
             const redis_captcha = await app.redis.get(reqData.captcha_key);
             if(!redis_captcha||redis_captcha!==reqData.captcha){
                 logger.debug('wrong captcha,this captcha is not exist');
-                ctx.body = await ctx.helper.messageByCode(400);
+                ctx.body = await ctx.helper.renderError(400000);
                 return
             }
-                
-            const verify_result= await service.sysUser.login(reqData);
-            if(!verify_result){
+            await app.redis.del(reqData.captcha_key)
+              
+            const result= await service.sysUser.login(reqData);
+            //验证密码  
+            if(!result.verify_result){
                 logger.debug('wrong pwd,verify result is false');
-                ctx.body = await ctx.helper.messageByCode(401);
+                ctx.body = await ctx.helper.renderError(400001);
+                return
+            }
+            //验证是否可用
+            if(!result.is_enable){
+                logger.debug(`wrong status,${reqData.user_name} is disable`);
+                ctx.body = await ctx.helper.renderError(400002);
                 return
             }
 
             //设置cookies
-            const token = await ctx.helper.setCookies(reqData.user_name)
-
-            ctx.body = await ctx.helper.messageByCode(204);
-            await ctx.redirect('./index');
+            const option = {
+                user_name     : result.user_name,
+                user_type     : result.user_type,
+                open_id       : result.open_id,
+                user_nick_name: result.user_nick_name,
+                wx_url        : result.wx_url,
+                is_enable     : result.is_enable
+            }
+            const token = await ctx.helper.setJWTToken(option)
+            
+            ctx.body = await ctx.helper.renderSuccess(200004);
+            
         }catch(err){
             logger.error(err);
             ctx.body = await ctx.helper.renderError(500, '系统出错');
         }
     }
-
 
 
 

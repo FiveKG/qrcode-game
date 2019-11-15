@@ -23,7 +23,7 @@
 							<input type="text" name="user_name" required lay-verify="user_name" placeholder="用户名" autocomplete="off" class="layui-input">
 						</div>
 						<div class="layui-form-item">
-							<input type="text" name="user_pwd" required lay-verify="user_pwd" placeholder="密码" autocomplete="off" class="layui-input">
+							<input type="password" name="user_pwd" required lay-verify="user_pwd" placeholder="密码" autocomplete="off" class="layui-input">
 						</div>
 						<div class="layui-form-item">
 							<div class="layui-inline">
@@ -70,20 +70,18 @@
 
 				//监听提交
 				form.on('submit(login)', function(data) {
-					
-					
 
 					$.ajax({
-						beforeSend:function(request){
-							request.setRequestHeader('x-csrf-token',csrfToken)
-						},
+						// beforeSend:function(request){
+						// 	request.setRequestHeader('x-csrf-token',csrfToken)
+						// },
 						url     : "/api/account/login",
 						type    : "POST",
 						dataType: "json",
 						data    : data.field,
 						success : function(data){
 						if(data.success==true){
-							//window.location.href='./index.html'
+							window.location.href='/index'
 						}
 						else{
 							alert(data.message)
