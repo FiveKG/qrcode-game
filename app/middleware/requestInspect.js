@@ -15,7 +15,7 @@ module.exports = option=>{
         }
         try{
             let user_info = await ctx.helper.decodeToken(jwtToken);
-            ctx.logger.debug('==================requestInspect-user_info===============>',user_info)
+            ctx.logger.debug('==================requestInspect-Token-user_info===============>',user_info)
             if(!user_info.is_enable){
                 ctx.body = await ctx.helper.messageByCode(400002);
                 return;
@@ -26,6 +26,7 @@ module.exports = option=>{
             await next();
             return
         }catch(err){
+            ctx.logger.debug(err)
             ctx.body = await ctx.helper.messageByCode(400003);
         }
     } 

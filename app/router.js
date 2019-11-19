@@ -28,4 +28,6 @@ module.exports = app => {
   router.get('/index', controller.v1.index.index);
   router.get('/page/welcome', controller.v1.index.welcome);
   router.get('/page/user/user_manage', controller.v1.index.userManage);
+  router.get('/edit/edit_user',controller.v1.sysUser.editUser)
+
 };
