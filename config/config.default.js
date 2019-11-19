@@ -73,6 +73,11 @@ module.exports = appInfo => {
     expiresIn: 2*24*3600, // 60
   };
 
+  config.bodyParser = {
+    ignore: /^\/data\//,
+  };
+
+
   // 设置模板
   config.view = {
     root: [
