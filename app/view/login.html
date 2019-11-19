@@ -4,11 +4,9 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<title>后台登录</title>
+		<title></title>
 		<!-- jQuery -->
 		<script type="text/javascript" src="/static/admin/js/jquery.min.js"></script>
-		<!-- jQuery-cookie -->
-		<script type="text/javascript" src="/static/admin/js/jquery.cookie.js"></script>
 		<link rel="stylesheet" type="text/css" href="/static/admin/layui/css/layui.css" />
 		<link rel="stylesheet" type="text/css" href="/static/admin/css/login.css" />
 	</head>
@@ -51,7 +49,8 @@
 		</div>
 		<script src="/static/admin/layui/layui.js" type="text/javascript" charset="utf-8"></script>
 		<script>
-			$(document).ready(get_captcha)
+			$(document).ready(get_captcha);
+			setInterval(get_captcha,2*60*1000);
 			layui.use(['form', 'layedit', 'laydate'], function() {
 				var form = layui.form,
 					layer = layui.layer;

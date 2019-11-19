@@ -21,15 +21,16 @@ class SysUserController extends Controller {
             let size = Number(reqData['limit']);
             const result = await service.sysUser.findSysUser(start, size, reqData['search'] || {});
             if (result === null) {
-                ctx.body = await ctx.helper.renderError(500, '系统出错');
+                ctx.body = await ctx.helper.renderError(500000, '系统出错');
             } else {
                 ctx.body = await ctx.helper.renderSuccess(0, '', result);
             }
         } catch (e) {
             logger.error(e);
-            ctx.body = await ctx.helper.renderError(500, '系统出错');
+            ctx.body = await ctx.helper.renderError(500000, '系统出错');
         }
     }
+
     async registerUser(){
         const { ctx, service, logger } = this;
         try{
@@ -47,7 +48,7 @@ class SysUserController extends Controller {
             await service.sysUser.register(reqData)
         }catch(err){
             logger.error(err);
-            ctx.body = await ctx.helper.renderError(500, '系统出错');
+            ctx.body = await ctx.helper.renderError(500000, '系统出错');
         }
     }
     
@@ -100,11 +101,14 @@ class SysUserController extends Controller {
             
         }catch(err){
             logger.error(err);
-            ctx.body = await ctx.helper.renderError(500, '系统出错');
+            ctx.body = await ctx.helper.renderError(500000, '系统出错');
         }
     }
 
-
+    async editUser(){
+        const { ctx } = this;
+        await ctx.render('/user/editUser.html');
+    }
 
     async module(){
         const { ctx, service, logger } = this;
@@ -115,7 +119,7 @@ class SysUserController extends Controller {
 
         }catch(err){
             logger.error(err);
-            ctx.body = await ctx.helper.renderError(500, '系统出错');
+            ctx.body = await ctx.helper.renderError(500000, '系统出错');
         }
     }
 }
