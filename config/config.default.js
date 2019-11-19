@@ -19,7 +19,8 @@ module.exports = appInfo => {
 
   // add your middleware config here
   config.middleware = [
-    "requestInspect",
+    //"requestInspect",
+    "first",
     "requestProxy",
 
   ];
@@ -62,14 +63,14 @@ module.exports = appInfo => {
     host: process.env.PROXY_HOST, // target host that matched path will be proxy to
     match: /^\/data\//,
     map: function (path) {
-      // console.log(`proxy, path:${path}`);
-      return path.replace('/data/', '/');
+      console.log(`proxy, path:${path}`);
+      return path.replace('/data/', '');
     }
   };
 
   config.token = {
     secret: process.env.JWT_SECRET,
-    expiresIn: 60, // 60
+    expiresIn: 2*24*3600, // 60
   };
 
   // 设置模板

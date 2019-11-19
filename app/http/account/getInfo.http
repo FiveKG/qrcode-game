@@ -22,6 +22,22 @@ content-type: application/json; charset=UTF-8
     "user_nick_name":"nick_name2"
 }
 
+###update
+PATCH  http://localhost:7005/data/sys_user?user_id=eq.asdfada2
+
+{ "user_name":"test1"}
+
+###update
+PATCH  http://postgrest.qrcode.isecsp.com/sys_user?user_id=eq.asdfada2
+
+{ "user_name":"test1"}
+
+
+
+###get
+GET  http://localhost:7005/data/sys_user
+
+
 ###getCaptcha
 GET  http://localhost:7005/api/tool/get_captcha
 content-type: application/json; charset=UTF-8

@@ -127,6 +127,13 @@ module.exports = {
         const {jwt_key,cookies_options} = this.config.cookies
         const jwtToken = this.ctx.cookies.get(jwt_key,cookies_options)
         return jwtToken
+    },
+    /**
+     * @returns {Promise<Object>}
+     */
+    async getJWTInfo(){
+        const jwtToken =await this.getJWTToken();
+        const jwtInfo = await this.decodeToken(jwtToken);
+        return jwtInfo
     }
-    
 }
