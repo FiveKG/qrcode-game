@@ -44,17 +44,18 @@
 		</div>
 		<script type="text/html" id="toolUser">
 			<div class="layui-btn-container">
-				<button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button>
-				<button class="layui-btn layui-btn-danger layui-btn-sm layui-icon layui-icon-close" title="删除"lay-event="del"></button>
+				<!-- <button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button> -->
+				<!-- <button class="layui-btn layui-btn-danger layui-btn-sm layui-icon layui-icon-close" title="删除"lay-event="del"></button> -->
 			</div>
 		</script>
 		<script type="text/html" id="barUser">
-			<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+			<!-- <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a> -->
 			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">禁用</a>
 		</script>
 		<script src="/static/admin/layui/layui.js"></script>
 		<script src="/static/admin/js/common.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/date-fns/1.28.5/date_fns.min.js"></script>
 		<script>
 			layui.use(['table', 'dialog', 'jquery'], function() {
 				var table = layui.table;
@@ -89,21 +90,33 @@
 					}
 					,cols: [[
 						{type: 'checkbox', fixed: 'left'}
-						,{field:'user_id', title:'ID', width:120}
-						,{field:'user_name', title:'用户名', width:120}
-						,{field:'user_type', title:'用户类型', width:120}
-						,{field:'open_id', title:'微信ID'}
-						,{field:'user_nick_name', title:'昵称', width:120}
-						,{field:'is_enable', title:'状态', width:60}
-						,{field:'add_time', title:'添加时间', width:120}
-						,{field:'last_login', title:'最后登录时间', width:120}
-						,{field:'account_balance', title:'账户余额', width:90}
-						,{field:'last_ip', title:'最后登录IP', width:160}
-						,{fixed:'right', title: "操作", width:200, align:'center', toolbar: '#barUser'}
+						,{field:'user_id', title:'ID' ,hide:true, }
+						,{field:'user_name', title:'用户名', }
+						,{field:'user_type', title:'用户类型', }
+						//,{field:'open_id', title:'微信ID'}
+						,{field:'user_nick_name', title:'昵称', }
+						,{field:'is_enable', title:'状态', templet: function(d){
+							if(d.is_enable==true){
+								return '是'
+							}else if(d.is_enable==false){
+								return 	'否'
+							}
+						}}
+						,{field:'add_time', title:'添加时间', templet:function(d){
+							return dateFns.format(d.add_time,'YYYY-MM-DD HH:mm')
+						} }
+						,{field:'last_login', title:'最后登录时间',templet:function(d){
+							return dateFns.format(d.last_login,'YYYY-MM-DD HH:mm')
+						} }
+						//,{field:'account_balance', title:'账户余额', width:90}
+						,{field:'last_ip', title:'最后登录IP', }
+						,{fixed:'right', title: "操作", align:'center', toolbar: '#barUser'}
 					]]
 					,id: 'userTable'
 					,page: true
 				});
+
+			
 				
 				//监听表单提交
 				form.on('submit(user-from)', function(data){
@@ -120,11 +133,27 @@
 						//弹出层引入用户详情页面
 					} 
 					else if(layEvent === 'del'){ //删除
-						layer.confirm(`删除用户：${obj.data.user_name}`, function(index){
-							obj.del()
-							layer.close(index);
+						layer.confirm(`禁用用户：${obj.data.user_name}`, function(index){
 							//向服务端发送删除指令
-						});
+							$.ajax({
+								url     : `/data/sys_user?user_id=eq.${obj.data.user_id}`,
+								type    : "PATCH",
+								dataType: "json",
+								data    : JSON.stringify({"is_enable":false}),
+								contentType: 'application/json; charset=utf-8',
+								success: function(data){
+									if(!data){
+										layer.msg('更新成功!');
+									}else{
+										layer.msg('更新失败!');
+									}
+									setTimeout(function(){ 
+										window.location.reload()  
+										}, 1000);
+										
+								}
+							})
+											});
 					}
 					else if(layEvent === 'edit'){ //编辑
 						//layer.msg('编辑');
@@ -134,7 +163,7 @@
 						type: 2 ,
 						area: ['500px', '650px'],
 						title:"编辑",
-						content: "/edit/edit_user",
+						content: "/page/edit_user",
 						success: function(layero, index){
 							var body = layer.getChildFrame('body', index);
 							//var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
@@ -148,6 +177,7 @@
 							body.find("input[name='last_login']").val(obj.data.last_login);
 							body.find("input[name='account_balance']").val(obj.data.account_balance);
 							body.find("input[name='last_ip']").val(obj.data.last_ip);
+							body.find("form[class='layui-form']").val(index);
 						}
 
 						});    
@@ -165,6 +195,16 @@
 					switch(obj.event){
 						case 'add':
 							layer.msg('添加');
+							layer.open({
+								type: 2 ,
+								area: ['500px', '450px'],
+								title:"添加",
+								content: "/page/add_user",
+								success: function(layero, index){
+								var body = layer.getChildFrame('body', index);
+								body.find("form[class='layui-form']").val(index);
+								}
+							})
 						break;
 						case 'del':
 							let data = checkStatus['data'];

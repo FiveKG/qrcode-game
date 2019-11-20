@@ -16,14 +16,17 @@ POST  http://localhost:7005/api/account/register
 content-type: application/json; charset=UTF-8
 
 {
-    "user_id":"asdfada2",
+    "user_name":"abc",
     "user_pwd":"123",
     "user_type":"admin",
-    "user_nick_name":"nick_name2"
+    "open_id":"wx002",
+    "user_nick_name":"nick_name2",
+    "wx_url":"wx_url002"
 }
 
 ###update
 PATCH  http://localhost:7005/data/sys_user?user_id=eq.asdfada2
+content-type: application/json; charset=UTF-8
 
 { "user_name":"test1"}
 
