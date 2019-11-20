@@ -20,7 +20,7 @@ module.exports = appInfo => {
   // add your middleware config here
   config.middleware = [
     //"requestInspect",
-    "first",
+    //"first",
     "requestProxy",
 
   ];
@@ -59,11 +59,17 @@ module.exports = appInfo => {
     ignore:['/api/account/register','/login','/api/tool/get_captcha*','/api/account/login']
   };  
   
+
+  config.bodyParser = {
+    ignore: /^\/data\//,
+  };
+
+  
   config.requestProxy = {
     host: process.env.PROXY_HOST, // target host that matched path will be proxy to
     match: /^\/data\//,
     map: function (path) {
-      console.log(`proxy, path:${path}`);
+      //console.log(`proxy, path:${path}`);
       return path.replace('/data/', '');
     }
   };
