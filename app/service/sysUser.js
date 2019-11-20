@@ -20,6 +20,7 @@ class SysUserService extends Service {
      */
     async findSysUser(start, size, search) {
         const { logger } = this;
+        logger.debug(`service findSysUser,start:${start},size:${size},search:${search}`)
         try {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
@@ -82,32 +83,42 @@ class SysUserService extends Service {
     /**
      *      
      * @param {{
-     * user_id       : string,
+     * user_name     : string,
      * user_pwd      : string,
      * user_type     : string,
-     * user_nick_name: string
+     * user_nick_name: string,
+     * open_id       : string
      * }} register_data 
      * @returns {Promise<boolean>}
      */
     async register(register_data){
         const { logger,ctx } = this;
+        logger.debug(`service register,param:${register_data}`)
         try{
-            const encrypt_pwd = await ctx.helper.encryptPwd(register_data.user_pwd);
             let sql = `INSERT INTO public."sys_user"
             ("user_id"
+            ,"user_name"
             ,"user_pwd"
             ,"user_type"
             ,"user_nick_name"
-            )VALUES($1,$2,$3,$4)`
-        const {rowCount} = await this.app.pg.query(sql,[register_data.user_id,encrypt_pwd,register_data.user_type,register_data.user_nick_name]);
-        if(rowCount){
-            logger.debug(`${register_data.user_id}创建账号成功`)
-            return true
-        }
-        else{
-            logger.debug(`${register_data.user_id}创建账号失败`)
-            return false
-        }
+            ,"open_id"
+            ,"last_ip"
+            )VALUES($1,$2,$3,$4,$5,$6,$7)`
+            
+            const user_id     = ctx.helper.getPrimaryKey()
+            const last_ip   = ctx.ip
+            const encrypt_pwd = await ctx.helper.encryptPwd(register_data.user_pwd);
+ 
+            const {rowCount} = await this.app.pg.query(sql,[user_id,register_data.user_name,encrypt_pwd,register_data.user_type,register_data.user_nick_name,register_data.open_id,last_ip]);
+            if(rowCount){
+                logger.debug(`${register_data.user_name}创建账号成功`)
+                return true
+            }
+            else{
+                logger.debug(`${register_data.user_name}创建账号失败`)
+                return false
+            }
+
         }catch(err){
             logger.error(err)
             throw err
@@ -133,12 +144,19 @@ class SysUserService extends Service {
      */
     async login(login_data){
         const { logger,ctx,app} = this;
+        logger.debug(`service login,param:${login_data}`)
         try {
             const sql           = `select user_pwd,user_name,user_type,open_id,user_nick_name,wx_url,is_enable from sys_user where user_name = $1;`;
             const {rows}        = await app.pg.query(sql,[login_data.user_name]);
             const sql_result    = rows.pop()
             const sql_pwd       = sql_result.user_pwd;
             const verify_result = await ctx.helper.verifyPwd(sql_pwd,login_data.user_pwd)
+
+            if(verify_result){
+                //更新最后登录时间/ip
+                const update = `update sys_user set last_login = 'now()',last_ip='${ctx.ip}' where user_name = $1;`
+                await app.pg.query(update,[login_data.user_name]);
+            }
 
             const result = {
                 verify_result: verify_result,

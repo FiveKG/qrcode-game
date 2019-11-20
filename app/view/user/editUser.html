@@ -2,139 +2,164 @@
 <html>
     {%include "head.html" %}
     {% include 'script.html' %}
-    <form class="layui-form" action="">
-            <div class="layui-form-item">
-                <label class="layui-form-label">ID</label>
-                <div class="layui-input-block">
-                <input type="text" name="user_id" required  lay-verify="required"  autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">用户名</label>
-                <div class="layui-input-block">
-                    <input type="text" name="user_name" required  lay-verify="required"  autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-            <label class="layui-form-label">用户类型</label>
-            <div class="layui-input-block">
-                <select name="user_type" lay-verify="required">   
-                    <option value="0"></option>
-                    <option value="1"></option>
-                <option value="2"></option>
-                </select>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">微信ID</label>
-                <div class="layui-input-block">
-                    <input type="text" name="open_id" required  lay-verify="required"  autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">昵称</label>
-                <div class="layui-input-block">
-                    <input type="text" name="user_nick_name" required  lay-verify="required"  autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-            <label class="layui-form-label">状态</label>
-            <div class="layui-input-block">
-                <select name="is_enable" lay-verify="required">   
-                    <option value="0"></option>
-                    <option value="1"></option>
-                </select>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">添加时间
-                    </label>
-                <div class="layui-input-block">
-                    <input type="text" name="add_time" required  lay-verify="required"  autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">最后登录时间</label>
-                <div class="layui-input-block">
-                    <input type="text" name="last_login" required  lay-verify="required"  autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">账户余额</label>
-                <div class="layui-input-block">
-                    <input type="text" name="account_balance" required  lay-verify="required"  autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">最后登录IP</label>
-                <div class="layui-input-block">
-                    <input type="text" name="last_ip"   autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-            <div class="layui-input-block">
-                <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-            </div>
-            </div>
-        
-      
+    <div class="layui-card">
+        <div class="layui-card-body">
+                <form class="layui-form"  action="">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">ID</label>
+                            <div class="layui-input-block">
+                            <input type="text" name="user_id" disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">用户名</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="user_name" disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                        <label class="layui-form-label">用户类型</label>
+                        <div class="layui-input-block">
+                            <select name="user_type" lay-verify="required">   
+                                <option value="0"></option>
+                                <option value="1"></option>
+                            <option value="2"></option>
+                            </select>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">微信ID</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="open_id" disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">昵称</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="user_nick_name" disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-block">
+                            <select name="is_enable" lay-verify="required">   
+                                <option value="0"></option>
+                                <option value="1"></option>
+                            </select>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">添加时间
+                                </label>
+                            <div class="layui-input-block">
+                                <input type="text" name="add_time" disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">最后登录时间</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="last_login" disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">账户余额</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="account_balance" disabled disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">最后登录IP</label>
+                            <div class="layui-input-block">
+                                <input type="text" name="last_ip"  disabled autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                        </div>
+                    
+                  
+                
+                </form>
+        </div>
+    </div>
     
-    </form>
-           
     <script>
     //Demo
     layui.use('form', function(){
     var form = layui.form;
     //监听提交
     form.on('submit(formDemo)', function(data){
-        console.log('???',data)
+        let layer_index = $("form[class='layui-form']").val()
         $.ajax({
-            url     : "/data/sys_user?user_id=eq.asdfada2",
+            url     : `/data/sys_user?user_id=eq.${data.field.user_id}`,
             type    : "PATCH",
             dataType: "json",
-            data    : {"user_nick_name":"nick_name"},
-            success : function(data){
-            if(data){
-                console.log(data)
-            }
-            else{
-                alert(data.message)
-            }
+            data    : JSON.stringify(data.field),
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){
+                if(!data){
+                    layer.msg('更新成功!');
+                    setTimeout(function(){ 
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭   
+                    }, 1000);
+                }
+                else{
+                    layer.msg('更新失败!');
+                }
             }
         })
         return false;
     });
     });
 
+
+
     //动态下拉
     let user_type_option = $("select[name='user_type'] option[value='0']").text();
     if(user_type_option=='admin'){
         $("select[name='user_type'] option[value='1']").text("agent");
+        $("select[name='user_type'] option[value='1']").val("agent");
         $("select[name='user_type'] option[value='2']").text("shop");
+        $("select[name='user_type'] option[value='2']").val("shop");
+        
     }
     else if(user_type_option=='agent'){
         $("select[name='user_type'] option[value='1']").text("admin");
+        $("select[name='user_type'] option[value='1']").val("admin");
         $("select[name='user_type'] option[value='2']").text("shop");
+        $("select[name='user_type'] option[value='2']").val("shop");
     }
     else if(user_type_option=='shop'){
         $("select[name='user_type'] option[value='1']").text("admin");
+        $("select[name='user_type'] option[value='1']").val("admin");
         $("select[name='user_type'] option[value='2']").text("agent");
+        $("select[name='user_type'] option[value='2']").val("agent");
     }
     else {
         $("select[name='user_type'] option[value='0']").text("admin");
+        $("select[name='user_type'] option[value='0']").val("admin");
         $("select[name='user_type'] option[value='1']").text("agent");
+        $("select[name='user_type'] option[value='1']").val("agent");
         $("select[name='user_type'] option[value='2']").text("shop");
+        $("select[name='user_type'] option[value='2']").val("shop");
     }
 
     let is_enable_option = $("select[name='is_enable'] option[value='0']").text();
     if(is_enable_option=="false"){
         $("select[name='is_enable'] option[value='1']").text('true')
+        $("select[name='is_enable'] option[value='1']").val('true')
     }
     else if(is_enable_option=='true'){
         $("select[name='is_enable'] option[value='1']").text('false')
+        $("select[name='is_enable'] option[value='1']").val('false')
     }
     else{
         $("select[name='is_enable'] option[value='0']").text('true')
+        $("select[name='is_enable'] option[value='0']").val('true')
         $("select[name='is_enable'] option[value='1']").text('false')
+        $("select[name='is_enable'] option[value='1']").val('false')
     }
 
     </script>

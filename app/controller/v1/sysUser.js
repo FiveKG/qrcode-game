@@ -38,14 +38,18 @@ class SysUserController extends Controller {
             logger.debug('请求参数：%j', reqData);
             //检验规则：https://github.com/node-modules/parameter/blob/master/example.js
             const validate_rule = {
-                user_id:'string',
-                user_pwd:'string',
-                user_type:['admin','agent','shop'],
-                user_nick_name:'string'
+                user_name     : 'string',
+                user_pwd      : 'string',
+                user_type     : ['admin','agent','shop'],
+                user_nick_name: 'string',
+                wx_url        : 'string'
             }
             ctx.validate(validate_rule)
 
-            await service.sysUser.register(reqData)
+            if(await service.sysUser.register(reqData)){
+                ctx.body = await ctx.helper.renderSuccess(200004);
+            }
+
         }catch(err){
             logger.error(err);
             ctx.body = await ctx.helper.renderError(500000, '系统出错');
@@ -56,7 +60,7 @@ class SysUserController extends Controller {
         const { ctx, service, logger,app } = this;
         try{
             const reqData = ctx.request.body;
-            logger.debug('registerUser请求参数：%j', reqData);
+            logger.debug('请求参数：%j', reqData);
             if(parseInt(reqData.captcha).toString()==='NaN')
             {
                 logger.debug('wrong captcha,this captcha is not a number');
@@ -108,6 +112,11 @@ class SysUserController extends Controller {
     async editUser(){
         const { ctx } = this;
         await ctx.render('/user/editUser.html');
+    }
+
+    async addUser(){
+        const { ctx } = this;
+        await ctx.render('/user/addUser.html');
     }
 
     async module(){
