@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+    {%include "head.html" %}
+    {% include 'script.html' %}
+    <div class="layui-card">
+        <div class="layui-card-body">
+                <form class="layui-form"  action="">
+                    <div class="layui-form-item" style="display:none">
+                        <label class="layui-form-label">ID</label>
+                        <div class="layui-input-block">
+                        <input type="text" name="shop_id" disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">店铺名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="name"  required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form" lay-filter="province">
+                        <label class="layui-form-label">省份</label>
+                        <div class="layui-input-block">
+                            <select id = 'province' name="province"  required  lay-verify="required" lay-filter="province">   
+                                <option value="" disabled selected>请选择省</option>
+                            </select>
+                    </div>
+                    <div class="layui-form" lay-filter="city">
+                        <label class="layui-form-label">市</label>
+                        <div class="layui-input-block">
+                            <select id = 'city' name="city" lay-search required  lay-verify="required" lay-filter="city" >   
+                                <option value="" disabled selected>请选择市</option>
+                            </select>
+                    </div>
+                    <div class="layui-form" lay-filter="area">
+                        <label class="layui-form-label">区</label>
+                        <div class="layui-input-block">
+                            <select id = 'area' name="area" lay-search required  lay-verify="required"  lay-filter="area" >   
+                                <option value="" disabled selected>请选择区</option>
+                            </select>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">详细地址</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="local_address"  required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">负责人名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="shop_manager"  required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">负责人手机号码		
+                            </label>
+                        <div class="layui-input-block">
+                            <input type="text" name="mobile"  required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form" lay-filter="group_id">
+                        <label class="layui-form-label">所属品牌</label>
+                    <div class="layui-input-block">
+                        <select id = 'group_id' name="group_id" lay-search  >   
+                            <option value="" selected>无所属品牌</option>
+                        </select>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">营业执照编号</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="license"   required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">经度</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="longitude"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">纬度</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="latitude"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                    </div>
+                </form>
+        </div>
+    </div>
+    
+    <!-- 动态赋值 -->
+    <script>
+        layui.use('form', function(){
+            var form = layui.form;
+            var select_obj = $('#group_id');
+            var id_object = $('#shop_id');
+            var user_id_object = $('#add_user_id');
+            var province_object =  $('#province');
+            var city_object =  $('#city');
+            var area_object =  $('#area');
+
+            $.ajax({
+                    url     : `/data/shop_group?select=group_id,group_name`,
+                    type    : "GET",
+                    success: function(data){
+                        for(element of data){
+                            select_obj.append(`<option value=${element.group_id}>${element.group_name}</option>`);
+                        }
+                        form.render('select','group_id');
+                    }
+                })
+            $.ajax({
+                url     : `/api/tool/getJwtInfo`,
+                type    : "get",
+                success: function(result){
+                    user_id_object.val(result.data.user_id)
+                    form.render();
+                }
+            })
+            $.ajax({
+                url     : `/api/common/generate_key`,
+                type    : "get",
+                success: function(result){
+                    id_object.val(result.data)
+                    form.render();
+                }
+            })
+
+            $.ajax({
+                url     : `/api/common/get_province`,
+                type    : "get",
+                success: function(result){
+                    for(element of result.data){
+                        province_object.append(`<option value=${element.value}>${element.label}</option>`);
+                        }
+                    form.render('select','province');
+                }
+            })
+
+            form.on('select(province)', function(data){
+                $.ajax({
+                    url     : `/api/common/get_city`,
+                    type    : "get",
+                    dataType: "json",
+                    data    : {provinceCode:data.value},
+                    contentType: 'application/json; charset=utf-8',
+                    success: function(result){
+                        city_object.empty()
+                        area_object.empty()
+                        city_object.append(`<option value="" selected>请选择城市</option>`)
+                        area_object.append(`<option value="" selected>请选择区</option>`)
+                        for(element of result.data){
+
+                            city_object.append(`<option value=${element.value}>${element.label}</option>`);
+                            }
+                        form.render('select','city');
+                    }
+                })
+            });     
+            form.on('select(city)', function(data){
+                $.ajax({
+                    url     : `/api/common/get_area`,
+                    type    : "get",
+                    data    : {cityCode:data.value},
+                    contentType: 'application/json; charset=utf-8',
+                    success: function(result){
+                        area_object.empty()
+                        area_object.append(`<option value="" selected>请选择区</option>`)
+                        for(element of result.data){
+                            area_object.append(`<option value=${element.value}>${element.label}</option>`);
+                            }
+                            form.render('select','area');
+                    }
+                })
+            });       
+
+            });
+        
+    </script>
+
+    <script>
+    //Demo
+    layui.use('form', function(){
+    var form = layui.form;
+    //监听提交
+    form.on('submit(formDemo)', function(data){
+        let layer_index = $("form[class='layui-form']").val()
+        var province =  $('#province').find("option:selected").text();
+        var city =  $('#city').find("option:selected").text();
+        var area =  $('#area').find("option:selected").text();
+        var p_c_a_text = `{"${province}","${city}","${area}"}`;
+        var p_c_a_id = `{"${data.field.province}","${data.field.city}","${data.field.area}"}`;
+        let insert = data.field;
+        delete insert.province;
+        delete insert.city;
+        delete insert.area;
+        console.log(insert)
+        $.ajax({
+            url     : `/data/shop?shop_id=eq.${insert.shop_id}`,
+            type    : "PATCH",
+            dataType: "json",
+            data    : JSON.stringify(data.field),
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){
+                if(!data){
+                    layer.msg('更新成功!');
+                    setTimeout(function(){ 
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭   
+                    }, 1000);
+                }
+                else{
+                    layer.msg('更新失败!');
+                }
+            }
+        })
+        return false;
+    });
+    });
+    </script>
+
+
+</html>

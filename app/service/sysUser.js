@@ -20,7 +20,7 @@ class SysUserService extends Service {
      */
     async findSysUser(start, size, search) {
         const { logger } = this;
-        logger.debug(`service findSysUser,start:${start},size:${size},search:${search}`)
+        logger.debug(`findSysUser请求参数,start:${start},size:${size},search:${JSON.stringify(search,null,4)}`)
         try {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
@@ -93,7 +93,7 @@ class SysUserService extends Service {
      */
     async register(register_data){
         const { logger,ctx } = this;
-        logger.debug(`service register,param:${register_data}`)
+        logger.debug(`register请求参数,param:${register_data}`)
         try{
             let sql = `INSERT INTO public."sys_user"
             ("user_id"
@@ -132,6 +132,7 @@ class SysUserService extends Service {
      * user_pwd:string,       
      * }} login_data
      * @returns {Promise<{
+     * user_id       : string,
      * verify_result : boolean,
      * user_pwd      : string,
      * user_name     : string,
@@ -144,9 +145,9 @@ class SysUserService extends Service {
      */
     async login(login_data){
         const { logger,ctx,app} = this;
-        logger.debug(`service login,param:${login_data}`)
+        logger.debug(`login请求参数,param:${login_data}`)
         try {
-            const sql           = `select user_pwd,user_name,user_type,open_id,user_nick_name,wx_url,is_enable from sys_user where user_name = $1;`;
+            const sql           = `select user_id,user_pwd,user_name,user_type,open_id,user_nick_name,wx_url,is_enable from sys_user where user_name = $1;`;
             const {rows}        = await app.pg.query(sql,[login_data.user_name]);
             const sql_result    = rows.pop()
             const sql_pwd       = sql_result.user_pwd;
