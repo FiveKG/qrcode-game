@@ -69,7 +69,7 @@ module.exports = appInfo => {
     host: process.env.PROXY_HOST, // target host that matched path will be proxy to
     match: /^\/data\//,
     map: function (path) {
-      //console.log(`proxy, path:${path}`);
+      // console.log(`proxy, path:${path}`);
       return path.replace('/data/', '');
     }
   };
@@ -79,9 +79,6 @@ module.exports = appInfo => {
     expiresIn: 2*24*3600, // 60
   };
 
-  config.bodyParser = {
-    ignore: /^\/data\//,
-  };
 
 
   // 设置模板

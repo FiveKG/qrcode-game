@@ -92,6 +92,7 @@ class SysUserController extends Controller {
 
             //设置cookies
             const option = {
+                user_id       : result.user_id,
                 user_name     : result.user_name,
                 user_type     : result.user_type,
                 open_id       : result.open_id,
@@ -119,18 +120,6 @@ class SysUserController extends Controller {
         await ctx.render('/user/addUser.html');
     }
 
-    async module(){
-        const { ctx, service, logger } = this;
-        try{
-            const reqData = ctx.request.body;
-            logger.debug('registerUser请求参数：%j', reqData);
-
-
-        }catch(err){
-            logger.error(err);
-            ctx.body = await ctx.helper.renderError(500000, '系统出错');
-        }
-    }
 }
 
 module.exports = SysUserController;
