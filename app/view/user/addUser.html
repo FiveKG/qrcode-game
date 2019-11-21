@@ -1,56 +1,60 @@
 <!DOCTYPE html>
 <html>
     {%include "head.html" %}
-    {% include 'script.html' %}
-    <form class="layui-form"  action="">
-            <div class="layui-form-item layui-row">
-                <label class="layui-form-label">用户名</label>
-                <div class="layui-input-block ">
-                    <input type="text" name="user_name" required  lay-verify="required"  autocomplete="off" class="layui-input">
+    {% include "script.html" %}
+    <div class="layui-card">
+        <div class="layui-card-body">
+        <form class="layui-form"  action="">
+                <div class="layui-form-item layui-row">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-block ">
+                        <input type="text" name="user_name" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                    </div>
                 </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">密码</label>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">密码</label>
+                    <div class="layui-input-block">
+                        <input type="password" name="user_pwd" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                <label class="layui-form-label">用户类型</label>
                 <div class="layui-input-block">
-                    <input type="password" name="user_pwd" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                    <select name="user_type" lay-verify="required">   
+                        <option value="admin">admin</option>
+                        <option value="agent">agent</option>
+                        <option value="shop">shop</option>
+                    <option value="2"></option>
+                    </select>
                 </div>
-            </div>
-            <div class="layui-form-item">
-            <label class="layui-form-label">用户类型</label>
-            <div class="layui-input-block">
-                <select name="user_type" lay-verify="required">   
-                    <option value="admin">admin</option>
-                    <option value="agent">agent</option>
-                    <option value="shop">shop</option>
-                <option value="2"></option>
-                </select>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">微信ID</label>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">微信ID</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="open_id" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">昵称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="user_nick_name" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">微信头像地址</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="wx_url" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
                 <div class="layui-input-block">
-                    <input type="text" name="open_id" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                    <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                 </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">昵称</label>
-                <div class="layui-input-block">
-                    <input type="text" name="user_nick_name" required  lay-verify="required"  autocomplete="off" class="layui-input">
                 </div>
-            </div>
-            <div class="layui-form-item">
-                <label class="layui-form-label">微信头像地址</label>
-                <div class="layui-input-block">
-                    <input type="text" name="wx_url" required  lay-verify="required"  autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-form-item">
-            <div class="layui-input-block">
-                <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-            </div>
-            </div>
 
-    </form>
+        </form>
+        </div>
+    </div>   
            
     <script>
     //Demo
