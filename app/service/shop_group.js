@@ -3,28 +3,23 @@
 
 const Service = require('egg').Service;
 
-class ShopService extends Service {
-   /**
-     * @description 返回商店
+class Shop_groupService extends Service {
+    /**
+     * @description 返回shop_group
      * @param {number} start 
      * @param {number} size 
      * @param {object} search 参数
      */
-    async findShop(start, size, search) {
+    async findShop_group(start, size, search) {
         const { logger } = this;
-        logger.debug(`findShop,start:${start},size:${size},search:${JSON.stringify(search,null,4)}`)
+        logger.debug(`findShop_group,start:${start},size:${size},search:${JSON.stringify(search,null,4)}`)
         try {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['name']) {
+            if (search['shop_group_name']) {
                 joinStr += ` AND name like $${i}`;
                 params.push(`${search['name']}%`);
-                i ++;
-            }
-            if (search['shop_manager']) {
-                joinStr += ` AND shop_manager like $${i}`;
-                params.push(`${search['shop_manager']}%`);
                 i ++;
             }
             if (search['is_enable']) {
@@ -37,24 +32,16 @@ class ShopService extends Service {
                 i ++;
             }
             let sql = `SELECT
-                ROW_NUMBER () OVER (ORDER BY shop.add_time DESC) AS RowNumber,
-                shop.shop_id,
-                shop.name,
-                shop.p_c_a_id,
-                shop.p_c_a_text,
-                shop.local_address,
-                shop.shop_manager,
-                shop.mobile,
-                shop.group_id,
-                shop.license,
-                shop.longitude,
-                shop.latitude,
-                shop.add_user_id,
-                shop.add_time,
-                shop.is_enable,
+                ROW_NUMBER () OVER (ORDER BY shop_group.add_time DESC) AS RowNumber,
+                shop_group.group_id,
+                shop_group.group_name,
+                shop_group.parent_id,
+                shop_group.add_time,
+                shop_group.is_enable,
+                shop_group.add_user_id,
                 u.user_name
             FROM
-            "public".shop as shop inner join "public".sys_user as u on u.user_id = shop.add_user_id  ${joinStr}`;
+            "public".shop_group as shop_group inner join "public".sys_user as u on  shop_group.add_user_id=u.user_id${joinStr}`;
             let searchSql = await this.service.tool.joinSearchSql(sql, start, size);
             let total = await this.service.tool.findRowCount(sql, params);
             // logger.debug('searchSql: ', searchSql);
@@ -73,4 +60,4 @@ class ShopService extends Service {
     }
 }
 
-module.exports = ShopService;
+module.exports = Shop_groupService;
