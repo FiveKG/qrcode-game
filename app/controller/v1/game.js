@@ -3,31 +3,30 @@
 
 const Controller = require('egg').Controller;
 
-class ShopController extends Controller {
-    
-    async shopManage(){
+class GameController extends Controller {
+    async gameManage(){
         const { ctx } = this;
-        await ctx.render('/shop/shopManage.html');
+        await ctx.render('/game/gameManage.html');
     }
 
-    async addShop(){
+    async addGame(){
         const { ctx } = this;
-        await ctx.render('/shop/addShop.html');
+        await ctx.render('/game/addGame.html');
     }
 
-    async editShop(){
+    async editGame(){
         const { ctx } = this;
-        await ctx.render('/shop/editShop.html');
+        await ctx.render('/game/editGame.html');
     }
 
-    async getShop() {
+    async getGame() {
         const { ctx, service, logger } = this;
         try {
             const reqData = ctx.request.body;
             logger.debug('请求参数：%j', reqData);
             let start = Number(reqData['limit']) * (Number(reqData['page']) -1);
             let size = Number(reqData['limit']);
-            const result = await service.shop.findShop(start, size, reqData['search'] || {});
+            const result = await service.game.findGame(start, size, reqData['search'] || {});
             if (result === null) {
                 ctx.body = await ctx.helper.renderError(500000, '系统出错');
             } else {
@@ -39,7 +38,6 @@ class ShopController extends Controller {
         }
     }
 
-
 }
 
-module.exports = ShopController;
+module.exports = GameController;

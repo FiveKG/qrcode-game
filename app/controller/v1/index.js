@@ -26,10 +26,7 @@ class IndexController extends Controller {
         const { ctx } = this;
         await ctx.render('welcome.html');
     }
-    async userManage() {
-        const { ctx } = this;
-        await ctx.render('/user/userManage.html');
-    }
+
     
 }
 

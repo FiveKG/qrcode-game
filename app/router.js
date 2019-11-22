@@ -25,18 +25,24 @@ module.exports = app => {
   router.post('/api/account/register',controller.v1.sysUser.registerUser);
   router.post('/api/account/login',controller.v1.sysUser.login);
 
-  /** ----------------------------Api-account---------------------------- */
+  /** ----------------------------Api-shop---------------------------- */
   router.post('/api/shop/search', controller.v1.shop.getShop);
+
+  /** ----------------------------Api-game---------------------------- */
+  router.post('/api/game/search', controller.v1.game.getGame);
+
   /** ----------------------------Page---------------------------- */
   router.get('/login',controller.v1.index.login);
   router.get('/index', controller.v1.index.index);
   router.get('/page/welcome', controller.v1.index.welcome);
-  router.get('/page/user/user_manage', controller.v1.index.userManage);
+  router.get('/page/user/user_manage', controller.v1.sysUser.userManage);
   router.get('/page/add_user',controller.v1.sysUser.addUser);
   router.get('/page/edit_user',controller.v1.sysUser.editUser);
   router.get('/page/shop/shop_manage', controller.v1.shop.shopManage);
   router.get('/page/add_shop',controller.v1.shop.addShop);
   router.get('/page/edit_shop',controller.v1.shop.editShop);
-
+  router.get('/page/game/game_manage', controller.v1.game.gameManage);
+  router.get('/page/add_game',controller.v1.game.addGame);
+  router.get('/page/edit_game',controller.v1.game.editGame);
 
 };
