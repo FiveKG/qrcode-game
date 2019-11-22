@@ -12,6 +12,11 @@ const Controller = require('egg').Controller;
  * @version 
  */
 class SysUserController extends Controller {
+    async userManage() {
+        const { ctx } = this;
+        await ctx.render('/user/userManage.html');
+    }
+    
     async getSysUser() {
         const { ctx, service, logger } = this;
         try {
