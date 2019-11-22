@@ -25,11 +25,10 @@ module.exports = app => {
   router.post('/api/account/register',controller.v1.sysUser.registerUser);
   router.post('/api/account/login',controller.v1.sysUser.login);
 
-  /** ----------------------------Api-shop---------------------------- */
+  /** ----------------------------Api-shouManage---------------------------- */
   router.post('/api/shop/search', controller.v1.shop.getShop);
-
-  /** ----------------------------Api-game---------------------------- */
   router.post('/api/game/search', controller.v1.game.getGame);
+  router.post('/api/shop_group/search', controller.v1.shopGroup.getShop_group);
 
   /** ----------------------------Page---------------------------- */
   router.get('/login',controller.v1.index.login);
@@ -44,5 +43,8 @@ module.exports = app => {
   router.get('/page/game/game_manage', controller.v1.game.gameManage);
   router.get('/page/add_game',controller.v1.game.addGame);
   router.get('/page/edit_game',controller.v1.game.editGame);
+  router.get('/page/shop/shop_group_manage', controller.v1.shopGroup.shop_groupManage);
+  router.get('/page/add_shop_group',controller.v1.shopGroup.addShop_group);
+  router.get('/page/edit_shop_group',controller.v1.shopGroup.editShop_group);
 
 };
