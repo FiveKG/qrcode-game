@@ -102,13 +102,11 @@
 								return `<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
 							<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">解禁</a>`
 							}
-							
 						}}
 					]]
 					,id: 'gameTable'
 					,page: true
 				});
-
 		
 				//监听表单提交
 				form.on('submit(user-from)', function(data){
@@ -117,8 +115,6 @@
 					return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
 				});
 
-
-	
 				//监听行工具事件
 				table.on('tool(game_table)', function(obj){
 					var layEvent = obj.event; //获得 lay-event 对应的值
@@ -163,9 +159,7 @@
 									}else{
 										layer.msg('更新失败!');
 									}
-									setTimeout(function(){ 
-										table.reload("gameTable")
-										}, 1000);	
+										table.reload("gameTable")	
 								}
 							})
 							});
@@ -195,9 +189,6 @@
 							body.find("input[name='is_enable']").val(obj.data.is_enable);
 							body.find("input[name='add_user_id']").val(obj.data.add_user_id);
 						},
-						end:function(){
-							table.reload("gameTable")
-						}
 						});    
 						// obj.update({
 						// 	username: '123'
@@ -216,15 +207,13 @@
 							layer.open({
 								type: 2 ,
 								area: ['500px','450px'],
-								title:"添加店铺",
+								title:"添加",
 								content: "/page/add_game",
 								success: function(layero, index){
 									var body = layer.getChildFrame('body', index);
 									body.find("form[class='layui-form']").val(index);
 								},
-								end:function(){
-									table.reload("gameTable")
-								}
+
 							})
 						break;
 						case 'is_enable':

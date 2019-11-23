@@ -29,6 +29,7 @@ module.exports = app => {
   router.post('/api/shop/search', controller.v1.shop.getShop);
   router.post('/api/game/search', controller.v1.game.getGame);
   router.post('/api/shop_group/search', controller.v1.shopGroup.getShop_group);
+  router.post('/api/agent/search', controller.v1.agent.getAgent);
 
   /** ----------------------------Page---------------------------- */
   router.get('/login',controller.v1.index.login);
@@ -46,5 +47,8 @@ module.exports = app => {
   router.get('/page/shop/shop_group_manage', controller.v1.shopGroup.shop_groupManage);
   router.get('/page/add_shop_group',controller.v1.shopGroup.addShop_group);
   router.get('/page/edit_shop_group',controller.v1.shopGroup.editShop_group);
+  router.get('/page/agent/agent_manage', controller.v1.agent.agentManage);
+  router.get('/page/add_agent',controller.v1.agent.addAgent);
+  router.get('/page/edit_agent',controller.v1.agent.editAgent);
 
 };
