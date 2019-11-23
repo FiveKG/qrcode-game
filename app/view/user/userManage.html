@@ -174,7 +174,7 @@
 									}else{
 										layer.msg('更新失败!');
 									}
-									user_table.reload({where:{user_id:obj.user_id}})
+									table.reload("userTable")
 								}		
 							})
 							});
@@ -203,8 +203,7 @@
 							body.find("input[name='account_balance']").val(obj.data.account_balance);
 							body.find("input[name='last_ip']").val(obj.data.last_ip);
 							body.find("form[class='layui-form']").val(index);
-						}
-
+						},
 						});    
 						// obj.update({
 						// 	username: '123'
@@ -228,8 +227,8 @@
 								success: function(layero, index){
 								var body = layer.getChildFrame('body', index);
 								body.find("form[class='layui-form']").val(index);
-								}
-							})
+								},
+						})
 						break;
 						case 'is_enable':
 							let data = checkStatus['data'];

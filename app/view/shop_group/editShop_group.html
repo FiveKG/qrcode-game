@@ -54,7 +54,8 @@
                     layer.msg('更新成功!');
                     setTimeout(function(){ 
                         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-                        parent.layer.close(index); //再执行关闭   
+                        parent.layer.close(index); //再执行关闭  
+                        parent.layui.table.reload('shop_groupTable');//刷新父表格    
                     }, 1000);
                 }
                 else{
