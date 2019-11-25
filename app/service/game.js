@@ -18,12 +18,12 @@ class GameService extends Service {
             let params = [];
             let i = 1;
             if (search['game_name']) {
-                joinStr += ` AND name like $${i}`;
-                params.push(`${search['name']}%`);
+                joinStr += ` AND game_name like $${i}`;
+                params.push(`${search['game_name']}%`);
                 i ++;
             }
             if (search['is_enable']) {
-                joinStr += ` AND is_enable = $${i}`;
+                joinStr += ` AND game.is_enable = $${i}`;
                 let isEnable = false;
                 if (search['is_enable'] === 'true') {
                     isEnable = true;

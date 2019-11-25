@@ -60,7 +60,8 @@ class SysUserService extends Service {
                 add_time,
                 last_login,
                 account_balance,
-                last_ip
+                last_ip,
+                phone_num
             FROM
             "public".sys_user ${joinStr}`;
             let searchSql = await this.service.tool.joinSearchSql(sql, start, size);

@@ -8,55 +8,52 @@
                 <div class="layui-form-item layui-row"  style="display:none" >
                     <label class="layui-form-label"></label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="agent_id"   autocomplete="off" class="layui-input">
+                        <input type="text"  name="agent_id"  required  lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
                     <label class="layui-form-label">经销商名称</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="name"   autocomplete="off" class="layui-input">
+                        <input type="text"  name="name" required  lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 
                 <div class="layui-form-item layui-row" >
                     <label class="layui-form-label">经销商的营业执照编号</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="license"   autocomplete="off" class="layui-input">
+                        <input type="text"  name="license"  required  lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form" lay-filter="province">
                     <label class="layui-form-label">省份</label>
                     <div class="layui-input-block">
-                        <select id = 'province' name="province"  required  lay-verify="required" lay-filter="province">   
-                            <option value="" disabled selected>请选择省</option>
+                        <select id = 'province' name="province" lay-search required  lay-verify="required" lay-filter="province">   
                         </select>
                 </div>
                 <div class="layui-form" lay-filter="city">
                     <label class="layui-form-label">市</label>
                     <div class="layui-input-block">
                         <select id = 'city' name="city" lay-search required  lay-verify="required" lay-filter="city" >   
-                            <option value="" disabled selected>请选择市</option>
                         </select>
                 </div>
                 <div class="layui-form" lay-filter="area">
                     <label class="layui-form-label">区</label>
                     <div class="layui-input-block">
                         <select id = 'area' name="area" lay-search required  lay-verify="required"  lay-filter="area" >   
-                            <option value="" disabled selected>请选择区</option>
                         </select>
                 </div>
                 <div class="layui-form-item layui-row" >
                     <label class="layui-form-label">详细地址</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="local_address"   autocomplete="off" class="layui-input">
+                        <input type="text"  name="local_address" required  lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
 
-                <div class="layui-form-item layui-row"  >
+                <div class="layui-form-item layui-row">
                     <label class="layui-form-label " style=" margin-top:-18px;">获利比例</label>
                     <div class="layui-input-block ">
-                        <input type="text"   style="display:none" name="gain_rate"   autocomplete="off" class="layui-input">
-                        <div id="slideTest1" style=" margin-top:30px;"></div>
+                        <input type="text"    name="gain_rate" required  lay-verify="required|number"  autocomplete="off" class="layui-input">
+                        <div id="slide" style=" margin-top:30px;"></div>
                     </div>
                 </div>
 
@@ -81,18 +78,19 @@
     <script>
         layui.use('slider', function(){
         var slider = layui.slider;
-        
         //渲染
         slider.render({
-            elem: '#slideTest1',  //绑定元素
+            elem: '#slide',  //绑定元素
             min:0,
             max:100,
             input:true,
+            value:0,
             change:function(value){
                 $('input[name="gain_rate"]').val(value)
             }
             });
         });
+
     </script>
 
     <!-- 动态赋值 -->
@@ -126,6 +124,9 @@
                 url     : `/api/common/get_province`,
                 type    : "get",
                 success: function(result){
+                    province_object.append(`<option value="-1" selected>请选择省</option>`)
+                    city_object.append(`<option value="-1" selected>请选择市</option>`)
+                    area_object.append(`<option value="-1" selected>请选择区</option>`)
                     for(element of result.data){
                         province_object.append(`<option value=${element.value}>${element.label}</option>`);
                         }
@@ -143,8 +144,8 @@
                     success: function(result){
                         city_object.empty()
                         area_object.empty()
-                        city_object.append(`<option value="" selected>请选择城市</option>`)
-                        area_object.append(`<option value="" selected>请选择区</option>`)
+                        city_object.append(`<option value="-1" selected>请选择市</option>`)
+                        area_object.append(`<option value="-1" selected>请选择区</option>`)
                         for(element of result.data){
 
                             city_object.append(`<option value=${element.value}>${element.label}</option>`);
@@ -161,7 +162,7 @@
                     contentType: 'application/json; charset=utf-8',
                     success: function(result){
                         area_object.empty()
-                        area_object.append(`<option value="" selected>请选择区</option>`)
+                        area_object.append(`<option value="-1" selected>请选择区</option>`)
                         for(element of result.data){
                             area_object.append(`<option value=${element.value}>${element.label}</option>`);
                             }
@@ -177,6 +178,17 @@
     var form = layui.form;
     //监听提交
     form.on('submit(formDemo)', function(data){
+        if(data.field.province==='-1'||data.field.province===''){
+            layer.msg('请选择省份');
+            return false
+        }else if(data.field.city==='-1'||data.field.city===''){
+            layer.msg('请选择市');
+            return false
+        }
+        else if(data.field.area==='-1'||data.field.area===''){
+            layer.msg('请选择区');
+            return false
+        }
         let layer_index = $("form[class='layui-form']").val()
         var province =  $('#province').find("option:selected").text();
         var city =  $('#city').find("option:selected").text();
@@ -189,7 +201,7 @@
         delete insert.area;
         insert['p_c_a_text'] = p_c_a_text;
         insert['p_c_a_id'] = p_c_a_id;
-
+        //console.log(insert)
         $.ajax({
             url        : `/data/agent`,
             type       : "POST",

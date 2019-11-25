@@ -18,12 +18,12 @@ class Shop_groupService extends Service {
             let params = [];
             let i = 1;
             if (search['shop_group_name']) {
-                joinStr += ` AND name like $${i}`;
-                params.push(`${search['name']}%`);
+                joinStr += ` AND group_name like $${i}`;
+                params.push(`${search['shop_group_name']}%`);
                 i ++;
             }
             if (search['is_enable']) {
-                joinStr += ` AND is_enable = $${i}`;
+                joinStr += ` AND shop_group.is_enable = $${i}`;
                 let isEnable = false;
                 if (search['is_enable'] === 'true') {
                     isEnable = true;

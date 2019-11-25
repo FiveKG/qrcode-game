@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    {%include "head.html" %}
+    {% include 'script.html' %}
+    <div class="layui-card">
+        <div class="layui-card-body">
+                <form class="layui-form"  action="">
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">主键</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="qrcode_id"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">扫码后的动作</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="scan_action"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">二维码的下载地址</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="download_url"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">生成此二维码的经销商id</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="agent_id"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">所属店铺</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="shop_id"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">所属连锁店</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="group_id"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">二维码的内容hash</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="hash_str"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">序号</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="seq"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">是否可用</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="is_enable"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">添加的时间</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="add_time"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">创建二维码的用户的id</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="create_user_id"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                    </div>
+                </form>
+        </div>
+    </div>
+    
+    <script>
+        function init(data){
+            layui.use('form', function(){
+                var form = layui.form;
+            })
+        }
+    </script>
+
+    <!-- 监听提交 -->
+    <script>
+    layui.use('form', function(){
+    var form = layui.form;
+    form.on('submit(formDemo)', function(data){
+        $.ajax({
+            url     : `/data/qrcode?qrcode_id=eq.${data.field.qrcode_id}`,
+            type    : "PATCH",
+            dataType: "json",
+            data    : JSON.stringify(data.field),
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){
+                if(!data){
+                    layer.msg('更新成功!');
+                    setTimeout(function(){ 
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭   
+                        parent.layui.table.reload('qrcodeTable');//刷新父表格  
+                    }, 1000);
+                }
+                else{
+                    layer.msg('更新失败!');
+                }
+            }
+        })
+        return false;
+    });
+    });
+    </script>
+
+
+</html>

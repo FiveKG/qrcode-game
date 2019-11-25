@@ -6,9 +6,9 @@
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="user-from">
 				<div class="layui-inline">
-					<label class="layui-form-label">店铺名</label>
+					<label class="layui-form-label">名</label>
 					<div class="layui-input-inline">
-						<input type="text" name="shop_group_name" autocomplete="off" class="layui-input">
+						<input type="text" name="qrcode_name" autocomplete="off" class="layui-input">
 					</div>
 				</div>
 				<div class="layui-inline">
@@ -22,15 +22,15 @@
 				</div>
 				<button class="layui-btn table-search" lay-submit lay-filter="user-from">搜索</button>
 			</form>
-			<table class="layui-hide" id="shop_groupTable" lay-filter="shop_group_table"></table>
+			<table class="layui-hide" id="qrcodeTable" lay-filter="qrcode_table"></table>
 		</div>
-		<script type="text/html" id="toolshop_group">
+		<script type="text/html" id="toolqrcode">
 			<div class="layui-btn-container">
 				<button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button>
 				<!-- <button class="layui-btn layui-btn-danger layui-btn-sm layui-icon layui-icon-close" title="删除"lay-event="is_enable"></button> -->
 			</div>
 		</script>
-		<!-- <script type="text/html" id="bashop_group">
+		<!-- <script type="text/html" id="baqrcode">
 			<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
 			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
 			<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">禁用</a>
@@ -44,7 +44,7 @@
 				const active = {
 					//table重载
 					tableReload: function (params) {
-						table.reload('shop_groupTable', {
+						table.reload('qrcodeTable', {
 							where: {
 								"search": params
 							}
@@ -55,10 +55,10 @@
 				var form = layui.form;
 				//初始渲染
 				table.render({
-					elem: '#shop_groupTable'
-					,url:'/api/shop_group/search'
+					elem: '#qrcodeTable'
+					,url:'/api/qrcode/search'
 					,method: 'post'
-					,toolbar: '#toolshop_group' //开启头部工具栏，并为其绑定左侧模板
+					,toolbar: '#toolqrcode' //开启头部工具栏，并为其绑定左侧模板
 					,title: '用户数据表'
 					,parseData: function(res) {
 						return {
@@ -70,12 +70,20 @@
 					}
 					,cols: [[
 						{type: 'checkbox', fixed: 'left'}
-						,{field:'group_id', title:'',hide:true }
-						,{field:'group_name', title:'名称', }
-						,{field:'parent_id', title:'上级组织id',hide:true }
-						,{field:'add_time', title:'添加时间',hide:true }
-						,{field:'is_enable', title:'是否启用',hide:true }
-                        ,{field:'user_name', title:'录入人', }
+						,{field:'qrcode_id', title:'主键', }
+						,{field:'scan_action', title:'扫码后的动作',templet(d){
+                            return JSON.stringify(d.scan_action)
+                        } }
+						,{field:'download_url', title:'二维码的下载地址', }
+						,{field:'agent_name', title:'生成此二维码的经销商', }
+						,{field:'shop_name', title:'所属店铺', }
+						,{field:'group_name', title:'所属连锁店', }
+						,{field:'hash_str', title:'二维码的内容hash', }
+						,{field:'seq', title:'序号', }
+						,{field:'is_enable', title:'是否可用',hide:true }
+						,{field:'add_time', title:'添加的时间', hide:true}
+						,{field:'add_user_id', title:'创建二维码的用户的', hide:true}
+						,{field:'add_user_name', title:'录入人', }
 						,{field:'is_enable', title:'是否启用', templet: function(d){
 							if(d.is_enable===true){
 								$("#is_enable").text('禁用')
@@ -100,14 +108,14 @@
 							
 						}}
 					]]
-					,id: 'shop_groupTable'
+					,id: 'qrcodeTable'
 					,page: true
 				});
 
 		
 				//监听表单提交
 				form.on('submit(user-from)', function(data){
-					console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+					//console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
 					active.tableReload(data.field);
 					return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
 				});
@@ -115,20 +123,19 @@
 
 	
 				//监听行工具事件
-				table.on('tool(shop_group_table)', function(obj){
+				table.on('tool(qrcode_table)', function(obj){
 					var layEvent = obj.event; //获得 lay-event 对应的值
 					if(layEvent === 'detail'){ //查看
 						layer.msg('查看');
 						//弹出层引入用户详情页面
 					} 
-                    else if(layEvent === 'is_enable'){ //删除	
-                        console.log(obj.data)		
+					else if(layEvent === 'is_enable'){ //删除
+						
 						if(obj.data.is_enable==true){
-						layer.confirm(`禁用：${obj.data.group_name}`, function(index){
-                            
+						layer.confirm(`禁用：${obj.data.qrcode_name}`, function(index){
 							//向服务端发送禁用指令
 							$.ajax({
-								url     : `/data/shop_group?group_id=eq.${obj.data.group_id}`,
+								url     : `/data/qrcode?qrcode_id=eq.${obj.data.qrcode_id}`,
 								type    : "PATCH",
 								dataType: "json",
 								data    : JSON.stringify({"is_enable":false}),
@@ -140,7 +147,7 @@
 										layer.msg('更新失败!');
 									}
 									setTimeout(function(){ 
-										table.reload("shop_groupTable")
+										table.reload("qrcodeTable")
 										}, 1000);	
 								}
 							})
@@ -150,7 +157,7 @@
 							layer.confirm(`解禁：${obj.data.name}`, function(index){
 							//向服务端发送接近指令
 							$.ajax({
-								url     : `/data/shop_group?shop_group_id=eq.${obj.data.shop_group_id}`,
+								url     : `/data/qrcode?qrcode_id=eq.${obj.data.qrcode_id}`,
 								type    : "PATCH",
 								dataType: "json",
 								data    : JSON.stringify({"is_enable":true}),
@@ -161,9 +168,7 @@
 									}else{
 										layer.msg('更新失败!');
 									}
-									setTimeout(function(){ 
-										table.reload("shop_groupTable")
-										}, 1000);	
+										table.reload("qrcodeTable")	
 								}
 							})
 							});
@@ -175,21 +180,31 @@
 						//同步更新缓存对应的值 也可以直接重载表格
 						layer.open({
 						type: 2 ,
-                        area: '500px',
-                        resize  :false,//是否允许拉伸
+						area: ['500px', '650px'],
 						title:"编辑",
-						content:`/page/edit_shop_group`,
+						content:`/page/edit_qrcode`,
 						success: function(layero, index){
 							var body = layer.getChildFrame('body', index);
-							console.log(obj.data)
+							//console.log(obj.data)
 							//var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+							body.find("input[name='qrcode_id']").val(obj.data.qrcode_id);
+							body.find("input[name='scan_action']").val(obj.data.scan_action);
+							body.find("input[name='download_url']").val(obj.data.download_url);
+							body.find("input[name='agent_id']").val(obj.data.agent_id);
+							body.find("input[name='shop_id']").val(obj.data.shop_id);
 							body.find("input[name='group_id']").val(obj.data.group_id);
-							body.find("input[name='group_name']").val(obj.data.group_name);
-							body.find("input[name='parent_id']").val(obj.data.parent_id);
-							body.find("input[name='add_time']").val(obj.data.add_time);
+							body.find("input[name='hash_str']").val(obj.data.hash_str);
+							body.find("input[name='seq']").val(obj.data.seq);
 							body.find("input[name='is_enable']").val(obj.data.is_enable);
-							body.find("input[name='add_user_id']").val(obj.data.add_user_id);
+							body.find("input[name='add_time']").val(obj.data.add_time);
+							body.find("input[name='create_user_id']").val(obj.data.create_user_id);
+							var iframe = window['layui-layer-iframe' + index];
+
+							var data = {
+							}
+							iframe.init(data)
 						},
+
 						});    
 						// obj.update({
 						// 	username: '123'
@@ -199,7 +214,7 @@
 				});
 
 				//监听事件
-				table.on('toolbar(shop_group_table)', function(obj){
+				table.on('toolbar(qrcode_table)', function(obj){
 					var checkStatus = table.checkStatus(obj.config.id);
 
 					switch(obj.event){
@@ -207,9 +222,9 @@
 							layer.msg('添加');
 							layer.open({
 								type: 2 ,
-                                area: ['500px','200px'],
-								title:"添加品牌",
-								content: "/page/add_shop_group",
+								area: ['500px', '450px'],
+								title:"添加",
+								content: "/page/add_qrcode",
 								success: function(layero, index){
 									var body = layer.getChildFrame('body', index);
 									body.find("form[class='layui-form']").val(index);

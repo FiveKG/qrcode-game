@@ -3,31 +3,30 @@
 
 const Controller = require('egg').Controller;
 
-class AgentController extends Controller {
-    async agentManage(){
+class QrcodeController extends Controller {
+    async qrcodeManage(){
         const { ctx } = this;
-        await ctx.render('/agent/agentManage.html');
+        await ctx.render('/qrcode/qrcodeManage.html');
     }
 
-    async addAgent(){
+    async addQrcode(){
         const { ctx } = this;
-        await ctx.render('/agent/addAgent.html');
+        await ctx.render('/qrcode/addQrcode.html');
     }
 
-    async editAgent(){
+    async editQrcode(){
         const { ctx } = this;
-        await ctx.render('/agent/editAgent.html');
+        await ctx.render('/qrcode/editQrcode.html');
     }
 
-
-    async getAgent() {
+    async getQrcode() {
         const { ctx, service, logger } = this;
         try {
             const reqData = ctx.request.body;
             logger.debug('请求参数：%j', reqData);
             let start = Number(reqData['limit']) * (Number(reqData['page']) -1);
             let size = Number(reqData['limit']);
-            const result = await service.agent.findAgent(start, size, reqData['search'] || {});
+            const result = await service.qrcode.findQrcode(start, size, reqData['search'] || {});
             if (result === null) {
                 ctx.body = await ctx.helper.renderError(500000, '系统出错');
             } else {
@@ -40,4 +39,4 @@ class AgentController extends Controller {
     }
 }
 
-module.exports = AgentController;
+module.exports = QrcodeController;

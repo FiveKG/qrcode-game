@@ -21,22 +21,24 @@ module.exports = app => {
   router.get('/api/tool/getJwtInfo',controller.tool.getJwtInfo)
  
   /** ----------------------------Api-account---------------------------- */
-  router.post('/api/account/search', controller.v1.sysUser.getSysUser);
   router.post('/api/account/register',controller.v1.sysUser.registerUser);
   router.post('/api/account/login',controller.v1.sysUser.login);
 
-  /** ----------------------------Api-shouManage---------------------------- */
+  /** ----------------------------Api-showManage---------------------------- */
+  router.post('/api/account/search', controller.v1.sysUser.getSysUser);
   router.post('/api/shop/search', controller.v1.shop.getShop);
   router.post('/api/game/search', controller.v1.game.getGame);
   router.post('/api/shop_group/search', controller.v1.shopGroup.getShop_group);
   router.post('/api/agent/search', controller.v1.agent.getAgent);
+  router.post('/api/agent_staff/search',controller.v1.agentStaff.getAgent_staff);
+  router.post('/api/qrcode/search',controller.v1.qrcode.getQrcode)
 
   /** ----------------------------Page---------------------------- */
   router.get('/login',controller.v1.index.login);
   router.get('/index', controller.v1.index.index);
   router.get('/page/welcome', controller.v1.index.welcome);
   router.get('/page/user/user_manage', controller.v1.sysUser.userManage);
-  router.get('/page/add_user',controller.v1.sysUser.addUser);
+  //router.get('/page/add_user',controller.v1.sysUser.addUser);
   router.get('/page/edit_user',controller.v1.sysUser.editUser);
   router.get('/page/shop/shop_manage', controller.v1.shop.shopManage);
   router.get('/page/add_shop',controller.v1.shop.addShop);
@@ -50,5 +52,10 @@ module.exports = app => {
   router.get('/page/agent/agent_manage', controller.v1.agent.agentManage);
   router.get('/page/add_agent',controller.v1.agent.addAgent);
   router.get('/page/edit_agent',controller.v1.agent.editAgent);
-
+  router.get('/page/agent/agent_staff_manage', controller.v1.agentStaff.agent_staffManage);
+  //router.get('/page/add_agent_staff',controller.v1.agentStaff.addAgent_staff);
+  router.get('/page/edit_agent_staff',controller.v1.agentStaff.editAgent_staff);
+  router.get('/page/qrcode/qrcode_manage', controller.v1.qrcode.qrcodeManage);
+  router.get('/page/add_qrcode',controller.v1.qrcode.addQrcode);
+  router.get('/page/edit_qrcode',controller.v1.qrcode.editQrcode);
 };

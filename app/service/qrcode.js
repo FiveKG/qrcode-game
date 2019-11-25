@@ -3,27 +3,27 @@
 
 const Service = require('egg').Service;
 
-class AgentService extends Service {
+class QrcodeService extends Service {
    /**
-     * @description 返回agent
+     * @description 返回qrcode
      * @param {number} start 
      * @param {number} size 
      * @param {object} search 参数
      */
-    async findAgent(start, size, search) {
+    async findQrcode(start, size, search) {
         const { logger } = this;
-        logger.debug(`findAgent,start:${start},size:${size},search:${JSON.stringify(search,null,4)}`)
+        logger.debug(`findqrcode,start:${start},size:${size},search:${JSON.stringify(search,null,4)}`)
         try {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['agent_name']) {
-                joinStr += ` AND name like $${i}`;
-                params.push(`${search['agent_name']}%`);
+            if (search['qrcode_name']) {
+                joinStr += ` AND qrcode_name like $${i}`;
+                params.push(`${search['name']}%`);
                 i ++;
             }
             if (search['is_enable']) {
-                joinStr += ` AND agent.is_enable = $${i}`;
+                joinStr += ` AND qrcode.is_enable = $${i}`;
                 let isEnable = false;
                 if (search['is_enable'] === 'true') {
                     isEnable = true;
@@ -32,21 +32,10 @@ class AgentService extends Service {
                 i ++;
             }
             let sql = `SELECT
-                ROW_NUMBER () OVER (ORDER BY agent.add_time DESC) AS RowNumber,
-                    agent.agent_id,
-                    agent.name,
-                    agent.gain_rate,
-                    agent.license,
-                    agent.p_c_a_id,
-                    agent.p_c_a_text,
-                    agent.local_address,
-                    agent.is_enable,
-                    agent.add_user_id,
-                    agent.balance,
-                    agent.add_time,
-                u.user_name
-            FROM
-            "public".agent as agent inner join "public".sys_user as u on  agent.add_user_id=u.user_id${joinStr}`;
+                ROW_NUMBER () OVER (ORDER BY qrcode.add_time DESC) AS RowNumber,
+                *
+            FROM qrcode_view
+            ${joinStr}`;
             let searchSql = await this.service.tool.joinSearchSql(sql, start, size);
             let total = await this.service.tool.findRowCount(sql, params);
             // logger.debug('searchSql: ', searchSql);
@@ -65,4 +54,4 @@ class AgentService extends Service {
     }
 }
 
-module.exports = AgentService;
+module.exports = QrcodeService;
