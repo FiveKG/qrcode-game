@@ -6,11 +6,17 @@
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="user-from">
 				<div class="layui-inline">
-					<label class="layui-form-label">店铺名</label>
+					<label class="layui-form-label">员工名</label>
 					<div class="layui-input-inline">
-						<input type="text" name="shop_group_name" autocomplete="off" class="layui-input">
+						<input type="text" name="agent_staff_name" autocomplete="off" class="layui-input">
 					</div>
-				</div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">所属经销商</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="agent_name" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
 				<div class="layui-inline">
 					<label class="layui-form-label">状态</label>
 					<div class="layui-input-inline">
@@ -22,15 +28,15 @@
 				</div>
 				<button class="layui-btn table-search" lay-submit lay-filter="user-from">搜索</button>
 			</form>
-			<table class="layui-hide" id="shop_groupTable" lay-filter="shop_group_table"></table>
+			<table class="layui-hide" id="agent_staffTable" lay-filter="agent_staff_table"></table>
 		</div>
-		<script type="text/html" id="toolshop_group">
+		<script type="text/html" id="toolagent_staff">
 			<div class="layui-btn-container">
-				<button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button>
+				<!-- <button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button> -->
 				<!-- <button class="layui-btn layui-btn-danger layui-btn-sm layui-icon layui-icon-close" title="删除"lay-event="is_enable"></button> -->
 			</div>
 		</script>
-		<!-- <script type="text/html" id="bashop_group">
+		<!-- <script type="text/html" id="baagent_staff">
 			<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
 			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
 			<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">禁用</a>
@@ -40,11 +46,11 @@
 			layui.use(['table', 'dialog', 'jquery'], function() {
 				var table = layui.table;
 				var dialog = layui.dialog;
-				var $ = layui.jquery;
+				var $ = layui.jquery;   
 				const active = {
 					//table重载
 					tableReload: function (params) {
-						table.reload('shop_groupTable', {
+						table.reload('agent_staffTable', {
 							where: {
 								"search": params
 							}
@@ -55,10 +61,10 @@
 				var form = layui.form;
 				//初始渲染
 				table.render({
-					elem: '#shop_groupTable'
-					,url:'/api/shop_group/search'
+					elem: '#agent_staffTable'
+					,url:'/api/agent_staff/search'
 					,method: 'post'
-					,toolbar: '#toolshop_group' //开启头部工具栏，并为其绑定左侧模板
+					,toolbar: '#toolagent_staff' //开启头部工具栏，并为其绑定左侧模板
 					,title: '用户数据表'
 					,parseData: function(res) {
 						return {
@@ -70,12 +76,27 @@
 					}
 					,cols: [[
 						{type: 'checkbox', fixed: 'left'}
-						,{field:'group_id', title:'',hide:true }
-						,{field:'group_name', title:'名称', }
-						,{field:'parent_id', title:'上级组织id',hide:true }
-						,{field:'add_time', title:'添加时间',hide:true }
-						,{field:'is_enable', title:'是否启用',hide:true }
-                        ,{field:'user_name', title:'录入人', }
+						,{field:'agent_staff_id', title:'',hide:true }
+						,{field:'user_name', title:'用户名', }
+						,{field:'agent_name', title:'所属经销商', }
+						,{field:'agent_staff_type', title:'员工类型', templet:function(d){
+                            if(d.agent_staff_type=='10'){
+                                return '经销商管理员'
+                            }else{
+                                return '推广员'
+                            }
+                        }}
+						,{field:'can_withdraw', title:'是否可操作提现', templet:function(d){
+                            if(d.can_withdraw==true){
+                                return "是"
+                            }else{
+                                return '否'
+                            }
+                        }}
+						,{field:'is_enable', title:'是否启用', hide:true }
+						,{field:'add_user_id', title:'操作人id',hide:true }
+						,{field:'add_time', title:'添加时间', }
+						,{field:'add_user_name', title:'录入人', }
 						,{field:'is_enable', title:'是否启用', templet: function(d){
 							if(d.is_enable===true){
 								$("#is_enable").text('禁用')
@@ -100,14 +121,14 @@
 							
 						}}
 					]]
-					,id: 'shop_groupTable'
+					,id: 'agent_staffTable'
 					,page: true
 				});
 
 		
 				//监听表单提交
 				form.on('submit(user-from)', function(data){
-					console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+					//console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
 					active.tableReload(data.field);
 					return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
 				});
@@ -115,20 +136,19 @@
 
 	
 				//监听行工具事件
-				table.on('tool(shop_group_table)', function(obj){
+				table.on('tool(agent_staff_table)', function(obj){
 					var layEvent = obj.event; //获得 lay-event 对应的值
 					if(layEvent === 'detail'){ //查看
 						layer.msg('查看');
 						//弹出层引入用户详情页面
 					} 
-                    else if(layEvent === 'is_enable'){ //删除	
-                        console.log(obj.data)		
+					else if(layEvent === 'is_enable'){ //删除
+						
 						if(obj.data.is_enable==true){
-						layer.confirm(`禁用：${obj.data.group_name}`, function(index){
-                            
+						layer.confirm(`禁用：${obj.data.user_name}`, function(index){
 							//向服务端发送禁用指令
 							$.ajax({
-								url     : `/data/shop_group?group_id=eq.${obj.data.group_id}`,
+								url     : `/data/agent_staff?agent_staff_id=eq.${obj.data.agent_staff_id}`,
 								type    : "PATCH",
 								dataType: "json",
 								data    : JSON.stringify({"is_enable":false}),
@@ -140,17 +160,18 @@
 										layer.msg('更新失败!');
 									}
 									setTimeout(function(){ 
-										table.reload("shop_groupTable")
+										table.reload("agent_staffTable")
 										}, 1000);	
 								}
 							})
 							});
 						}
 						else{		
-							layer.confirm(`解禁：${obj.data.name}`, function(index){
+                            //console.log(obj.data)
+							layer.confirm(`解禁：${obj.data.user_name}`, function(index){
 							//向服务端发送接近指令
 							$.ajax({
-								url     : `/data/shop_group?shop_group_id=eq.${obj.data.shop_group_id}`,
+								url     : `/data/agent_staff?agent_staff_id=eq.${obj.data.agent_staff_id}`,
 								type    : "PATCH",
 								dataType: "json",
 								data    : JSON.stringify({"is_enable":true}),
@@ -161,9 +182,7 @@
 									}else{
 										layer.msg('更新失败!');
 									}
-									setTimeout(function(){ 
-										table.reload("shop_groupTable")
-										}, 1000);	
+										table.reload("agent_staffTable")	
 								}
 							})
 							});
@@ -175,21 +194,34 @@
 						//同步更新缓存对应的值 也可以直接重载表格
 						layer.open({
 						type: 2 ,
-                        area: '500px',
+                        area: ['500px', '320px'],
                         resize  :false,//是否允许拉伸
 						title:"编辑",
-						content:`/page/edit_shop_group`,
+						content:`/page/edit_agent_staff`,
 						success: function(layero, index){
 							var body = layer.getChildFrame('body', index);
-							console.log(obj.data)
+							//.log(obj.data)
 							//var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
-							body.find("input[name='group_id']").val(obj.data.group_id);
-							body.find("input[name='group_name']").val(obj.data.group_name);
-							body.find("input[name='parent_id']").val(obj.data.parent_id);
-							body.find("input[name='add_time']").val(obj.data.add_time);
+							body.find("input[name='agent_staff_id']").val(obj.data.agent_staff_id);
+                            body.find("input[name='user_id']").val(obj.data.user_id);
+                            body.find("input[name='user_name']").val(obj.data.user_name);
+                            body.find("input[name='agent_id']").val(obj.data.agent_id);
+                            body.find("input[name='agent_name']").val(obj.data.agent_name);
+							body.find("input[name='agent_staff_type']").val(obj.data.agent_staff_type);
+							body.find("input[name='can_withdraw']").val(obj.data.can_withdraw);
 							body.find("input[name='is_enable']").val(obj.data.is_enable);
 							body.find("input[name='add_user_id']").val(obj.data.add_user_id);
+							body.find("input[name='add_time']").val(obj.data.add_time);
+							var iframe = window['layui-layer-iframe' + index];
+                            let data = {
+                                can_withdraw    : obj.data.can_withdraw,
+                                agent_staff_type: obj.data.agent_staff_type,
+                                agent_id        : obj.data.agent_id
+                            }
+
+							iframe.init(data)
 						},
+
 						});    
 						// obj.update({
 						// 	username: '123'
@@ -199,7 +231,7 @@
 				});
 
 				//监听事件
-				table.on('toolbar(shop_group_table)', function(obj){
+				table.on('toolbar(agent_staff_table)', function(obj){
 					var checkStatus = table.checkStatus(obj.config.id);
 
 					switch(obj.event){
@@ -207,9 +239,9 @@
 							layer.msg('添加');
 							layer.open({
 								type: 2 ,
-                                area: ['500px','200px'],
-								title:"添加品牌",
-								content: "/page/add_shop_group",
+								area: ['500px', '450px'],
+								title:"添加",
+								content: "/page/add_agent_staff",
 								success: function(layero, index){
 									var body = layer.getChildFrame('body', index);
 									body.find("form[class='layui-form']").val(index);

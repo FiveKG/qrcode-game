@@ -17,18 +17,18 @@ class ShopService extends Service {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['name']) {
+            if (search['shop_name']) {
                 joinStr += ` AND name like $${i}`;
-                params.push(`${search['name']}%`);
+                params.push(`${search['shop_name']}%`);
                 i ++;
             }
-            if (search['shop_manager']) {
-                joinStr += ` AND shop_manager like $${i}`;
-                params.push(`${search['shop_manager']}%`);
-                i ++;
-            }
+            // if (search['shop_manager']) {
+            //     joinStr += ` AND shop_manager like $${i}`;
+            //     params.push(`${search['shop_manager']}%`);
+            //     i ++;
+            // }
             if (search['is_enable']) {
-                joinStr += ` AND is_enable = $${i}`;
+                joinStr += ` AND shop.is_enable = $${i}`;
                 let isEnable = false;
                 if (search['is_enable'] === 'true') {
                     isEnable = true;

@@ -5,7 +5,7 @@
     <div class="layui-card">
         <div class="layui-card-body">
                 <form class="layui-form"  action="">
-                        <div class="layui-form-item">
+                        <div class="layui-form-item" style="display: none">
                             <label class="layui-form-label">ID</label>
                             <div class="layui-input-block">
                             <input type="text" name="user_id" disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
@@ -23,52 +23,25 @@
                             <select name="user_type" lay-verify="required">   
                                 <option value="0"></option>
                                 <option value="1"></option>
-                            <option value="2"></option>
+                                <option value="2"></option>
                             </select>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">微信ID</label>
-                            <div class="layui-input-block">
-                                <input type="text" name="open_id" disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
-                            </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">昵称</label>
                             <div class="layui-input-block">
-                                <input type="text" name="user_nick_name" disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
+                                <input type="text" name="user_nick_name"  required  lay-verify="required"  autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
-                        <label class="layui-form-label">状态</label>
-                        <div class="layui-input-block">
-                            <select name="is_enable" lay-verify="required">   
-                                <option value="0"></option>
-                                <option value="1"></option>
-                            </select>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">添加时间
-                                </label>
+                            <label class="layui-form-label">手机号码</label>
                             <div class="layui-input-block">
-                                <input type="text" name="add_time" disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">最后登录时间</label>
-                            <div class="layui-input-block">
-                                <input type="text" name="last_login" disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
+                                <input type="text" name="phone_num"  required  lay-verify="required|number|phone"  autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
                             <label class="layui-form-label">账户余额</label>
                             <div class="layui-input-block">
-                                <input type="text" name="account_balance" disabled disabled required  lay-verify="required"  autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">最后登录IP</label>
-                            <div class="layui-input-block">
-                                <input type="text" name="last_ip"  disabled autocomplete="off" class="layui-input">
+                                <input type="text" name="account_balance" required  lay-verify="required"  autocomplete="off" class="layui-input">
                             </div>
                         </div>
                         <div class="layui-form-item">
@@ -90,7 +63,7 @@
     var form = layui.form;
     //监听提交
     form.on('submit(formDemo)', function(data){
-        let layer_index = $("form[class='layui-form']").val()
+        console.log(data.field)
         $.ajax({
             url     : `/data/sys_user?user_id=eq.${data.field.user_id}`,
             type    : "PATCH",

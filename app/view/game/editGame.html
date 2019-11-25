@@ -41,28 +41,13 @@
                             <input type="text"  name="game_url"   autocomplete="off" class="layui-input">
                         </div>
                     </div>
-                    <div class="layui-form-item layui-row" >
+                    <div class="layui-form" >
                         <label class="layui-form-label">游戏类型</label>
-                        <div class="layui-input-block ">
-                            <input type="text"  name="game_type"   autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item layui-row" style="display:none">
-                        <label class="layui-form-label">添加时间</label>
-                        <div class="layui-input-block ">
-                            <input type="text"  name="add_time"   autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item layui-row" style="display:none" >
-                        <label class="layui-form-label">是否启用</label>
-                        <div class="layui-input-block ">
-                            <input type="text"  name="is_enable"   autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item layui-row" style="display:none" >
-                        <label class="layui-form-label">操作添加的用户</label>
-                        <div class="layui-input-block ">
-                            <input type="text" disabled id = "add_user_id" name="add_user_id"   autocomplete="off" class="layui-input">
+                        <div class="layui-input-block">
+                        <select id = 'game_type' name="game_type" lay-search  >   
+                            <option value="1" >积分类游戏</option>
+                            <option value='2' >过关类游戏</option>
+                        </select>
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -74,12 +59,19 @@
                 </form>
         </div>
     </div>
+
     <script>
-    //Demo
+        function init(data){
+            layui.use('form', function(){
+            var form = layui.form;
+            form.render('select')
+            })
+        }
+    </script>
+    <script>
+    //监听提交
     layui.use('form', function(){
     var form = layui.form;
-
-    //监听提交
     form.on('submit(formDemo)', function(data){
         let layer_index = $("form[class='layui-form']").val()
         $.ajax({
