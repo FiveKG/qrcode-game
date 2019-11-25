@@ -5,55 +5,52 @@
     <div class="layui-card">
         <div class="layui-card-body">
         <form class="layui-form"  action="">
-                <div class="layui-form-item layui-row" style="display:none" >
+                <div class="layui-form-item layui-row" >
                     <label class="layui-form-label"></label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="game_id"   autocomplete="off" class="layui-input">
+                        <input type="text"  name="agent_staff_id"   autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
-                    <label class="layui-form-label">游戏名称</label>
+                    <label class="layui-form-label">用户id</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="game_name"   autocomplete="off" class="layui-input">
+                        <input type="text"  name="user_id"   autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
-                    <label class="layui-form-label">游戏大图</label>
+                    <label class="layui-form-label">所属经销商</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="game_img"   autocomplete="off" class="layui-input">
+                        <input type="text"  name="agent_id"   autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
-                    <label class="layui-form-label">游戏小图</label>
+                    <label class="layui-form-label">员工类型</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="game_img_small"   autocomplete="off" class="layui-input">
+                        <input type="text"  name="agent_staff_type"   autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
-                    <label class="layui-form-label">支付价格</label>
+                    <label class="layui-form-label">是否可操作提现</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="price"   autocomplete="off" class="layui-input">
+                        <input type="text"  name="can_withdraw"   autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
-                    <label class="layui-form-label">游戏打开路径</label>
+                    <label class="layui-form-label">是否启用</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="game_url"   autocomplete="off" class="layui-input">
+                        <input type="text"  name="is_enable"   autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
-                    <label class="layui-form-label">游戏类型</label>
-                    <div class="layui-input-block ">
-                        <select  name="game_type"  required  lay-verify="required" lay-filter="game_type">   
-                            <option value="1" selected>射击类游戏</option>
-                            <option value="2"  >休闲类游戏</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="layui-form-item layui-row" style="display:none" >
-                    <label class="layui-form-label">操作添加的用户id</label>
+                    <label class="layui-form-label">操作人id</label>
                     <div class="layui-input-block ">
                         <input type="text"  name="add_user_id"   autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-row" >
+                    <label class="layui-form-label">添加时间</label>
+                    <div class="layui-input-block ">
+                        <input type="text"  name="add_time"   autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -73,7 +70,7 @@
           layui.use('form', function(){
             var form = layui.form;
 
-            //解析getJWT,添加人
+            //解析getJWT
             $.ajax({
                 url     : `/api/tool/getJwtInfo`,
                 type    : "get",
@@ -87,7 +84,7 @@
                 url     : `/api/common/generate_key`,
                 type    : "get",
                 success: function(result){
-                    $('input[name="game_id"]').val(result.data)
+                     $('input[name="agent_staff_id"]').val(result.data)
                     form.render();
                 }
             })
@@ -99,9 +96,10 @@
     var form = layui.form;
     //监听提交
     form.on('submit(formDemo)', function(data){
-        let layer_index = $("form[class='layui-form']").val();
+        let layer_index = $("form[class='layui-form']").val()
+        console.log(data.field)
         $.ajax({
-            url        : `/data/game`,
+            url        : `/data/agent_staff`,
             type       : "POST",
             dataType   : "json",
             data       : JSON.stringify(data.field),
@@ -113,10 +111,8 @@
                     setTimeout(function(){ 
                         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
                         parent.layer.close(index); //再执行关闭   
-                        parent.layui.table.reload('gameTable');//刷新父表格   
-
+                        parent.layui.table.reload('agent_staffTable');//刷新父表格
                     }, 1000);
-                    
                 }else{
                     layer.msg('添加失败!');
                 }

@@ -36,6 +36,7 @@
                             <select id = 'city' name="city" lay-search required  lay-verify="required" lay-filter="city" >   
                             </select>
                     </div>
+
                     <div class="layui-form" lay-filter="area">
                         <label class="layui-form-label">区</label>
                         <div class="layui-input-block">
@@ -117,7 +118,6 @@
                     area_object.empty()
                     //city_object.append(`<option value="" selected>请选择城市</option>`)
                     //area_object.append(`<option value="" selected>请选择区</option>`)
-                    
                     for(element of result.data){
                         city_object.append(`<option value=${element.value}>${element.label}</option>`);
                         }
@@ -154,8 +154,6 @@
         var province_object =  $('#province');
         var city_object =  $('#city');
         var area_object =  $('#area');
-
-        var data= $('.layui-slider-input-txt').find('input').val()
         
         $.ajax({
             url     : `/api/common/get_province`,
@@ -178,12 +176,10 @@
                 success: function(result){
                     city_object.empty()
                     area_object.empty()
-                    city_object.append(`<option value="" selected>请选择城市</option>`)
-                    area_object.append(`<option value="" selected>请选择区</option>`)
-                    
                     for(element of result.data){
                         city_object.append(`<option value=${element.value}>${element.label}</option>`);
                         }
+                    city_object.val('')
                     form.render('select','city');
                 }
             })
@@ -196,11 +192,11 @@
                 contentType: 'application/json; charset=utf-8',
                 success: function(result){
                     area_object.empty()
-                    area_object.append(`<option value="" selected>请选择区</option>`)
                     for(element of result.data){
                         area_object.append(`<option value=${element.value}>${element.label}</option>`);
                         }
-                        form.render('select','area');
+                    area_object.val('')
+                    form.render('select','area');
                 }
             })
         });       
