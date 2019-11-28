@@ -6,11 +6,23 @@
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="user-from">
 				<div class="layui-inline">
-					<label class="layui-form-label">名</label>
+					<label class="layui-form-label">经销商</label>
 					<div class="layui-input-inline">
-						<input type="text" name="qrcode_name" autocomplete="off" class="layui-input">
+						<input type="text" name="agent_name" autocomplete="off" class="layui-input">
 					</div>
-				</div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">所属品牌</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="group_name" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">所属店铺</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="shop_name" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
 				<div class="layui-inline">
 					<label class="layui-form-label">状态</label>
 					<div class="layui-input-inline">
@@ -20,13 +32,16 @@
 						</select>
 					</div>
 				</div>
-				<button class="layui-btn table-search" lay-submit lay-filter="user-from">搜索</button>
-			</form>
+                <button class="layui-btn table-search" lay-submit lay-filter="user-from">搜索</button>
+
+            </form>
+
 			<table class="layui-hide" id="qrcodeTable" lay-filter="qrcode_table"></table>
 		</div>
 		<script type="text/html" id="toolqrcode">
 			<div class="layui-btn-container">
-				<button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button>
+                <button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button>
+                <button class="layui-btn layui-btn-sm layui-btn-sm layui-icon layui-icon-file" title="生成二维码" lay-event='generateQrCode' ></button>
 				<!-- <button class="layui-btn layui-btn-danger layui-btn-sm layui-icon layui-icon-close" title="删除"lay-event="is_enable"></button> -->
 			</div>
 		</script>
@@ -70,15 +85,15 @@
 					}
 					,cols: [[
 						{type: 'checkbox', fixed: 'left'}
-						,{field:'qrcode_id', title:'主键', }
+						,{field:'qrcode_id', title:'主键',hide:true }
 						,{field:'scan_action', title:'扫码后的动作',templet(d){
                             return JSON.stringify(d.scan_action)
                         } }
-						,{field:'download_url', title:'二维码的下载地址', }
-						,{field:'agent_name', title:'生成此二维码的经销商', }
+						,{field:'download_url', title:'下载地址', }
+						,{field:'agent_name', title:'生成于经销商', }
 						,{field:'shop_name', title:'所属店铺', }
-						,{field:'group_name', title:'所属连锁店', }
-						,{field:'hash_str', title:'二维码的内容hash', }
+						,{field:'group_name', title:'所属品牌', }
+						,{field:'hash_str', title:'内容hash', }
 						,{field:'seq', title:'序号', }
 						,{field:'is_enable', title:'是否可用',hide:true }
 						,{field:'add_time', title:'添加的时间', hide:true}
@@ -120,7 +135,6 @@
 					return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
 				});
 
-
 	
 				//监听行工具事件
 				table.on('tool(qrcode_table)', function(obj){
@@ -132,7 +146,7 @@
 					else if(layEvent === 'is_enable'){ //删除
 						
 						if(obj.data.is_enable==true){
-						layer.confirm(`禁用：${obj.data.qrcode_name}`, function(index){
+						layer.confirm(`禁用：shop_name=${obj.data.shop_name},seq=${obj.data.seq}`, function(index){
 							//向服务端发送禁用指令
 							$.ajax({
 								url     : `/data/qrcode?qrcode_id=eq.${obj.data.qrcode_id}`,
@@ -154,7 +168,7 @@
 							});
 						}
 						else{		
-							layer.confirm(`解禁：${obj.data.name}`, function(index){
+							layer.confirm(`解禁：shop_name=${obj.data.shop_name},seq=${obj.data.seq}`, function(index){
 							//向服务端发送接近指令
 							$.ajax({
 								url     : `/data/qrcode?qrcode_id=eq.${obj.data.qrcode_id}`,
@@ -188,19 +202,25 @@
 							//console.log(obj.data)
 							//var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
 							body.find("input[name='qrcode_id']").val(obj.data.qrcode_id);
-							body.find("input[name='scan_action']").val(obj.data.scan_action);
+							body.find("textarea[name='scan_action']").val(JSON.stringify(obj.data.scan_action,null,4));
 							body.find("input[name='download_url']").val(obj.data.download_url);
 							body.find("input[name='agent_id']").val(obj.data.agent_id);
 							body.find("input[name='shop_id']").val(obj.data.shop_id);
 							body.find("input[name='group_id']").val(obj.data.group_id);
-							body.find("input[name='hash_str']").val(obj.data.hash_str);
+							body.find("textarea[name='hash_str']").val(obj.data.hash_str);
 							body.find("input[name='seq']").val(obj.data.seq);
 							body.find("input[name='is_enable']").val(obj.data.is_enable);
 							body.find("input[name='add_time']").val(obj.data.add_time);
-							body.find("input[name='create_user_id']").val(obj.data.create_user_id);
+							body.find("input[name='add_user_id']").val(obj.data.create_user_id);
 							var iframe = window['layui-layer-iframe' + index];
 
 							var data = {
+                                agent_id  : obj.data.agent_id,
+                                shop_id   : obj.data.shop_id,
+                                group_id  : obj.data.group_id,
+                                agent_name: obj.data.agent_name,
+                                shop_name : obj.data.shop_name,
+                                group_name: obj.data.group_name
 							}
 							iframe.init(data)
 						},
@@ -227,9 +247,25 @@
 								content: "/page/add_qrcode",
 								success: function(layero, index){
 									var body = layer.getChildFrame('body', index);
-									body.find("form[class='layui-form']").val(index);
+                                    body.find("form[class='layui-form']").val(index);
+                                    
 								},
 							})
+                        break;
+                        case 'generateQrCode':
+                                layer.msg('生成二维码');
+                                layer.open({
+                                    type: 2 ,
+									area: ['950px', '650px'],
+									resize :false,
+                                    title:"生成二维码",
+                                    content: "/page/qrcode/download_qrcode",
+                                    success: function(layero, index){
+                                        var body = layer.getChildFrame('body', index);
+                                        body.find("form[class='layui-form']").val(index);
+                                        
+                                    },
+                                })
 						break;
 						case 'is_enable':
 							let data = checkStatus['data'];
