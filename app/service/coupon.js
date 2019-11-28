@@ -3,32 +3,27 @@
 
 const Service = require('egg').Service;
 
-class ShopService extends Service {
+class CouponService extends Service {
    /**
-     * @description 返回商店
+     * @description 返回coupon
      * @param {number} start 
      * @param {number} size 
      * @param {object} search 参数
      */
-    async findShop(start, size, search) {
+    async findCoupon(start, size, search) {
         const { logger } = this;
-        logger.debug(`findShop,start:${start},size:${size},search:${JSON.stringify(search,null,4)}`)
+        logger.debug(`findCoupon,start:${start},size:${size},search:${JSON.stringify(search,null,4)}`)
         try {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['shop_name']) {
-                joinStr += ` AND name like $${i}`;
-                params.push(`${search['shop_name']}%`);
+            if (search['coupon_name']) {
+                joinStr += ` AND coupon_name like $${i}`;
+                params.push(`${search['name']}%`);
                 i ++;
             }
-            // if (search['shop_manager']) {
-            //     joinStr += ` AND shop_manager like $${i}`;
-            //     params.push(`${search['shop_manager']}%`);
-            //     i ++;
-            // }
             if (search['is_enable']) {
-                joinStr += ` AND shop.is_enable = $${i}`;
+                joinStr += ` AND coupon.is_enable = $${i}`;
                 let isEnable = false;
                 if (search['is_enable'] === 'true') {
                     isEnable = true;
@@ -37,10 +32,9 @@ class ShopService extends Service {
                 i ++;
             }
             let sql = `SELECT
-                ROW_NUMBER () OVER (ORDER BY shop_view.add_time DESC) AS RowNumber,
-                *
-                FROM
-                shop_view ${joinStr}`;
+                ROW_NUMBER () OVER (ORDER BY coupon_view.add_time DESC) AS RowNumber,
+                 *
+                FROM coupon_view ${joinStr}`;
             let searchSql = await this.service.tool.joinSearchSql(sql, start, size);
             let total = await this.service.tool.findRowCount(sql, params);
             // logger.debug('searchSql: ', searchSql);
@@ -59,4 +53,4 @@ class ShopService extends Service {
     }
 }
 
-module.exports = ShopService;
+module.exports = CouponService;

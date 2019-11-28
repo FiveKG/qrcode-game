@@ -35,8 +35,8 @@ module.exports = app => {
   router.post('/api/shop_group/search', controller.v1.shopGroup.getShop_group);
   router.post('/api/agent/search', controller.v1.agent.getAgent);
   router.post('/api/agent_staff/search',controller.v1.agentStaff.getAgent_staff);
-  router.post('/api/qrcode/search',controller.v1.qrcode.getQrcode)
-
+  router.post('/api/qrcode/search',controller.v1.qrcode.getQrcode);
+  router.post('/api/coupon/search',controller.v1.coupon.getCoupon);
 
   /** ----------------------------Page---------------------------- */
   router.get('/login',controller.v1.index.login);
@@ -64,4 +64,8 @@ module.exports = app => {
   router.get('/page/add_qrcode',controller.v1.qrcode.addQrcode);
   router.get('/page/edit_qrcode',controller.v1.qrcode.editQrcode);
   router.get('/page/qrcode/download_qrcode',controller.v1.qrcode.downloadQrcode);
+
+  router.get('/page/coupon/coupon_manage', controller.v1.coupon.couponManage);
+  router.get('/page/add_coupon',controller.v1.coupon.addCoupon);
+  router.get('/page/edit_coupon',controller.v1.coupon.editCoupon);
 };

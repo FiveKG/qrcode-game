@@ -4,12 +4,6 @@
 {% include "script.html" %}
 <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
 <script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
-<style>
-    .pdf{
-	position:fixed;
-	left: 0;
-	top: 0;
-}
 </style>
 
         <div class="layui-card">
@@ -71,16 +65,11 @@
 
 <!-- 设置pdf -->
 <script>
-    function g(selector){
-	var method = selector.substr(0,1) == '.' ?
-		'getElementsByClassName' : 'getElementById';
-	return document[method](selector.substr(1));
-    }
 
-    //将html页面导出.pdf格式文件(适用于jQuery、vue库)  -- xzz 2018/04/24
-function makeMpdf(pdfName) {
-    var target = $('#img_rows');
-    $('#img_rows').css("background", "#fff")
+//将html页面导出.pdf格式文件(适用于jQuery、vue库)  -- xzz 2018/04/24
+function makePdf(pdfName) {
+    var target = $('#img_rows');//目标dom
+    $('#img_rows').css("background", "#fff")//设置颜色
 
     if(pdfName==''||pdfName==undefined) pdfName='a4.pdf';
     
@@ -169,44 +158,8 @@ function makeMpdf(pdfName) {
                     
 
                 })    
-                form.render();
-
-              //    
-                //var doc = new jsPDF()
-                makeMpdf()
-                console.log('?????',result_length)
-                
-                // for(let i =1;i<=page;i++){
-                //     if(i%12==0){
-                //         doc.addPage();
-                //     }
-                //     doc.addHTML($(`#img_rows${i}`),function(){
-                //         doc.output("save", "a4.pdf")       
-                //     });
-
-                //     // if(i===result){
-                //     //     doc.save("a4.pdf")   
-                //     // }
-                // }
-
-                // doc.addHTML($('#img_rows'),function(){
-                //     for(let i =1;i<=page;i++){
-                //         if(i%12==0){
-                //             doc.addPage();
-                //         }
-                //     doc.output("save", "a4.pdf")       
-                // }
-                // })    
-                // let option = {
-                //     "pagesplit": true, //设置是否自动分页,
-                //     "background": '#FFFFFF'
-                // }
-                // doc.addHTML($(`#img_rows`),option,function(){
-                //         doc.output("save", "a4.pdf")       
-                // });
-                
-                // btnDownloadPageBypfd2('#img_rows')
-                
+                form.render();  
+                makePdf()
             }
         })
             return false
