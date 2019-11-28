@@ -111,6 +111,8 @@ module.exports = appInfo => {
     allowDebugAtProd: process.env.DEBUG ? true : false,
   };
 
+
+
   config.pg = {
     // database configuration
     client: {
@@ -145,7 +147,6 @@ module.exports = appInfo => {
   // add your user config here
   const userConfig = {
     redis_expiration:60*2,
-
     //设置cookies
     cookies:{
       jwt_key    : 'jwtToken',
@@ -157,7 +158,27 @@ module.exports = appInfo => {
       signed   : false,            //设置是否对 Cookie 进行签名
       encrypt  : false             //设置是否对 Cookie 进行加密
         }
+      },
+    
+    qrcode:{
+        hash_secret:process.env.HASH_SECRET,
+        option:{
+          size:4,//二维码的大小，从1-5.仅支持调整npg和svg格式，详情：https://www.npmjs.com/package/qr-image 
+          margin :4,//白色边框，png默认是4，其他为1
+        },
+        url_option:{
+            host:"https://www.qrcode.isecsp.com/entry_page?",
+            param1:'id=',
+            param2:'&s_id=',
+            param3:"&g_id=",
+            param4:'&hash=',
+            param5:'&seq='
+        },
+        url:function(data){
+            return `https://www.qrcode.isecsp.com/entry_page?id=${data.id}&s_id=${data.s_id}&g_id=${data.g_id}&hash=${data.hash}`
+        }
       }
+
   };
 
   return {

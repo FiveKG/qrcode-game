@@ -9,6 +9,7 @@ const resData = require('../tool/resData');
 const svgCaptcha = require('svg-captcha');
 const upash = require('upash');
 upash.install('argon2', require('@phc/argon2'));
+const crypto = require('crypto');
 
 module.exports = {
     renderSuccess(code, message='', data={}) {
@@ -65,6 +66,7 @@ module.exports = {
     decodeToken(token) {
         return jwt.verify(token, process.env.JWT_SECRET);
     },
+    
     getUri() {
         return this.ctx.request.path;
     },
@@ -111,6 +113,43 @@ module.exports = {
         return result
     },
 
+    /**
+     * 用于返回二维码信息的哈希值
+     * @param {String} data 
+     * @returns {Promise<string>}
+     */
+    async getHashStr(data){
+        const {hash_secret}=this.config.qrcode
+        const hash = crypto.createHmac('sha256', hash_secret)
+                   .update(data)
+                   .digest('hex');
+        return hash
+    },
+    /**
+     * 获得url
+     * @param {Object} reqData
+     * @returns {Promise<string>}
+     */
+    async qrcode_url(reqData){
+        const {config} = this;
+
+        //http://域名/entry_page?id=$id&s_id=$shop_id&g_id=&$group_id&hash=xxxxxxxxx
+        let url_option = {
+            id:reqData.qrcode_id||null,
+            s_id:reqData.shop_id||null,
+            g_id:reqData.group_id||null,
+            hash:reqData.hash_str||null
+        }
+        const host      = config.qrcode.url_option.host;
+        const id        = config.qrcode.url_option.param1+reqData.qrcode_id||null;
+        const s_id      = config.qrcode.url_option.param2+reqData.shop_id||null;
+        const g_id      = config.qrcode.url_option.param3+reqData.group_id||null;
+        const hash      = config.qrcode.url_option.param4+reqData.hash_str||null;
+        const seq       = config.qrcode.url_option.param5+reqData.seq||null;
+        const qrcodeUrl = host+id+s_id+g_id+hash+seq
+        //const qrcodeUrl = config.qrcode.url(url_option)
+        return qrcodeUrl
+    },
     /**
      * 
      * @param {Object} option

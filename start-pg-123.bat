@@ -10,5 +10,6 @@ set REDIS_PWD=pass@2019
 set REDIS_DB=6
 
 set JWT_SECRET=scangamenjkuz
+set HASH_SECRET=scangamesha256
 set PROXY_HOST=http://postgrest.qrcode.isecsp.com/
 npm run dev

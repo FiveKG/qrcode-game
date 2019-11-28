@@ -41,7 +41,6 @@ class Agent_staffService extends Service {
                 *
                 FROM agent_staff_view
                 ${joinStr}`;
-            logger.debug('sql',sql)
             let searchSql = await this.service.tool.joinSearchSql(sql, start, size);
             let total = await this.service.tool.findRowCount(sql, params);
             //logger.debug('searchSql: ', searchSql);

@@ -5,7 +5,7 @@
     <div class="layui-card">
         <div class="layui-card-body">
                 <form class="layui-form"  action="">
-                    <div class="layui-form-item layui-row" >
+                    <div class="layui-form-item layui-row" style="display: none" >
                         <label class="layui-form-label">主键</label>
                         <div class="layui-input-block ">
                             <input type="text"  name="qrcode_id"   autocomplete="off" class="layui-input">
@@ -14,7 +14,7 @@
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">扫码后的动作</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="scan_action"   autocomplete="off" class="layui-input">
+                            <textarea name="scan_action" required lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-textarea"></textarea>
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
@@ -23,52 +23,42 @@
                             <input type="text"  name="download_url"   autocomplete="off" class="layui-input">
                         </div>
                     </div>
-                    <div class="layui-form-item layui-row" >
-                        <label class="layui-form-label">生成此二维码的经销商id</label>
-                        <div class="layui-input-block ">
-                            <input type="text"  name="agent_id"   autocomplete="off" class="layui-input">
-                        </div>
+                    
+                    <div class="layui-form" lay-filter="group_id">
+                        <label class="layui-form-label">所属品牌</label>
+                    <div class="layui-input-block">
+                        <select id = 'group_id' name="group_id" lay-search  >   
+                            <option value="" >无所属品牌</option>
+                        </select>
                     </div>
-                    <div class="layui-form-item layui-row" >
+
+                    <div class="layui-form" lay-filter="shop_id">
                         <label class="layui-form-label">所属店铺</label>
-                        <div class="layui-input-block ">
-                            <input type="text"  name="shop_id"   autocomplete="off" class="layui-input">
-                        </div>
+                    <div class="layui-input-block">
+                        <select id = 'shop_id' name="shop_id" lay-search>
+                            <!-- <option value=-1 selected>选择店铺</option> -->
+                        </select>   
+                        </select>
                     </div>
-                    <div class="layui-form-item layui-row" >
-                        <label class="layui-form-label">所属连锁店</label>
-                        <div class="layui-input-block ">
-                            <input type="text"  name="group_id"   autocomplete="off" class="layui-input">
-                        </div>
+
+                    <div class="layui-form" lay-filter="agent_id">
+                        <label class="layui-form-label">生成于代理商</label>
+                    <div class="layui-input-block">
+                        <select id = 'agent_id' name="agent_id" lay-search  >   
+                            <!-- <option value=-1 selected>选择代理商</option> -->
+                        </select>
                     </div>
+
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">二维码的内容hash</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="hash_str"   autocomplete="off" class="layui-input">
+                            <textarea name="hash_str" required lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-textarea"></textarea>
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">序号</label>
                         <div class="layui-input-block ">
                             <input type="text"  name="seq"   autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item layui-row" >
-                        <label class="layui-form-label">是否可用</label>
-                        <div class="layui-input-block ">
-                            <input type="text"  name="is_enable"   autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item layui-row" >
-                        <label class="layui-form-label">添加的时间</label>
-                        <div class="layui-input-block ">
-                            <input type="text"  name="add_time"   autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item layui-row" >
-                        <label class="layui-form-label">创建二维码的用户的id</label>
-                        <div class="layui-input-block ">
-                            <input type="text"  name="create_user_id"   autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row">
@@ -85,6 +75,43 @@
         function init(data){
             layui.use('form', function(){
                 var form = layui.form;
+                //获取店铺
+                $.ajax({
+                    url : `/data/shop?select=shop_id,name`,
+                    type:"GET",
+                    success:function(result){
+                        for(element of result){
+                            $("#shop_id").append(`<option value=${element.shop_id}>${element.name}</option>`);
+                        }
+                        $("#shop_id").val(`${data.shop_id}`);
+                        form.render('select','shop_id');
+                    }
+                })
+                //获取品牌
+                $.ajax({
+                    url : `/data/shop_group?select=group_id,group_name`,
+                    type:"GET",
+                    success:function(result){
+                        for(element of result){
+                            $("#group_id").append(`<option value=${element.group_id}>${element.group_name}</option>`);
+                        }
+                        $("#group_id").val(`${data.group_id}`);
+                        form.render('select','group_id');
+                    }
+                })
+                //获取代理商
+                $.ajax({
+                    url : `/data/agent?select=agent_id,name`,
+                    type:"GET",
+                    success:function(result){
+                        for(element of result){
+                            $("#agent_id").append(`<option value=${element.agent_id}>${element.name}</option>`);
+                        }
+
+                        $("#agent_id").val(`${data.agent_id}`);
+                        form.render('select','agent_id');
+                    }
+                })
             })
         }
     </script>
@@ -94,6 +121,7 @@
     layui.use('form', function(){
     var form = layui.form;
     form.on('submit(formDemo)', function(data){
+        data.field.scan_action=(JSON.parse(data.field.scan_action))
         $.ajax({
             url     : `/data/qrcode?qrcode_id=eq.${data.field.qrcode_id}`,
             type    : "PATCH",

@@ -17,12 +17,16 @@ module.exports = app => {
   router.get('/api/common/get_province',controller.tool.getProvince);
   router.get('/api/common/get_city',controller.tool.getCity);
   router.get('/api/common/get_area',controller.tool.getArea);
-  router.get('/api/tool/get_captcha',controller.tool.getCaptcha)
-  router.get('/api/tool/getJwtInfo',controller.tool.getJwtInfo)
- 
+  router.get('/api/tool/get_captcha',controller.tool.getCaptcha);
+  router.get('/api/tool/getJwtInfo',controller.tool.getJwtInfo);
+
   /** ----------------------------Api-account---------------------------- */
   router.post('/api/account/register',controller.v1.sysUser.registerUser);
   router.post('/api/account/login',controller.v1.sysUser.login);
+  /** ----------------------------Api-qrcode---------------------------- */
+  router.post('/api/qrcode/add_qrcode',controller.v1.qrcode.insertQrcode);
+  router.get('/api/qrcode/generate_qr_code',controller.v1.qrcode.GenerateQrcode);
+  
 
   /** ----------------------------Api-showManage---------------------------- */
   router.post('/api/account/search', controller.v1.sysUser.getSysUser);
@@ -32,6 +36,7 @@ module.exports = app => {
   router.post('/api/agent/search', controller.v1.agent.getAgent);
   router.post('/api/agent_staff/search',controller.v1.agentStaff.getAgent_staff);
   router.post('/api/qrcode/search',controller.v1.qrcode.getQrcode)
+
 
   /** ----------------------------Page---------------------------- */
   router.get('/login',controller.v1.index.login);
@@ -58,4 +63,5 @@ module.exports = app => {
   router.get('/page/qrcode/qrcode_manage', controller.v1.qrcode.qrcodeManage);
   router.get('/page/add_qrcode',controller.v1.qrcode.addQrcode);
   router.get('/page/edit_qrcode',controller.v1.qrcode.editQrcode);
+  router.get('/page/qrcode/download_qrcode',controller.v1.qrcode.downloadQrcode);
 };

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+{%include "head.html" %}
+{% include "script.html" %}
+<script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
+<style>
+    .pdf{
+	position:fixed;
+	left: 0;
+	top: 0;
+}
+</style>
+
+        <div class="layui-card">
+            <div class="layui-card-header">
+            <form class="layui-form"  action="" id='downloadQrcode'>
+                <div class="layui-container">  
+                <div class="layui-row">
+                    <div class="layui-col-md9 layui-col-xs9 layui-col-sm9">
+                        <form class="layui-form"  action="" id='downloadQrcode'></form>
+                            <div class="layui-form-item layui-row" lay-filter="shop_name">
+                                <label class="layui-form-label">所属店铺</label>
+                                <div class="layui-input-block">
+                                    <select id = 'shop_name' name="shop_name" lay-search  >   
+                                    </select>
+                                </div> 
+                            </div>
+                        </form>
+                    </div>
+                    <div class="layui-col-md3 layui-col-xs3 layui-col-sm3">
+                        <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" lay-submit style="margin-left:-88px;" lay-submit lay-filter="formDemo">立即生成</button>
+                        </div>
+                        </div> 
+                    </div>
+                </div> 
+            </form>
+            </div>
+            <div class="layui-card-body " >
+                <div class="layui-container ">  
+                <div class="layui-row layui-col-space10" id='img_rows'>
+        
+                        <!-- <div class="layui-col-md4 layui-col-xs4 layui-col-sm4 "id=img_rows${index+1}>
+                                <img src="/api/qrcode/generate_qr_code?qrcode_id=F0U0-qhWWos4_t&amp;t=0.0027683700972120917" alt="">   
+                        </div> -->
+                </div>
+                </div>
+            </div>
+        </div>
+</html>
+
+<!-- 动态赋值 -->
+<script>
+    layui.use('form', function(){
+        var form = layui.form;
+        //获取店铺
+        $.ajax({
+            url : `/data/shop?select=name&is_enable=eq.1`,
+            type:"GET",
+            success:function(result){
+                for(element of result){
+                    $("#shop_name").append(`<option value=${element.name}>${element.name}</option>`);
+                }
+                form.render();
+            }
+        })
+    })
+</script>
+
+<!-- 设置pdf -->
+<script>
+    function g(selector){
+	var method = selector.substr(0,1) == '.' ?
+		'getElementsByClassName' : 'getElementById';
+	return document[method](selector.substr(1));
+    }
+
+    //将html页面导出.pdf格式文件(适用于jQuery、vue库)  -- xzz 2018/04/24
+function makeMpdf(pdfName) {
+    var target = $('#img_rows');
+    $('#img_rows').css("background", "#fff")
+
+    if(pdfName==''||pdfName==undefined) pdfName='a4.pdf';
+    
+    html2canvas(target, {
+        onrendered:function(canvas) {
+            var contentWidth = canvas.width;
+            var contentHeight = canvas.height;
+
+            //一页pdf显示html页面生成的canvas高度;
+            var pageHeight = contentWidth / 592.28 * 841.89;
+            //未生成pdf的html页面高度
+            var leftHeight = contentHeight;
+            //页面偏移
+            var position = 20;//整数向下移动，负数向上
+            //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+            var imgWidth = 595.28;
+            var imgHeight = 592.28/contentWidth * contentHeight;
+
+            var pageData = canvas.toDataURL('image/jpeg', 1.0);
+
+            var pdf = new jsPDF('', 'pt', 'a4');
+
+            //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+            //当内容未超过pdf一页显示的范围，无需分页
+            if (leftHeight < pageHeight) {
+            pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight );
+            } else {
+                while(leftHeight > 0) {
+                    pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
+                    leftHeight -= pageHeight;
+                    position -= 841.89;
+                    //避免添加空白页
+                    if(leftHeight > 0) {
+                      pdf.addPage();
+                    }
+                }
+            }
+            pdf.save(pdfName+".pdf");
+        }
+      })
+  
+}
+
+
+</script>
+<!-- 提交监听 -->
+<script>   
+    layui.use('form', function(){
+        let form = layui.form;
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            //目前做法是根据用户店铺id搜索出所有二维码，包括不同代理商，所以答应出来的二维码是包括不同代理商的，需注意
+            $.ajax({
+            url : `/data/qrcode_view?select=qrcode_id&is_enable=eq.1&shop_name=eq.${data.field.shop_name}`,
+            type:"GET",
+            success:function(result){
+                $('#img_rows').empty();
+                let result_length = parseInt(result.length)
+                let page = Math.ceil(result_length/12)//每页12个二维码，不足一页向上取整
+                result.map((value,index)=>{
+                    if(index===0){
+                        $('#img_rows').append(
+                            `
+                            <p style="margin: 30px">&nbsp&nbsp</p>
+
+                            `
+                            )
+                    }else{
+                        if((index)%9===0){
+                        $('#img_rows').append(
+                            `
+                            <p style="margin: 200px">&nbsp&nbsp</p>
+
+                            `
+                            )
+                        }
+                    }
+                    
+                    $('#img_rows').append(
+                        `<div class="layui-col-md4 layui-col-xs4 layui-col-sm4" style="text-align:center"  id=img_rows${index+1}>
+                            <img src="/api/qrcode/generate_qr_code?qrcode_id=${value.qrcode_id}&t=${Math.random()}"  alt="二维码编号:${index+1}">
+                            <br/>
+                            <b>${data.field.shop_name}&nbsp&nbsp序号:${index+1}</b>
+                        </div>`
+                    )
+                    
+
+                })    
+                form.render();
+
+              //    
+                //var doc = new jsPDF()
+                makeMpdf()
+                console.log('?????',result_length)
+                
+                // for(let i =1;i<=page;i++){
+                //     if(i%12==0){
+                //         doc.addPage();
+                //     }
+                //     doc.addHTML($(`#img_rows${i}`),function(){
+                //         doc.output("save", "a4.pdf")       
+                //     });
+
+                //     // if(i===result){
+                //     //     doc.save("a4.pdf")   
+                //     // }
+                // }
+
+                // doc.addHTML($('#img_rows'),function(){
+                //     for(let i =1;i<=page;i++){
+                //         if(i%12==0){
+                //             doc.addPage();
+                //         }
+                //     doc.output("save", "a4.pdf")       
+                // }
+                // })    
+                // let option = {
+                //     "pagesplit": true, //设置是否自动分页,
+                //     "background": '#FFFFFF'
+                // }
+                // doc.addHTML($(`#img_rows`),option,function(){
+                //         doc.output("save", "a4.pdf")       
+                // });
+                
+                // btnDownloadPageBypfd2('#img_rows')
+                
+            }
+        })
+            return false
+        });
+    });
+</script>
