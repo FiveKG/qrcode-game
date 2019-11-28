@@ -82,14 +82,14 @@
 						//,{field:'open_id', title:'微信ID'}
 						,{field:'local_address', title:'详细地址', }
 						,{field:'shop_manager', title:'负责人名称', }
-						,{field:'mobile', title:'	负责人手机号码', }
-						,{field:'group_id', title:'	所属连锁品牌id', }
+						,{field:'mobile', title:'负责人手机号码', }
+						,{field:'group_id', title:'	所属连锁品牌id', hide:true,}
+						,{field:'group_name', title:'所属品牌', }
 						,{field:'license', title:'	营业执照编号', }
 						,{field:'longitude', title:'经度', }
 						,{field:'latitude', title:'	纬度', }
-						,{field:'user_name', title:'录入人', }
+						,{field:'add_user_name', title:'录入人', }
 						,{field:'is_enable', title:'是否启用', templet: function(d){
-
 							if(d.is_enable===true){
 								$("#is_enable").text('禁用')
 								return '是'
@@ -196,10 +196,14 @@
 							body.find("input[name='local_address']").val(obj.data.local_address);
 							body.find("input[name='shop_manager']").val(obj.data.shop_manager);
 							body.find("input[name='mobile']").val(obj.data.mobile);
-							//body.find("input[name='group_id']").val(obj.data.group_id);
+							body.find("select[name='group_id']").val(obj.data.group_id);
+							body.find("select[name='province']").val(obj.data.p_c_a_id[0]);
+							body.find("select[name='city']").val(obj.data.p_c_a_id[1]);
+							body.find("select[name='area']").val(obj.data.p_c_a_id[2]);
 							body.find("input[name='license']").val(obj.data.license);
 							body.find("input[name='longitude']").val(obj.data.longitude);
 							body.find("input[name='latitude']").val(obj.data.latitude);
+				
 							var iframe = window['layui-layer-iframe' + index];
 							var data = {
 								provinceCode: obj.data.p_c_a_id[0],
@@ -209,8 +213,15 @@
 								city        : obj.data.p_c_a_text[1],
 								area        : obj.data.p_c_a_text[2],
 								group_id	: obj.data.group_id,
+								group_name  : obj.data.group_name
 							}
+
 							iframe.init(data)//第一时间要执行的函数
+
+							//获取新窗口对象
+							var iframeWindow = layero.find('iframe')[0].contentWindow;
+							//重新渲染
+							iframeWindow.layui.form.render();
 						},
 						});    
 						// obj.update({

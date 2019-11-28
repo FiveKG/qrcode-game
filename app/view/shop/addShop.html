@@ -100,7 +100,7 @@
     <script>
         layui.use('form', function(){
             var form = layui.form;
-            var select_obj = $('#group_id');
+            var group_obj = $('#group_id');
             var id_object = $('#shop_id');
             var user_id_object = $('#add_user_id');
             var province_object =  $('#province');
@@ -112,7 +112,7 @@
                     type    : "GET",
                     success: function(data){
                         for(element of data){
-                            select_obj.append(`<option value=${element.group_id}>${element.group_name}</option>`);
+                            group_obj.append(`<option value=${element.group_id}>${element.group_name}</option>`);
                         }
                         form.render('select','group_id');
                     }

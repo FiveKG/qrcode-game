@@ -39,9 +39,9 @@ class Shop_groupService extends Service {
                 shop_group.add_time,
                 shop_group.is_enable,
                 shop_group.add_user_id,
-                u.user_name
+                sys_user.user_name
             FROM
-            "public".shop_group as shop_group inner join "public".sys_user as u on  shop_group.add_user_id=u.user_id${joinStr}`;
+            "public".shop_group as shop_group inner join "public".sys_user as sys_user on  shop_group.add_user_id=sys_user.user_id${joinStr}`;
             let searchSql = await this.service.tool.joinSearchSql(sql, start, size);
             let total = await this.service.tool.findRowCount(sql, params);
             // logger.debug('searchSql: ', searchSql);
