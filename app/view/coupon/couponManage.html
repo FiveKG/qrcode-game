@@ -234,8 +234,8 @@
                             //todo bug:没有显示出店铺和品牌
                             ajax1.then((res)=>{
 
-                                res.map(element=>{
-                                    body.find("select[name='group_id']").append(`<option value=${element.group_id}>${element.group_name}</option>`)
+                                res.map(group=>{
+                                    body.find("select[name='group_id']").append(`<option value=${group.group_id}>${group.group_name}</option>`)
                                 })
                                 body.find("select[name='group_id']").append(`<option  value=-1>无所属品牌</option>`)
                                 if(!data.group_id){
@@ -247,8 +247,8 @@
                                 console.log('group:',res)
                             })
                             ajax2.then((res)=>{
-                                for(element of res){
-                                    body.find("select[name='shop_id']").append(`<option value=${element.shop_id}>${element.name}</option>`);
+                                for(shop of res){
+                                    body.find("select[name='shop_id']").append(`<option value=${shop.shop_id}>${shop.name}</option>`);
                                 }
                                 body.find("select[name='shop_id']").val(obj.data.shop_id);
                                 iframe.layui.form.render();
