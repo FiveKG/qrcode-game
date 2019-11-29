@@ -95,6 +95,7 @@ class QrcodeService extends Service {
             max =0
         }
 
+
         //赋值hash和url
         const hash_str  = await ctx.helper.getHashStr(JSON.stringify(data))
 
@@ -123,7 +124,7 @@ class QrcodeService extends Service {
             let {rows} = await this.app.pg.query(sql)
 
             const url =await  ctx.helper.qrcode_url(rows.pop())
-            console.log('=========>',url)
+
             const qrcode = qr.image(url,config.qrcode.option)
             return qrcode            
         }catch(e){
