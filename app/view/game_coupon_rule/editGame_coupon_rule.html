@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    {%include "head.html" %}
+    {% include 'script.html' %}
+    <div class="layui-card">
+        <div class="layui-card-body">
+                <form class="layui-form"  action="">
+                    <div class="layui-form-item layui-row" style="display: none">
+                        <label class="layui-form-label">主键id</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="id"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">规则名</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="rule_name"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">游戏</label>
+                        <div class="layui-input-block">
+                        <select id = 'game_id' name="game_id" lay-search  >   
+                        </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">优惠券</label>
+                        <div class="layui-input-block">
+                        <select id = 'coupon_id' name="coupon_id" lay-search  >   
+                        </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">得分</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="score" lay-verify="number"  autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">玩的次数</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="play_count_range" disabled  autocomplete="off" class="layui-input">
+                            <div id="play_count_range_slide"></div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                    </div>
+                </form>
+        </div>
+    </div>
+    
+    <script>
+        function init(data){
+            let play_count_range_array = data.play_count_range
+            let value;
+            //初始化滑块数值
+            if(play_count_range_array.length===1){
+                value = [play_count_range_array[0],play_count_range_array[0]]
+            }else if(play_count_range_array.length===2){
+                value = [play_count_range_array[0],play_count_range_array[1]]
+            }
+            layui.use(['form','slider'], function(){
+                var form = layui.form;
+                var slider = layui.slider;  
+                //滑块渲染
+                slider.render({
+                    elem: '#play_count_range_slide',  //绑定元素
+                    min:1,
+                    max:100,
+                    range:true,//出现两个可拖拽的环
+                    value:value,//滑块初始值，若开启了滑块为范围拖拽（即 range: true），则需赋值数组
+                    input:true,//双环滑块时无效
+                    change:function(value){
+                        $('input[name="play_count_range"]').val(`[${value}]`)
+                    }
+                });
+            })
+        }
+    </script>
+
+
+    
+
+    <!-- 监听提交 -->
+    <script>
+    layui.use('form', function(){
+    var form = layui.form;
+    form.on('submit(formDemo)', function(data){
+        $.ajax({
+            url     : `/data/game_coupon_rule?id=eq.${data.field.id}`,
+            type    : "PATCH",
+            dataType: "json",
+            data    : JSON.stringify(data.field),
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){
+                if(!data){
+                    layer.msg('更新成功!');
+                    setTimeout(function(){ 
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭   
+                        parent.layui.table.reload('game_coupon_ruleTable');//刷新父表格  
+                    }, 1000);
+                }
+                else{
+                    layer.msg('更新失败!');
+                }
+            }
+        })
+        return false;
+    });
+    });
+    </script>
+
+
+</html>
