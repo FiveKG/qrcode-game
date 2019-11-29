@@ -38,6 +38,9 @@ module.exports = app => {
   router.post('/api/qrcode/search',controller.v1.qrcode.getQrcode);
   router.post('/api/coupon/search',controller.v1.coupon.getCoupon);
   router.post('/api/game_coupon_rule/search',controller.v1.gameCouponRule.getGame_coupon_rule);
+  router.post('/api/pay_order/search',controller.v1.pay.getPay_order);
+  router.post('/api/balance_log/search',controller.v1.pay.getBalance_log);
+  router.post('/api/user_recharge/search',controller.v1.pay.getUser_recharge);
 
   /** ----------------------------Page---------------------------- */
   router.get('/login',controller.v1.index.login);
@@ -73,4 +76,8 @@ module.exports = app => {
   router.get('/page/game_coupon_rule/game_coupon_rule_manage', controller.v1.gameCouponRule.game_coupon_ruleManage);
   router.get('/page/add_game_coupon_rule',controller.v1.gameCouponRule.addGame_coupon_rule);
   router.get('/page/edit_game_coupon_rule',controller.v1.gameCouponRule.editGame_coupon_rule);
+
+  router.get("/page/pay/pay_order",controller.v1.pay.pay_orderManage);
+  router.get("/page/pay/user_recharge",controller.v1.pay.user_rechargeManage);
+  router.get("/page/pay/balance_log",controller.v1.pay.balance_logManage);
 };
