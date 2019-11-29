@@ -6,7 +6,7 @@
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="user-from">
 				<div class="layui-inline">
-					<label class="layui-form-label">名</label>
+					<label class="layui-form-label">规则名</label>
 					<div class="layui-input-inline">
 						<input type="text" name="rule_name" autocomplete="off" class="layui-input">
 					</div>
@@ -272,7 +272,7 @@
 								content: "/page/add_game_coupon_rule",
 								success: function(layero, index){
                                     var iframe = window['layui-layer-iframe' + index];
-                                    
+
                                     //网络请求，动态生成子页面列表
                                     Promise.all([getGame(),getCoupon()]).then((res) => {
                                         res => [res1, res2]
