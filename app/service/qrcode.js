@@ -73,8 +73,12 @@ class QrcodeService extends Service {
         logger.debug(`insertQrcode,option:${JSON.stringify(data,null,4)}`)
 
         try{ 
-            let get_sql = `SELECT MAX(seq) FROM  public."qrcode"
+            let get_current_seq = `SELECT MAX(seq) FROM  public."qrcode"
             where shop_id = '${data.shop_id}'`
+
+            let get_shop_group = `SELECT group_id FROM public."shop"
+            where shop_id='${data.shop_id}'`
+
             let insert_sql =`INSERT INTO public."qrcode"
             ("qrcode_id"
             ,"scan_action"
@@ -89,12 +93,15 @@ class QrcodeService extends Service {
         
         
         //先查询该店已经有的seq值
-        const { rows } = await this.app.pg.query(get_sql);
-        let max = rows.pop().max
+        const { rows:seq } = await this.app.pg.query(get_current_seq);
+        let max = seq.pop().max
         if(max===null){
             max =0
         }
 
+        //查询该店所属品牌
+        const {rows:group} = await this.app.pg.query(get_shop_group);
+        let group_id = group.pop().group_id;
 
         //赋值hash和url
         const hash_str  = await ctx.helper.getHashStr(JSON.stringify(data))
@@ -102,7 +109,7 @@ class QrcodeService extends Service {
         for( let i= max+1;i<=(parseInt(data.seq)+max);i++){
             let qrcode_id = await ctx.helper.getPrimaryKey()
             data['qrcode_id'] = qrcode_id
-            await this.app.pg.query(insert_sql, [qrcode_id,data.scan_action,data.agent_id,data.shop_id,data.group_id,hash_str,data.add_user_id,i]);
+            await this.app.pg.query(insert_sql, [qrcode_id,data.scan_action,data.agent_id,data.shop_id,group_id,hash_str,data.add_user_id,i]);
         }
         return true
         }catch(err){
