@@ -22,13 +22,9 @@ class ShopService extends Service {
                 params.push(`${search['shop_name']}%`);
                 i ++;
             }
-            // if (search['shop_manager']) {
-            //     joinStr += ` AND shop_manager like $${i}`;
-            //     params.push(`${search['shop_manager']}%`);
-            //     i ++;
-            // }
+
             if (search['is_enable']) {
-                joinStr += ` AND shop.is_enable = $${i}`;
+                joinStr += ` AND shop_view.is_enable = $${i}`;
                 let isEnable = false;
                 if (search['is_enable'] === 'true') {
                     isEnable = true;
