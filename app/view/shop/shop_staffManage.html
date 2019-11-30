@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+{%include "head.html" %}
+{% include "script.html" %}
+	<body>
+		<div class="page-content-wrap">
+			<form class="layui-form" action="" lay-filter="user-from">
+				<div class="layui-inline">
+					<label class="layui-form-label">店铺员工名</label>
+					<div class="layui-input-inline">
+						<input type="text" name="staff_name" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">状态</label>
+					<div class="layui-input-inline">
+						<select name="is_enable" lay-search="">
+							<option value="true">启用</option>
+							<option value="false">禁用</option>
+						</select>
+					</div>
+				</div>
+				<button class="layui-btn table-search" lay-submit lay-filter="user-from">搜索</button>
+			</form>
+			<table class="layui-hide" id="shop_staffTable" lay-filter="shop_staff_table"></table>
+		</div>
+		<script type="text/html" id="toolshop_staff">
+			<div class="layui-btn-container">
+				<!-- <button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button> -->
+				<!-- <button class="layui-btn layui-btn-danger layui-btn-sm layui-icon layui-icon-close" title="删除"lay-event="is_enable"></button> -->
+			</div>
+		</script>
+		<!-- <script type="text/html" id="bashop_staff">
+			<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+			<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">禁用</a>
+		</script> -->
+
+		<script>
+			layui.use(['table', 'dialog', 'jquery'], function() {
+				var table = layui.table;
+				var dialog = layui.dialog;
+				var $ = layui.jquery;
+				const active = {
+					//table重载
+					tableReload: function (params) {
+						table.reload('shop_staffTable', {
+							where: {
+								"search": params
+							}
+						});
+					}
+				}
+
+				var form = layui.form;
+				//初始渲染
+				table.render({
+					elem: '#shop_staffTable'
+					,url:'/api/shop_staff/search'
+					,method: 'post'
+					,toolbar: '#toolshop_staff' //开启头部工具栏，并为其绑定左侧模板
+					,title: '店铺员工表'
+					,parseData: function(res) {
+						return {
+							"code": res['code'],
+							"msg": res['message'],
+							"count": res['data']['total'],
+							"data": res['data']['list']
+						}
+					}
+					,cols: [[
+						{type: 'checkbox', fixed: 'left'}
+						,{field:'shop_staff_id', title:'员工id', hide:true}
+						,{field:'staff_name', title:'员工的名称', }
+						,{field:'user_id', title:'用户id', hide:true}
+                        ,{field:'shop_id', title:'店铺id', hide:true}
+                        ,{field:'shop_name', title:'店铺', }
+						,{field:'shop_staff_type', title:'员工类型',templet:function(d){
+                            if(d.shop_staff_type==10){
+                                return '店长'
+                            }
+                            else if(d.shop_staff_type==20){
+                                return '核销员'
+                            }
+                            return '未知'
+                        } }
+						,{field:'is_enable', title:'是否启用',hide:true }
+						,{field:'add_time', title:'添加时间', hide:true}
+						,{field:'add_user_id', title:'操作人id', hide:true}
+						,{field:'add_user_name', title:'录入人', }
+						,{field:'is_enable', title:'是否启用', templet: function(d){
+							if(d.is_enable===true){
+								$("#is_enable").text('禁用')
+								return '是'
+							}else if(d.is_enable===false){
+								let a= $("#is_enable")
+								return 	'否'
+							}
+						}}
+						,{field:'add_time', title:'添加时间', templet:function(d){
+							return dateFns.format(d.add_time,'YYYY-MM-DD HH:mm')
+						} }
+						,{fixed:'right', title: "操作", align:'center', templet:function(d){
+							
+							if(d.is_enable===true){
+								return `<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+							<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">禁用</a>`
+							}else{
+								return `<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+							<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">解禁</a>`
+							}
+							
+						}}
+					]]
+					,id: 'shop_staffTable'
+					,page: true
+				});
+
+		
+				//监听表单提交
+				form.on('submit(user-from)', function(data){
+					//console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+					active.tableReload(data.field);
+					return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+				});
+
+
+	
+				//监听行工具事件
+				table.on('tool(shop_staff_table)', function(obj){
+					var layEvent = obj.event; //获得 lay-event 对应的值
+					if(layEvent === 'detail'){ //查看
+						layer.msg('查看');
+						//弹出层引入用户详情页面
+					} 
+					else if(layEvent === 'is_enable'){ //删除
+						
+						if(obj.data.is_enable==true){
+						layer.confirm(`禁用：${obj.data.staff_name}`, function(index){
+							//向服务端发送禁用指令
+							$.ajax({
+								url     : `/data/shop_staff?shop_staff_id=eq.${obj.data.shop_staff_id}`,
+								type    : "PATCH",
+								dataType: "json",
+								data    : JSON.stringify({"is_enable":false}),
+								contentType: 'application/json; charset=utf-8',
+								success: function(data){
+									if(!data){
+										layer.msg('更新成功!');
+									}else{
+										layer.msg('更新失败!');
+									}
+									setTimeout(function(){ 
+										table.reload("shop_staffTable")
+										}, 1000);	
+								}
+							})
+							});
+						}
+						else{		
+							layer.confirm(`解禁：${obj.data.staff_name}`, function(index){
+							//向服务端发送接近指令
+							$.ajax({
+								url     : `/data/shop_staff?shop_staff_id=eq.${obj.data.shop_staff_id}`,
+								type    : "PATCH",
+								dataType: "json",
+								data    : JSON.stringify({"is_enable":true}),
+								contentType: 'application/json; charset=utf-8',
+								success: function(data){
+									if(!data){
+										layer.msg('更新成功!');
+									}else{
+										layer.msg('更新失败!');
+									}
+										table.reload("shop_staffTable")	
+								}
+							})
+							});
+						}
+					}
+					else if(layEvent === 'edit'){ //编辑
+						//layer.msg('编辑');
+						//弹出层引入用户修改页面
+						//同步更新缓存对应的值 也可以直接重载表格
+						layer.open({
+						type: 2 ,
+						area: ['500px', '250px'],
+						title:"编辑",
+						content:`/page/edit_shop_staff`,
+						success: function(layero, index){
+							var body = layer.getChildFrame('body', index);
+							//console.log(obj.data)
+							//var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+							body.find("input[name='shop_staff_id']").val(obj.data.shop_staff_id);
+							body.find("input[name='staff_name']").val(obj.data.staff_name);
+							body.find("input[name='user_id']").val(obj.data.user_id);
+							body.find("input[name='shop_id']").val(obj.data.shop_id);
+							body.find("select[name='shop_staff_type']").val(obj.data.shop_staff_type);
+							body.find("input[name='is_enable']").val(obj.data.is_enable);
+							body.find("input[name='add_time']").val(obj.data.add_time);
+							body.find("input[name='add_user_id']").val(obj.data.add_user_id);
+							var iframe = window['layui-layer-iframe' + index];
+							iframe.layui.form.render();
+
+							var data = {
+							}
+							iframe.init(data)
+						},
+
+						});    
+						// obj.update({
+						// 	username: '123'
+						// 	,title: 'xxx'
+						// });
+					}
+				});
+
+				//监听事件
+				table.on('toolbar(shop_staff_table)', function(obj){
+					var checkStatus = table.checkStatus(obj.config.id);
+
+					switch(obj.event){
+						case 'add':
+							layer.msg('添加');
+							layer.open({
+								type: 2 ,
+								area: ['500px', '450px'],
+								title:"添加",
+								content: "/page/add_shop_staff",
+								success: function(layero, index){
+									var body = layer.getChildFrame('body', index);
+									body.find("form[class='layui-form']").val(index);
+								},
+							})
+						break;
+						case 'is_enable':
+							let data = checkStatus['data'];
+							if (data.length > 0) {
+							let ids = [];
+								$.each(data, function (i, tem) {
+									ids.push(tem['user_id']);
+								});
+								dialog.confirm({
+									message:'您确定要删除选中项',
+									success:function(){
+										staticActive.delBatch(ids, '删除API');
+										layer.msg('删除了')
+									},
+									cancel:function(){
+										layer.msg('取消了')
+									}
+								})
+								return false;
+							} else {
+								layer.msg('没有选中行');
+							}
+						break;
+					};
+				});
+			});
+		</script>
+	</body>
+
+</html>

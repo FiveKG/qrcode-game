@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    {%include "head.html" %}
+    {% include 'script.html' %}
+    <div class="layui-card">
+        <div class="layui-card-body">
+                <form class="layui-form"  action="">
+                    <div class="layui-form-item layui-row" style="display: none">
+                        <label class="layui-form-label">ID</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="shop_staff_id"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">员工的名称</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="staff_name"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">员工类型</label>
+                        <div class="layui-input-block ">
+                            <select id = 'shop_staff_type' name="shop_staff_type" lay-search >   
+                                <option value=10>店长</option>
+                                <option value=20>核销员</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                    </div>
+                </form>
+        </div>
+    </div>
+    
+    <script>
+        function init(data){
+            layui.use('form', function(){
+                var form = layui.form;
+            })
+        }
+    </script>
+
+    <!-- 监听提交 -->
+    <script>
+    layui.use('form', function(){
+    var form = layui.form;
+    form.on('submit(formDemo)', function(data){
+        console.log(data.field)
+        $.ajax({
+            url     : `/data/shop_staff?shop_staff_id=eq.${data.field.shop_staff_id}`,
+            type    : "PATCH",
+            dataType: "json",
+            data    : JSON.stringify(data.field),
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){
+                if(!data){
+                    layer.msg('更新成功!');
+                    setTimeout(function(){ 
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭   
+                        parent.layui.table.reload('shop_staffTable');//刷新父表格  
+                    }, 1000);
+                }
+                else{
+                    layer.msg('更新失败!');
+                }
+            }
+        })
+        return false;
+    });
+    });
+    </script>
+
+
+</html>
