@@ -17,13 +17,23 @@ class CouponService extends Service {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['coupon_name']) {
-                joinStr += ` AND coupon_name like $${i}`;
-                params.push(`${search['name']}%`);
+            if (search['coupon_id']) {
+                joinStr += ` AND coupon_id = $${i}`;
+                params.push(`${search['coupon_id']}`);
+                i ++;
+            }
+            if (search['shop_id']) {
+                joinStr += ` AND shop_id = $${i}`;
+                params.push(`${search['shop_id']}`);
+                i ++;
+            }
+            if (search['group_id']) {
+                joinStr += ` AND group_id = $${i}`;
+                params.push(`${search['group_id']}`);
                 i ++;
             }
             if (search['is_enable']) {
-                joinStr += ` AND coupon.is_enable = $${i}`;
+                joinStr += ` AND coupon_view.is_enable = $${i}`;
                 let isEnable = false;
                 if (search['is_enable'] === 'true') {
                     isEnable = true;

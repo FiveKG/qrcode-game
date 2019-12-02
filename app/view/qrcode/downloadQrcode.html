@@ -5,22 +5,19 @@
 <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
 <script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
 </style>
-
         <div class="layui-card">
             <div class="layui-card-header">
             <form class="layui-form"  action="" id='downloadQrcode'>
                 <div class="layui-container">  
                 <div class="layui-row">
                     <div class="layui-col-md9 layui-col-xs9 layui-col-sm9">
-                        <form class="layui-form"  action="" id='downloadQrcode'></form>
-                            <div class="layui-form-item layui-row" lay-filter="shop_name">
-                                <label class="layui-form-label">所属店铺</label>
-                                <div class="layui-input-block">
-                                    <select id = 'shop_name' name="shop_name" lay-search  >   
-                                    </select>
-                                </div> 
-                            </div>
-                        </form>
+                        <div class="layui-form-item layui-row" lay-filter="shop_name">
+                            <label class="layui-form-label">所属店铺</label>
+                            <div class="layui-input-block">
+                                <select id = 'shop_name' name="shop_name" lay-search  >   
+                                </select>
+                            </div> 
+                        </div>
                     </div>
                     <div class="layui-col-md3 layui-col-xs3 layui-col-sm3" inline>
                         <div class="layui-form-item">
@@ -67,54 +64,54 @@
 <script>
 
 //将html页面导出.pdf格式文件(适用于jQuery、vue库)  -- xzz 2018/04/24
-function makePdf(pdfName,loading_index) {
-    var target = $('#img_container');//目标dom
-    $('#img_container').css("background", "#fff")//设置颜色
+function makePdf(pdfName) {
+    return new Promise((resolve,reject)=>{
+        var target = $('#img_container');//目标dom
+        $('#img_container').css("background", "#fff")//设置颜色
 
-    if(pdfName==''||pdfName==undefined) pdfName='a4';
-    
-    html2canvas(target, {
-        onrendered:function(canvas) {
-            var contentWidth = canvas.width;
-            var contentHeight = canvas.height;
+        if(pdfName==''||pdfName==undefined) pdfName='a4';
+        
+        html2canvas(target, {
+            onrendered:function(canvas) {
+                var contentWidth = canvas.width;
+                var contentHeight = canvas.height;
 
-            //一页pdf显示html页面生成的canvas高度;
-            var pageHeight = contentWidth / 592.28 * 841.89;
-            //未生成pdf的html页面高度
-            var leftHeight = contentHeight;
-            //页面偏移
-            var position = 20;//整数向下移动，负数向上
-            //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
-            var imgWidth = 595.28;
-            var imgHeight = 592.28/contentWidth * contentHeight;
+                //一页pdf显示html页面生成的canvas高度;
+                var pageHeight = contentWidth / 592.28 * 841.89;
+                //未生成pdf的html页面高度
+                var leftHeight = contentHeight;
+                //页面偏移
+                var position = 20;//整数向下移动，负数向上
+                //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+                var imgWidth = 595.28;
+                var imgHeight = 592.28/contentWidth * contentHeight;
 
-            var pageData = canvas.toDataURL('image/jpeg', 1.0);
+                var pageData = canvas.toDataURL('image/jpeg', 1.0);
 
-            var pdf = new jsPDF('', 'pt', 'a4');
+                var pdf = new jsPDF('', 'pt', 'a4');
 
-            //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
-            //当内容未超过pdf一页显示的范围，无需分页
-            if (leftHeight < pageHeight) {
-            pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight );
-            } else {
-                while(leftHeight > 0) {
-                    pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
-                    leftHeight -= pageHeight;
-                    position -= 841.89;
-                    //避免添加空白页
-                    if(leftHeight > 0) {
-                      pdf.addPage();
+                //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+                //当内容未超过pdf一页显示的范围，无需分页
+                if (leftHeight < pageHeight) {
+                pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight );
+                } else {
+                    while(leftHeight > 0) {
+                        pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
+                        leftHeight -= pageHeight;
+                        position -= 841.89;
+                        //避免添加空白页
+                        if(leftHeight > 0) {
+                        pdf.addPage();
+                        }
                     }
                 }
+                
+                pdf.save(pdfName+".pdf");
+                let layer = layui.layer;
+                resolve('下载成功!')
             }
-            
-            pdf.save(pdfName+".pdf");
-            let layer = layui.layer;
-            layer.close(loading_index);
-             
-        }
-      })
-  
+        })
+    })
 }
 </script>
 <!-- 提交监听 -->
@@ -126,76 +123,97 @@ function makePdf(pdfName,loading_index) {
         form.on('submit(formDemo)', function(data){
             const loading_index = layer.load(); //风格1的加载
 
-            //目前做法是根据用户店铺id搜索出所有二维码，包括不同代理商，所以打印出来的二维码是包括不同代理商的，需注意
-            $.ajax({
-            url : `/data/qrcode_view?select=qrcode_id&is_enable=eq.1&shop_name=eq.${data.field.shop_name}`,
-            type:"GET",
-            success:function(result){
-                if(result.length>0){
-                    $('#img_rows').empty();
-                    result.map((value,index)=>{
-                        /**算法：每页9个二维码，当前个数除以9向上取证即是当前页数。
-                         * 每新的一页头部'(index+1)%9===1'和尾部'(index+1)%9===0)'都要加上空白以保证分页的时候不会把二维码切分掉，
-                         * 具体数量多少，以下数值是经过无数次测试得出。
-                         * 目前打印一两百个二维码都不会出错
-                         */
-                        let page = Math.ceil((index+1)/9)
-                        if((index+1)%9===1){
-                            $('#img_container').append(
-                                `
-                                <div class="layui-row layui-col-space10" id='page${page}'>
-                                    <div style="background:white;contain:paint" >
-                                        <p style="margin: 39px" >&nbsp&nbsp</p>
+            function download_qrcode(){
+                return new Promise((resolve,reject)=>{
+                     //目前做法是根据用户店铺id搜索出所有二维码，包括不同代理商，所以打印出来的二维码是包括不同代理商的，需注意
+                $.ajax({
+                url : `/data/qrcode_view?select=qrcode_id&is_enable=eq.1&shop_name=eq.${data.field.shop_name}`,
+                type:"GET",
+                success:function(result){
+                    if(result.length>0){
+                        $('#img_rows').empty();
+                        result.map((value,index)=>{
+                            /**算法：每页9个二维码，当前个数除以9向上取证即是当前页数。
+                             * 每新的一页头部'(index+1)%9===1'和尾部'(index+1)%9===0)'都要加上空白以保证分页的时候不会把二维码切分掉，
+                             * 具体数量多少，以下数值是经过无数次测试得出。
+                             * 目前打印一两百个二维码都不会出错
+                             */
+                            let page = Math.ceil((index+1)/9)
+                            if((index+1)%9===1){
+                                $('#img_container').append(
+                                    `
+                                    <div class="layui-row layui-col-space10" id='page${page}'>
+                                        <div style="background:white;contain:paint" >
+                                            <p style="margin: 39px" >&nbsp&nbsp</p>
+                                        </div>
+
                                     </div>
-
-                                </div>
-                                `
-                                )
-                        }
-                        $(`#page${page}`).append(
-                            `<div class="layui-col-md4 layui-col-xs4 layui-col-sm4" style="text-align:center"  >
-                                <img src="/api/qrcode/generate_qr_code?qrcode_id=${value.qrcode_id}&t=${Math.random()}"  alt="二维码编号:${index+1}">
-                                <br/>
-                                <b>${data.field.shop_name}&nbsp&nbsp序号:${index+1}</b>
-                            </div>`
-                        )
-                        //每页9个,9个以后顶白到第二页
-                        if((index+1)%9===0){
-
-                            if(page==1){
-
-                                $(`#page${page}`).append(
-                                `
-                                <div style="background:white;contain:paint" >
-                                    <p style="margin: 51px">&nbsp&nbsp</p>
-                                </div>
-                                `
-                                )
-                            }else{
-                            $(`#page${page}`).append(
-                                `
-                                <div style="background:white;contain:paint" >
-                                    <p style="margin: 71px">&nbsp&nbsp</p>
-                                </div>
-                                `
-                                )
+                                    `
+                                    )
                             }
-                        }
-                    })    
-                    makePdf(data.field.shop_name,loading_index)
+                            $(`#page${page}`).append(
+                                `<div class="layui-col-md4 layui-col-xs4 layui-col-sm4" style="text-align:center"  >
+                                    <img src="/api/qrcode/generate_qr_code?qrcode_id=${value.qrcode_id}&t=${Math.random()}"  alt="二维码编号:${index+1}">
+                                    <br/>
+                                    <b>${data.field.shop_name}&nbsp&nbsp序号:${index+1}</b>
+                                </div>`
+                            )
+                            //每页9个,9个以后顶白到第二页
+                            if((index+1)%9===0){
+
+                                if(page==1){
+
+                                    $(`#page${page}`).append(
+                                    `
+                                    <div style="background:white;contain:paint" >
+                                        <p style="margin: 51px">&nbsp&nbsp</p>
+                                    </div>
+                                    `
+                                    )
+                                }else{
+                                $(`#page${page}`).append(
+                                    `
+                                    <div style="background:white;contain:paint" >
+                                        <p style="margin: 71px">&nbsp&nbsp</p>
+                                    </div>
+                                    `
+                                    )
+                                }
+                            }
+                        })    
+                        makePdf(data.field.shop_name)
+                        .then(res=>{resolve(res)});}
+                    else{
+                        $('#img_rows').empty();
+                        $('#img_rows').append(
+                            `
+                            <div style="text-align:center">
+                            <b>请先为此店铺添加二维码</b>
+                            </div>
+                            `
+                            )
+                    }
                 }
-                else{
-                    $('#img_rows').empty();
-                    $('#img_rows').append(
-                        `
-                        <div style="text-align:center">
-                        <b>请先为此店铺添加二维码</b>
-                        </div>
-                        `
-                        )
-                }
+                })
+            })
             }
-        })
+
+            const result =Promise.race([
+                download_qrcode(),
+                new Promise(function(resolve,reject){
+                    setTimeout(() => reject('超时，请重试'), 15000)
+                })
+            ])
+
+            result
+            .then(res=>{
+                layer.close(loading_index);
+                layer.msg(res);
+            })
+            .catch(err=>{
+                layer.close(loading_index);
+                layer.msg(err);
+            })
             return false
         });
     });

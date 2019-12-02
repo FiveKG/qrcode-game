@@ -6,9 +6,34 @@
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="user-from">
 				<div class="layui-inline">
-					<label class="layui-form-label">微信用户id</label>
+					<label class="layui-form-label">支付类型</label>
 					<div class="layui-input-inline">
-						<input type="text" name="wx_open_id	" autocomplete="off" class="layui-input">
+						<select name="pay_type" layui-search>
+							<option value='' selected disabled>所有</option>
+							<option value=10>游戏支付</option>
+							<option value=20>充值支付</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">支付状态</label>
+					<div class="layui-input-inline">
+						<select name="pay_state" layui-search>
+							<option value='' selected disabled>所有</option>
+							<option value=10>未支付</option>
+							<option value=20>支付成功</option>
+							<option value=30>支付失败</option>
+						</select>
+					</div>
+				</div>
+				<div class="layui-inline">
+					<label class="layui-form-label">支付渠道</label>
+					<div class="layui-input-inline">
+						<select name="pay_way" layui-search>
+							<option value='' selected disabled>所有</option>
+							<option value=10>微信</option>
+							<option value=20>支付宝</option>
+						</select>
 					</div>
 				</div>
 
@@ -28,6 +53,7 @@
 			<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">禁用</a>
 		</script> -->
 
+			
 		<script>
 			layui.use(['table', 'dialog', 'jquery'], function() {
 				var table = layui.table;
@@ -63,7 +89,7 @@
 					,cols: [[
 						{type: 'checkbox', fixed: 'left'}
 						,{field:'pay_order_id', title:'id',hide:true }
-						,{field:'wx_open_id', title:'微信用户id', }
+						,{field:'wx_open_id', title:'微信用户id', hide:true}
 						,{field:'pay_type', title:'支付订单类型', templet:function(d){
 							if(d.pay_type==10){
 								return '游戏支付'
@@ -91,10 +117,10 @@
 						} }
 						,{field:'pay_way', title:'支付渠道', templet:function(d){
 							if(d.pay_way==10){
-								return '支付宝'
+								return '微信'
 							}
 							else if(d.pay_way==20){
-								return '微信'
+								return '支付宝'
 							}
 							else{
 								return '未知'

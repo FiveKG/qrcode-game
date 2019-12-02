@@ -17,9 +17,9 @@ class Shop_groupService extends Service {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['shop_group_name']) {
-                joinStr += ` AND group_name like $${i}`;
-                params.push(`${search['shop_group_name']}%`);
+            if (search['group_id']) {
+                joinStr += ` AND group_id = $${i}`;
+                params.push(`${search['group_id']}`);
                 i ++;
             }
             if (search['is_enable']) {
@@ -39,7 +39,7 @@ class Shop_groupService extends Service {
                 shop_group.add_time,
                 shop_group.is_enable,
                 shop_group.add_user_id,
-                sys_user.user_name
+                sys_user.user_name as add_user_name
             FROM
             "public".shop_group as shop_group inner join "public".sys_user as sys_user on  shop_group.add_user_id=sys_user.user_id${joinStr}`;
             let searchSql = await this.service.tool.joinSearchSql(sql, start, size);

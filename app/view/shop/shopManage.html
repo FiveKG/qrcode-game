@@ -8,15 +8,16 @@
 				<div class="layui-inline">
 					<label class="layui-form-label">店铺名</label>
 					<div class="layui-input-inline">
-						<input type="text" name="shop_name" autocomplete="off" class="layui-input">
+						<select name="shop_id" lay-search></select>
 					</div>
 				</div>
-				<!-- <div class="layui-inline">
-					<label class="layui-form-label">负责人名称</label>
+				<div class="layui-inline">
+					<label class="layui-form-label">所属品牌</label>
 					<div class="layui-input-inline">
-						<input type="text" name="shop_manager" autocomplete="off" class="layui-input">
+						<select name="group_id" lay-search></select>
 					</div>
-				</div> -->
+				</div>
+
 				<div class="layui-inline">
 					<label class="layui-form-label">状态</label>
 					<div class="layui-input-inline">
@@ -41,6 +42,59 @@
 			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
 			<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">禁用</a>
 		</script> -->
+
+		<!-- 搜索下拉 -->
+		<script>
+			layui.use('form',function(){
+				var form = layui.form;
+	
+				//获取店铺
+					$.ajax({
+					url        : `/data/shop?select=shop_id,name`,
+					type       : "GET",
+					success	:function(result){
+						if(result){
+							$('select[name="shop_id"]').empty();
+							$('select[name="shop_id"]').append(`<option value=''  selected>所有</option>`);
+							for(element of result){
+								$('select[name="shop_id"]').append(`<option value=${element.shop_id}>${element.name}</option>`);
+							}
+						}else{
+							$('select[name="shop_id"]').append(`<option value='' disable>无数据</option>`);
+						}
+						form.render();
+					},
+					error:function(err){
+						console.log('select[name="shop_id"] err:',err)
+						$('select[name="shop_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
+						form.render();
+					}
+					
+				})
+				//获取品牌
+					$.ajax({
+					url        : `/data/shop_group?select=group_id,group_name`,
+					type       : "GET",
+					success	:function(result){
+						if(result){
+							$('select[name="group_id"]').empty();
+							$('select[name="group_id"]').append(`<option value=''  selected>所有</option>`);
+							for(element of result){
+								$('select[name="group_id"]').append(`<option value=${element.group_id}>${element.group_name}</option>`);
+							}
+						}else{
+							$('select[name="group_id"]').append(`<option value='' disable>无数据</option>`);
+						}
+						form.render();
+					},
+					error:function(err){
+						console.log('select[name="group_id"] err:',err)
+						$('select[name="group_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
+						form.render();
+					}
+				})
+			}) 
+		</script>
 
 		<script>
 			layui.use(['table', 'dialog', 'jquery'], function() {
@@ -91,10 +145,8 @@
 						,{field:'add_user_name', title:'录入人', }
 						,{field:'is_enable', title:'是否启用', templet: function(d){
 							if(d.is_enable===true){
-								$("#is_enable").text('禁用')
 								return '是'
 							}else if(d.is_enable===false){
-								let a= $("#is_enable")
 								return 	'否'
 							}
 						}}

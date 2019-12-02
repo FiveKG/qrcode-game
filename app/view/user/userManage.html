@@ -14,7 +14,7 @@
 				<div class="layui-inline">
 					<label class="layui-form-label">用户名</label>
 					<div class="layui-input-inline">
-						<input type="text" name="user_name" autocomplete="off" class="layui-input">
+						<select name="user_id" lay-search></select>
 					</div>
 				</div>
 				<div class="layui-inline">
@@ -53,6 +53,35 @@
 			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="is_enable">禁用</a>
 		</script> -->
 
+		<!-- 搜索下拉 -->
+		<script>
+			layui.use('form',function(){
+				var form = layui.form;
+				//获取用户
+					$.ajax({
+					url        : `/data/sys_user?select=user_id,user_name`,
+					type       : "GET",
+					success	:function(result){
+						if(result){
+							$('select[name="user_id"]').empty();
+							$('select[name="user_id"]').append(`<option value=''  selected>所有</option>`);
+							for(element of result){
+								$('select[name="user_id"]').append(`<option value=${element.user_id}>${element.user_name}</option>`);
+							}
+						}else{
+							$('select[name="user_id"]').append(`<option value='' disable>无数据</option>`);
+						}
+						form.render();
+					},
+					error:function(err){
+						console.log('select[name="user_id"] err:',err)
+						$('select[name="user_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
+						form.render();
+					}
+				})
+			}) 
+		</script>
+
 		<script>
 			layui.use(['table', 'dialog', 'jquery'], function() {
 				var table = layui.table;
@@ -89,7 +118,20 @@
 						{type: 'checkbox', fixed: 'left'}
 						,{field:'user_id', title:'ID' ,hide:true, }
 						,{field:'user_name', title:'用户名', }
-						,{field:'user_type', title:'用户类型', }
+						,{field:'user_type', title:'用户类型',templet:function(d){
+							if(d.user_type==='admin'){
+								return '管理员'
+							}
+							else if(d.user_type==='shop'){
+								return '店铺账号'
+							}
+							else if(d.user_type==='agent'){
+								return '代理商账号'
+							}
+							else{
+								return '未知'
+							}
+						} }
 						//,{field:'open_id', title:'微信ID'}
 						,{field:'user_nick_name', title:'昵称', }
 						,{field:'phone_num', title:'手机号码',}

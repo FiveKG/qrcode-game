@@ -4,17 +4,19 @@
 {% include "script.html" %}
 	<body>
 		<div class="page-content-wrap">
-			<form class="layui-form" action="" lay-filter="user-from">
+			<form class="layui-form" action="" lay-filter="agent_staff_user_from">
 				<div class="layui-inline">
 					<label class="layui-form-label">员工名</label>
 					<div class="layui-input-inline">
-						<input type="text" name="agent_staff_name" autocomplete="off" class="layui-input">
+						<select name="agent_staff_id" lay-search>
+						</select>
 					</div>
                 </div>
                 <div class="layui-inline">
                     <label class="layui-form-label">所属经销商</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="agent_name" autocomplete="off" class="layui-input">
+						<select name="agent_id" lay-search>
+						</select>
                     </div>
                 </div>
 				<div class="layui-inline">
@@ -26,7 +28,7 @@
 						</select>
 					</div>
 				</div>
-				<button class="layui-btn table-search" lay-submit lay-filter="user-from">搜索</button>
+				<button class="layui-btn table-search" lay-submit lay-filter="agent_staff_user_from">搜索</button>
 			</form>
 			<table class="layui-hide" id="agent_staffTable" lay-filter="agent_staff_table"></table>
 		</div>
@@ -42,6 +44,66 @@
 			<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">禁用</a>
 		</script> -->
 
+
+		<!-- 搜索下拉 -->
+		<script>
+			//请求经销商
+			function getAgent_staff(){
+				return new Promise((resolve,reject)=>{
+					$.ajax({
+					url        : `/data/agent_staff_view?select=agent_staff_id,user_name`,
+					type       : "GET",
+					success	:function(result){
+						resolve(result);
+					}
+					})		
+				})
+			}
+			function getAgent(){
+				return new Promise((resolve,reject)=>{
+					$.ajax({
+					url        : `/data/agent?select=agent_id,name`,
+					type       : "GET",
+					success	:function(result){
+						resolve(result);
+					}
+					})
+				})
+			}
+			layui.use('form',function(){
+				var form = layui.form
+				Promise.all([getAgent_staff(),getAgent()])
+				.then(result=>{
+					const [agent_staffs,agents] = result;
+					if(agent_staffs){
+						$('select[name="agent_staff_id"]').empty();
+						$('select[name="agent_staff_id"]').append(`<option value=''  selected>所有</option>`);
+						for(element of agent_staffs){
+						$('select[name="agent_staff_id"]').append(`<option value=${element.agent_staff_id}>${element.user_name}</option>`);
+						}
+					}else{
+							$('select[name="agent_staff_id"]').append(`<option value='' disable>无数据</option>`);
+						}
+
+					if(agents){
+						$('select[name="agent_id"]').empty();
+						$('select[name="agent_id"]').append(`<option value=''  selected>所有</option>`);
+						for(element of agents){
+						$('select[name="agent_id"]').append(`<option value=${element.agent_id}>${element.name}</option>`);
+						}
+					}else{
+							$('select[name="agent_id"]').append(`<option value='' disable>无数据</option>`);
+						}
+					form.render('select')
+				})
+				.catch(err=>{
+					console.log('err:',err);
+					$('select[name="agent_id"]').append(`<option value='-1'>获取数据失败</option>`);
+					$('select[name="agent_staff_id"]').append(`<option value='-1'>获取数据失败</option>`);
+					form.render('select')
+				})
+			})
+		</script>
 		<script>
 			layui.use(['table', 'dialog', 'jquery'], function() {
 				var table = layui.table;
@@ -99,10 +161,8 @@
 						,{field:'add_user_name', title:'录入人', }
 						,{field:'is_enable', title:'是否启用', templet: function(d){
 							if(d.is_enable===true){
-								$("#is_enable").text('禁用')
 								return '是'
 							}else if(d.is_enable===false){
-								let a= $("#is_enable")
 								return 	'否'
 							}
 						}}
@@ -127,7 +187,7 @@
 
 		
 				//监听表单提交
-				form.on('submit(user-from)', function(data){
+				form.on('submit(agent_staff_user_from)', function(data){
 					//console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
 					active.tableReload(data.field);
 					return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。

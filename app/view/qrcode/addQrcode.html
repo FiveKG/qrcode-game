@@ -133,25 +133,47 @@
         }
         //解析一下，不然会有转义字符
         data.field.scan_action=(JSON.parse(data.field.scan_action))
-        $.ajax({
-            url:"/api/qrcode/add_qrcode",
-            type:'POST',
-            data:data.field,
-            success:function(result){
-                if(result.success===true){
-                    layer.close(loading_index); 
-                    layer.msg('添加成功!');
-                    setTimeout(function(){ 
-                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-                        parent.layer.close(index); //再执行关闭   
-                        parent.layui.table.reload('qrcodeTable');//刷新父表格   
-                    }, 1500);
+
+        function add_qrcode(){
+            return new Promise((resolve,reject)=>{
+                $.ajax({
+                url:"/api/qrcode/add_qrcode",
+                type:'POST',
+                data:data.field,
+                success:function(result){
+                    if(result.success===true){
+                        setTimeout(function(){ 
+                            var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                            parent.layer.close(index); //再执行关闭   
+                            parent.layui.table.reload('qrcodeTable');//刷新父表格   
+                        }, 1500);
+                        resolve('添加成功!')
+                    } 
+                    else{
+                        reject('添加失败!')
+                    }     
                 } 
-                else{
-                    layer.msg('添加失败!');
-                }     
-            } 
-        });
+            });
+            })
+        }
+
+        const result = Promise.race([
+            add_qrcode(),
+            new Promise((resolve,reject)=>{
+                setTimeout(()=>reject('超时，请重试!'),15000)
+            })
+        ])
+
+        result
+        .then(result=>{
+            layer.msg(result)
+            layer.close(loading_index); 
+        })
+        .catch(error=>{
+            layer.msg(error)
+            layer.close(loading_index); 
+        })
+
         //http://域名/entry_page?id=$id&s_id=$shop_id&g_id=&$group_id&hash=xxxxxxxxx
         return false
     });

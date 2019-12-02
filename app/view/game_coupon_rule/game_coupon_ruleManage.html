@@ -8,9 +8,21 @@
 				<div class="layui-inline">
 					<label class="layui-form-label">规则名</label>
 					<div class="layui-input-inline">
-						<input type="text" name="rule_name" autocomplete="off" class="layui-input">
+                        <select name="id"  lay-search></select>
 					</div>
-				</div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">游戏名</label>
+                    <div class="layui-input-inline">
+                        <select name="game_id"  lay-search></select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">优惠券名</label>
+                    <div class="layui-input-inline">
+                        <select name="coupon_id"  lay-search></select>
+                    </div>
+                </div>
 				<div class="layui-inline">
 					<label class="layui-form-label">状态</label>
 					<div class="layui-input-inline">
@@ -35,6 +47,78 @@
 			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
 			<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">禁用</a>
 		</script> -->
+
+        		<!-- 搜索下拉 -->
+		<script>
+
+            layui.use('form',function(){
+                var form = layui.form;
+                 //获取规则
+                $.ajax({
+                    url        : `/data/game_coupon_rule?select=id,rule_name`,
+                    type       : "GET",
+                    success	:function(result){
+                    if(result){
+                        $('select[name="id"]').empty();
+                        $('select[name="id"]').append(`<option value=''  selected>所有</option>`);
+                        for(element of result){
+                            $('select[name="id"]').append(`<option value=${element.id}>${element.rule_name}</option>`);
+                        }
+                    }
+                        form.render('select')
+                    },
+                    error:function(err){
+                        console.log('err:',err);
+						$('select[name="id"]').append(`<option value='-1'>获取数据失败</option>`);
+						form.render('select')
+                    }
+                })	
+                
+                //获取游戏
+                $.ajax({
+                    url        : `/data/game?select=game_id,game_name`,
+                    type       : "GET",
+                    success	:function(result){
+                    if(result){
+                        $('select[name="game_id"]').empty();
+                        $('select[name="game_id"]').append(`<option value=''  selected>所有</option>`);
+                        for(element of result){
+                            $('select[name="game_id"]').append(`<option value=${element.game_id}>${element.game_name}</option>`);
+                        }
+                    }
+                        form.render('select')
+                    },
+                    error:function(err){
+                        console.log('err:',err);
+						$('select[name="game_id"]').append(`<option value='-1'>获取数据失败</option>`);
+						form.render('select')
+                    }
+                })	
+
+                //获取优惠券
+                $.ajax({
+                    url        : `/data/coupon?select=coupon_id,coupon_name`,
+                    type       : "GET",
+                    success	:function(result){
+                    if(result){
+                        $('select[name="coupon_id"]').empty();
+                        $('select[name="coupon_id"]').append(`<option value=''  selected>所有</option>`);
+                        for(element of result){
+                            $('select[name="coupon_id"]').append(`<option value=${element.coupon_id}>${element.coupon_name}</option>`);
+                        }
+                    }
+                        form.render('select')
+                    },
+                    error:function(err){
+                        console.log('err:',err);
+						$('select[name="coupon_id"]').append(`<option value='-1'>获取数据失败</option>`);
+						form.render('select')
+                    }
+                })	
+
+            })
+           
+        </script>
 
 		<script>
 			layui.use(['table', 'dialog', 'jquery'], function() {
@@ -110,10 +194,8 @@
 						,{field:'add_user_name', title:'录入人', }
 						,{field:'is_enable', title:'是否启用', templet: function(d){
 							if(d.is_enable===true){
-								$("#is_enable").text('禁用')
 								return '是'
 							}else if(d.is_enable===false){
-								let a= $("#is_enable")
 								return 	'否'
 							}
 						}}
@@ -215,7 +297,7 @@
                      
                             //网络请求，动态生成子页面列表
                             Promise.all([getGame(),getCoupon()]).then((res) => {
-                                res => [res1, res2]
+                    
                                 const [games,coupons] = res
                                 //初始化游戏列表
                                 for(game of games){
@@ -275,7 +357,7 @@
 
                                     //网络请求，动态生成子页面列表
                                     Promise.all([getGame(),getCoupon()]).then((res) => {
-                                        res => [res1, res2]
+                   
                                         const [games,coupons] = res
                                         //初始化游戏列表
                                         for(game of games){
