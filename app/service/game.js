@@ -17,9 +17,14 @@ class GameService extends Service {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['game_name']) {
-                joinStr += ` AND game_name like $${i}`;
-                params.push(`${search['game_name']}%`);
+            if (search['game_id']) {
+                joinStr += ` AND game_id = $${i}`;
+                params.push(`${search['game_id']}`);
+                i ++;
+            }
+            if (search['game_type']) {
+                joinStr += ` AND game_type = $${i}`;
+                params.push(`${search['game_type']}`);
                 i ++;
             }
             if (search['is_enable']) {

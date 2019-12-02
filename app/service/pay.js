@@ -17,9 +17,9 @@ class PayService extends Service {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['wx_open_id']) {
-                joinStr += ` AND user_name like $${i}`;
-                params.push(`${search['user_name']}%`);
+            if (search['user_id']) {
+                joinStr += ` AND user_recharge.user_id = $${i}`;
+                params.push(`${search['user_id']}`);
                 i ++;
             }
 
@@ -62,9 +62,19 @@ class PayService extends Service {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['wx_open_id']) {
-                joinStr += ` AND wx_open_id =${i}`;
-                params.push(`${search['wx_open_id']}`);
+            if (search['pay_type']) {
+                joinStr += ` AND pay_type =$${i}`;
+                params.push(`${search['pay_type']}`);
+                i ++;
+            }
+            if (search['pay_state']) {
+                joinStr += ` AND pay_state =$${i}`;
+                params.push(`${search['pay_state']}`);
+                i ++;
+            }
+            if (search['pay_way']) {
+                joinStr += ` AND pay_way =$${i}`;
+                params.push(`${search['pay_way']}`);
                 i ++;
             }
 
@@ -112,9 +122,9 @@ class PayService extends Service {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['user_name']) {
-                joinStr += ` AND user_name like $${i}`;
-                params.push(`${search['user_name']}%`);
+            if (search['user_id']) {
+                joinStr += ` AND balance_log.user_id = $${i}`;
+                params.push(`${search['user_id']}`);
                 i ++;
             }
 

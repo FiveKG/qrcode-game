@@ -17,22 +17,22 @@ class QrcodeService extends Service {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['agent_name']) {
-                joinStr += ` AND agent_name like $${i}`;
-                params.push(`${search['agent_name']}%`);
+            if (search['agent_id']) {
+                joinStr += ` AND agent_id = $${i}`;
+                params.push(`${search['agent_id']}`);
                 i ++;
             }
-            if (search['group_name']) {
-                joinStr += ` AND group_name like $${i}`;
-                params.push(`${search['group_name']}%`);
+            if (search['group_id']) {
+                joinStr += ` AND group_id = $${i}`;
+                params.push(`${search['group_id']}`);
                 i ++;
             }
-            if (search['shop_name']) {
-                joinStr += ` AND shop_name like $${i}`;
-                params.push(`${search['shop_name']}%`);
+            if (search['shop_id']) {
+                joinStr += ` AND shop_id = $${i}`;
+                params.push(`${search['shop_id']}`);
                 i ++;
             }
-            if (search['is_enable']) {
+            if (search['qrcode_view.is_enable']) {
                 joinStr += ` AND is_enable = $${i}`;
                 let isEnable = false;
                 if (search['is_enable'] === 'true') {

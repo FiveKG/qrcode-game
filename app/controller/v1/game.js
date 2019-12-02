@@ -9,6 +9,10 @@ class GameController extends Controller {
         await ctx.render('/game/gameManage.html');
     }
 
+    async game_sessionManage(){
+        const { ctx } = this;
+        await ctx.render('/game/game_session.html');
+    }
     async addGame(){
         const { ctx } = this;
         await ctx.render('/game/addGame.html');

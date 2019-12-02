@@ -8,7 +8,7 @@
 				<div class="layui-inline">
 					<label class="layui-form-label">用户名</label>
 					<div class="layui-input-inline">
-						<input type="text" name="user_name" autocomplete="off" class="layui-input">
+						<select name="user_id" lay-search></select>
 					</div>
 				</div>
 				
@@ -27,6 +27,35 @@
 			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
 			<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">禁用</a>
 		</script> -->
+
+		<!-- 搜索下拉 -->
+		<script>
+			layui.use('form',function(){
+				var form = layui.form;
+				//获取用户
+					$.ajax({
+					url        : `/data/sys_user?select=user_id,user_name`,
+					type       : "GET",
+					success	:function(result){
+						if(result){
+							$('select[name="user_id"]').empty();
+							$('select[name="user_id"]').append(`<option value=''  selected>所有</option>`);
+							for(element of result){
+								$('select[name="user_id"]').append(`<option value=${element.user_id}>${element.user_name}</option>`);
+							}
+						}else{
+							$('select[name="user_id"]').append(`<option value='' disable>无数据</option>`);
+						}
+						form.render();
+					},
+					error:function(err){
+						console.log('select[name="user_id"] err:',err)
+						$('select[name="user_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
+						form.render();
+					}
+				})
+			}) 
+		</script>
 
 		<script>
 			layui.use(['table', 'dialog', 'jquery'], function() {

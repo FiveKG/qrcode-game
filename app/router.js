@@ -60,6 +60,7 @@ module.exports = app => {
   router.get('/page/edit_shop_staff',controller.v1.shop.editShop_staff);
 
   router.get('/page/game/game_manage', controller.v1.game.gameManage);
+  router.get('/page/game/game_session',controller.v1.game.game_sessionManage);
   router.get('/page/add_game',controller.v1.game.addGame);
   router.get('/page/edit_game',controller.v1.game.editGame);
 

@@ -30,11 +30,7 @@ class SysUserService extends Service {
                 params.push(search['user_id']);
                 i ++;
             }
-            if (search['user_name']) {
-                joinStr += ` AND user_name LIKE $${i}`;
-                params.push(`${search['user_name']}%`);
-                i ++;
-            }
+
             if (search['user_type']) {
                 joinStr += ` AND user_type = $${i}`;
                 params.push(search['user_type']);
@@ -43,7 +39,7 @@ class SysUserService extends Service {
             if (search['is_enable']) {
                 joinStr += ` AND is_enable = $${i}`;
                 let isEnable = false;
-                if (search['is_enable'] === '1') {
+                if (search['is_enable'] === 'true') {
                     isEnable = true;
                 }
                 params.push(isEnable);

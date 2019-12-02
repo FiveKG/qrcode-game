@@ -17,13 +17,23 @@ class Game_coupon_ruleService extends Service {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['game_coupon_rule_name']) {
-                joinStr += ` AND game_coupon_rule_name like $${i}`;
-                params.push(`${search['name']}%`);
+            if (search['id']) {
+                joinStr += ` AND id = $${i}`;
+                params.push(`${search['id']}`);
+                i ++;
+            }
+            if (search['game_name']) {
+                joinStr += ` AND game_name = $${i}`;
+                params.push(`${search['game_name']}`);
+                i ++;
+            }
+            if (search['coupon_name']) {
+                joinStr += ` AND coupon_name = $${i}`;
+                params.push(`${search['coupon_name']}`);
                 i ++;
             }
             if (search['is_enable']) {
-                joinStr += ` AND game_coupon_rule.is_enable = $${i}`;
+                joinStr += ` AND game_coupon_rule_view.is_enable = $${i}`;
                 let isEnable = false;
                 if (search['is_enable'] === 'true') {
                     isEnable = true;

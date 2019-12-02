@@ -17,9 +17,14 @@ class ShopService extends Service {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['shop_name']) {
-                joinStr += ` AND name like $${i}`;
-                params.push(`${search['shop_name']}%`);
+            if (search['shop_id']) {
+                joinStr += ` AND shop_id = $${i}`;
+                params.push(`${search['shop_id']}`);
+                i ++;
+            }
+            if (search['group_id']) {
+                joinStr += ` AND group_id = $${i}`;
+                params.push(`${search['group_id']}`);
                 i ++;
             }
 
@@ -67,9 +72,14 @@ class ShopService extends Service {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['staff_name']) {
-                joinStr += ` AND staff_name like $${i}`;
-                params.push(`${search['staff_name']}%`);
+            if (search['shop_staff_id']) {
+                joinStr += ` AND shop_staff_id = $${i}`;
+                params.push(`${search['shop_staff_id']}`);
+                i ++;
+            }
+            if (search['shop_id']) {
+                joinStr += ` AND shop_id = $${i}`;
+                params.push(`${search['shop_id']}`);
                 i ++;
             }
             if (search['is_enable']) {
@@ -85,6 +95,7 @@ class ShopService extends Service {
                 ROW_NUMBER () OVER (ORDER BY shop_staff_view.add_time DESC) AS RowNumber,
                 *
                 FROM shop_staff_view ${joinStr}`;
+
             let searchSql = await this.service.tool.joinSearchSql(sql, start, size);
             let total = await this.service.tool.findRowCount(sql, params);
             // logger.debug('searchSql: ', searchSql);
@@ -98,7 +109,7 @@ class ShopService extends Service {
             }
         } catch (e) {
             logger.error(e);
-            return null;
+            return null;    
         }
     }
 }

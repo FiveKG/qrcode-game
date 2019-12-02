@@ -17,9 +17,9 @@ class AgentService extends Service {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['agent_name']) {
-                joinStr += ` AND name like $${i}`;
-                params.push(`${search['agent_name']}%`);
+            if (search['agent_id']) {
+                joinStr += ` AND agent_id = $${i}`;
+                params.push(`${search['agent_id']}`);
                 i ++;
             }
             if (search['is_enable']) {

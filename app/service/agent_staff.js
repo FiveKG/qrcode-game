@@ -17,18 +17,18 @@ class Agent_staffService extends Service {
             let joinStr = ` WHERE 1 = 1`;
             let params = [];
             let i = 1;
-            if (search['agent_staff_name']) {
-                joinStr += ` AND agent_staff_name like $${i}`;
-                params.push(`${search['agent_staff_name']}%`);
+            if (search['agent_staff_id']) {
+                joinStr += ` AND agent_staff_id = $${i}`;
+                params.push(`${search['agent_staff_id']}`);
                 i ++;
             }
-            if (search['agent_staff_name']) {
-                joinStr += ` AND agent_staff_name like $${i}`;
-                params.push(`${search['agent_staff_name']}%`);
+            if (search['agent_id']) {
+                joinStr += ` AND agent_id = $${i}`;
+                params.push(`${search['agent_id']}`);
                 i ++;
             }
             if (search['is_enable']) {
-                joinStr += ` AND is_enable = $${i}`;
+                joinStr += ` AND agent_staff_view.is_enable = $${i}`;
                 let isEnable = false;
                 if (search['is_enable'] === 'true') {
                     isEnable = true;
