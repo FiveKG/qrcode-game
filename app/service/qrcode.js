@@ -91,7 +91,6 @@ class QrcodeService extends Service {
         VALUES
             ($1,$2,$3,$4,$5,$6,$7,$8)`
         
-        
         //先查询该店已经有的seq值
         const { rows:seq } = await this.app.pg.query(get_current_seq);
         let max = seq.pop().max
@@ -132,6 +131,7 @@ class QrcodeService extends Service {
 
             const url =await  ctx.helper.qrcode_url(rows.pop())
 
+            //const qrcode = await this.app.controller.tool.generateQrcode(url)
             const qrcode = qr.image(url,config.qrcode.option)
             return qrcode            
         }catch(e){

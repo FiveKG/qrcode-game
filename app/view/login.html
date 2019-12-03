@@ -71,9 +71,6 @@
 				form.on('submit(login)', function(data) {
 
 					$.ajax({
-						// beforeSend:function(request){
-						// 	request.setRequestHeader('x-csrf-token',csrfToken)
-						// },
 						url     : "/api/account/login",
 						type    : "POST",
 						dataType: "json",
@@ -83,7 +80,8 @@
 							window.location.href='/index'
 						}
 						else{
-							alert(data.message)
+							layer.msg(data.message)
+							get_captcha()
 							}
 						}
 					})
@@ -104,7 +102,7 @@
 						$("input[name='captcha_key']").val(random)
                     }
                     else{
-                        alert(data.message)
+						layer.msg(data.message)
                     }
                   }
               })

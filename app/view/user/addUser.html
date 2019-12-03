@@ -18,33 +18,31 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                <label class="layui-form-label">用户类型</label>
-                <div class="layui-input-block">
-                    <select name="user_type" lay-verify="required">   
-                        <option value="admin">admin</option>
-                        <option value="agent">agent</option>
-                        <option value="shop">shop</option>
-                    <option value="2"></option>
-                    </select>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">微信ID</label>
+                    <label class="layui-form-label">用户类型</label>
                     <div class="layui-input-block">
-                        <input type="text" name="open_id" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text" name="user_type" disabled value = 'admin' required  lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
-                <div class="layui-form-item">
+  
+                <div class="layui-form-item" >
                     <label class="layui-form-label">昵称</label>
                     <div class="layui-input-block">
-                        <input type="text" name="user_nick_name" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text" name="user_nick_name"  required  lay-verify="required"  autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item" >
+                    <label class="layui-form-label">微信号</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="open_id"  required  lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">微信头像地址</label>
+                    <label class="layui-form-label">手机号码</label>
                     <div class="layui-input-block">
-                        <input type="text" name="wx_url" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text" name="phone_num"  required  lay-verify="required|phone|number"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
+   
                 <div class="layui-form-item">
                 <div class="layui-input-block">
                     <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
@@ -55,14 +53,15 @@
         </form>
         </div>
     </div>   
-           
+    
+    
     <script>
-    //Demo
     layui.use('form', function(){
     var form = layui.form;
     //监听提交
     form.on('submit(formDemo)', function(data){
         let layer_index = $("form[class='layui-form']").val()
+        console.log(data)
         $.ajax({
             url     : `/api/account/register`,
             type    : "POST",
@@ -79,7 +78,7 @@
                     }, 1000);
                 }
                 else{
-                    layer.msg('添加失败!');
+                    layer.msg(data.message)
                 }
             }
         })

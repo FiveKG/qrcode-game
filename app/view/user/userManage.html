@@ -43,7 +43,7 @@
 		</div>
 		<script type="text/html" id="toolUser">
 			<div class="layui-btn-container">
-				<!-- <button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button> -->
+				<button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button>
 				<!-- <button class="layui-btn layui-btn-danger layui-btn-sm layui-icon layui-icon-close" title="删除"lay-event="is_enable"></button> -->
 			</div>
 		</script>
@@ -97,7 +97,6 @@
 						});
 					}
 				}
-
 				var form = layui.form;
 				//初始渲染
 				var user_table = table.render({
@@ -170,7 +169,7 @@
 				
 				//监听表单提交
 				form.on('submit(user-from)', function(data){
-					console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+					//console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
 					active.tableReload(data.field);
 					return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
 				});
@@ -248,9 +247,6 @@
 							body.find("input[name='last_ip']").val(obj.data.last_ip);
 							body.find("form[class='layui-form']").val(index);
 							body.find('input[name="phone_num"]').val(obj.data.phone_num);
-
-							console.log("phone_num:",obj.data)
-
 	
 						},
 						});    
@@ -263,19 +259,17 @@
 
 				//监听事件
 				table.on('toolbar(user-table)', function(obj){
-					var checkStatus = table.checkStatus(obj.config.id);
-
+					var checkStatus = table.checkStatus(obj.config.id)
 					switch(obj.event){
 						case 'add':
-							layer.msg('添加');
 							layer.open({
 								type: 2 ,
-								area: '500px',
+								area: ['500px','460px'],
 								title:"添加",
 								content: "/page/add_user",
 								success: function(layero, index){
 								var body = layer.getChildFrame('body', index);
-								body.find("form[class='layui-form']").val(index);
+								var iframe = window['layui-layer-iframe' + index];		
 								},
 						})
 						break;

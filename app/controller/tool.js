@@ -7,6 +7,8 @@ const cities = require('../tool/cities.json')
 //@ts-ignore
 const areas = require('../tool/areas.json')
 const Controller = require('egg').Controller;
+
+const qr = require('qr-image');
 /**
  * @description TODO(ToolController工具类)
  * @author woni
@@ -66,7 +68,23 @@ class ToolController extends Controller {
             logger.error(err)
             throw err
         }
-        
+    }
+
+    /**
+     * 返回二维码图像
+     * @param {*} data 
+     */
+    async generateQrcode(data){
+        const { logger,ctx,config} = this;
+        try{        
+
+            const qrcode = qr.image(data,config.qrcode.option)
+            return qrcode  
+        }catch(err){
+            logger.error(err)
+            throw err
+        }
+
     }
 
     /**
