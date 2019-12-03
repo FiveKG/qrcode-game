@@ -37,22 +37,39 @@ class SysUserController extends Controller {
     }
 
     async registerUser(){
-        const { ctx, service, logger } = this;
+        const { app,ctx, service, logger } = this;
         try{
             const reqData = ctx.request.body;
             logger.debug('请求参数：%j', reqData);
             //检验规则：https://github.com/node-modules/parameter/blob/master/example.js
             const validate_rule = {
+                user_id       : 'string',
                 user_name     : 'string',
                 user_pwd      : 'string',
                 user_type     : ['admin','agent','shop'],
-                user_nick_name: 'string',
-                wx_url        : 'string'
+                user_nick_name: 'number',
+                phone_num     : 'number'
             }
-            ctx.validate(validate_rule)
+            const validate_result = app.validator.validate(validate_rule,reqData)
+            if(validate_result.length>0){
+                //无论对方有多少项填错，都返回一个错误回去，直到所有错误改正
+                let message ; 
+                let field = validate_result.pop().field;
+                if(field ==='phone_num') message      = '手机格式不正确';
+                if(field ==='user_nick_name') message = '昵称格式不正确';
+                if(field ==='user_type') message      = '用户类型格式不正确';
+                if(field ==='user_name') message      = '用户名格式不正确';
+                ctx.body = await ctx.helper.renderError(400005, message);
+            }
 
-            if(await service.sysUser.register(reqData)){
-                ctx.body = await ctx.helper.renderSuccess(200004);
+            //注册
+            const register_result = await service.sysUser.register(reqData)
+            if(register_result.is_pass){
+                ctx.body = await ctx.helper.renderSuccess(register_result.explainCode);    
+            }
+            else{
+
+                ctx.body = await ctx.helper.renderError(register_result.explainCode,register_result.message);
             }
 
         }catch(err){
@@ -80,21 +97,15 @@ class SysUserController extends Controller {
                 return
             }
             await app.redis.del(reqData.captcha_key)
-              
+            
+            //登录检测
             const result= await service.sysUser.login(reqData);
-            //验证密码  
-            if(!result.verify_result){
-                logger.debug('wrong pwd,verify result is false');
-                ctx.body = await ctx.helper.renderError(400001);
+            if(!result.is_pass){
+                console.log('reuslt',result)
+                ctx.body = await ctx.helper.renderError(result.explainCode);
                 return
             }
-            //验证是否可用
-            if(!result.is_enable){
-                logger.debug(`wrong status,${reqData.user_name} is disable`);
-                ctx.body = await ctx.helper.renderError(400002);
-                return
-            }
-
+            
             //设置cookies
             const option = {
                 user_id       : result.user_id,
@@ -105,9 +116,11 @@ class SysUserController extends Controller {
                 wx_url        : result.wx_url,
                 is_enable     : result.is_enable
             }
-            const token = await ctx.helper.setJWTToken(option)
-            
-            ctx.body = await ctx.helper.renderSuccess(200004);
+            await ctx.helper.setJWTToken(option);
+            ctx.body = await ctx.helper.renderSuccess(result.explainCode);
+
+            //更新最后登录时间和ip
+            await service.sysUser._updateLoginTimeAndIp(result.user_id)
             
         }catch(err){
             logger.error(err);

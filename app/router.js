@@ -19,6 +19,7 @@ module.exports = app => {
   router.get('/api/common/get_area',controller.tool.getArea);
   router.get('/api/tool/get_captcha',controller.tool.getCaptcha);
   router.get('/api/tool/getJwtInfo',controller.tool.getJwtInfo);
+  router.get('/api/tool/generateQrcode',controller.tool.generateQrcode);
 
   /** ----------------------------Api-account---------------------------- */
   router.post('/api/account/register',controller.v1.sysUser.registerUser);
@@ -33,6 +34,7 @@ module.exports = app => {
   router.post('/api/shop/search', controller.v1.shop.getShop);
   router.post('/api/shop_staff/search',controller.v1.shop.getShop_staff);
   router.post('/api/game/search', controller.v1.game.getGame);
+  router.post('/api/game_session/search',controller.v1.game.getGame_session)
   router.post('/api/shop_group/search', controller.v1.shopGroup.getShop_group);
   router.post('/api/agent/search', controller.v1.agent.getAgent);
   router.post('/api/agent_staff/search',controller.v1.agentStaff.getAgent_staff);
@@ -50,7 +52,7 @@ module.exports = app => {
   router.get('/index', controller.v1.index.index);
   router.get('/page/welcome', controller.v1.index.welcome);
   router.get('/page/user/user_manage', controller.v1.sysUser.userManage);
-  //router.get('/page/add_user',controller.v1.sysUser.addUser);
+  router.get('/page/add_user',controller.v1.sysUser.addUser);
   router.get('/page/edit_user',controller.v1.sysUser.editUser);
 
   router.get('/page/shop/shop_manage', controller.v1.shop.shopManage);
