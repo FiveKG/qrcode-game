@@ -96,7 +96,6 @@ class ToolController extends Controller {
             const P_cities = cities.filter(x=>{
                 if(x.provinceCode == provinceCode)return x
             })
-            console.log(P_cities)
             ctx.body = await ctx.helper.renderSuccess(200,'',P_cities); 
         }catch(err){
             logger.error(err)

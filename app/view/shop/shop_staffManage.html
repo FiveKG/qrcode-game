@@ -163,17 +163,15 @@
                                 return '核销员'
                             }
                             return '未知'
-                        } }
+						} }
 						,{field:'is_enable', title:'是否启用',hide:true }
 						,{field:'add_time', title:'添加时间', hide:true}
 						,{field:'add_user_id', title:'操作人id', hide:true}
 						,{field:'add_user_name', title:'录入人', }
 						,{field:'is_enable', title:'是否启用', templet: function(d){
 							if(d.is_enable===true){
-								$("#is_enable").text('禁用')
 								return '是'
 							}else if(d.is_enable===false){
-								let a= $("#is_enable")
 								return 	'否'
 							}
 						}}
