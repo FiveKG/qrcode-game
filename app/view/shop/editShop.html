@@ -94,84 +94,6 @@
     </div>
     
 
-
-    <script>
-        //   <!-- 省市区初始化 -->
-         function init(data){
-             console.log('???init',data)
-         layui.use('form', function(){
-         var form = layui.form;
-             
-         $.ajax({
-            url:'/data/shop_group?select=group_id,group_name',
-            type:'GET',
-            success:function(result){
-                $('#group_id').empty()
-                result.map(element=>{
-                    $('#group_id').append(`<option value=${element.group_id}>${element.group_name}</option>`)
-                })
-                //如果无所属品牌
-                if(!data.group_id){
-                    $('#group_id').append(`<option selected value="aaaa">无所属品牌</option>`)
-                }
-                form.render('select','group_id')
-            }
-        })
-
-        $.ajax({
-            url     : `/api/common/get_province`,
-            type    : "get",
-            success: function(result){
-                $('#province').empty()
-                for(element of result.data){
-                    $('#province').append(`<option value=${element.value}>${element.label}</option>`);
-                }
-                $("#province").val(`${data.provinceCode}`);
-                form.render('select','province');     
-            }
-        })
-        
-        $.ajax({
-                url     : `/api/common/get_city`,
-                type    : "get",
-                dataType: "json",
-                data    :  {provinceCode:data.provinceCode},
-                contentType: 'application/json; charset=utf-8',
-                success: function(result){
-                    $('#city').empty()
-                    $('#area').empty()
-                    //city_object.append(`<option value="" selected>请选择城市</option>`)
-                    //area_object.append(`<option value="" selected>请选择区</option>`)
-                    
-                    for(element of result.data){
-                        $('#city').append(`<option value=${element.value}>${element.label}</option>`);
-                        }
-                    $("#city").val(`${data.cityCode}`);
-                    form.render('select','city');
-                }
-        })
-        
-        $.ajax({
-                url     : `/api/common/get_area`,
-                type    : "get",
-                data    : {cityCode:data.cityCode},
-                contentType: 'application/json; charset=utf-8',
-                success: function(result){
-                    $('#area').empty()
-                    //area_object.append(`<option value="" selected>请选择区</option>`)
-                    for(element of result.data){
-                        $('#area').append(`<option value=${element.value}>${element.label}</option>`);
-                        }
-                        $("#area").val(`${data.areaCode}`);
-                        form.render('select','area');
-                }
-        })
-
-     })
-
-     }
-    </script>
-
         <!-- 动态赋值 -->
     <script>
         layui.use('form', function(){
@@ -233,7 +155,6 @@
             })
         });  
         form.render()     
-        console.log('???动态赋值   ')
   });
     </script>
 
@@ -243,6 +164,7 @@
     var form = layui.form;
     //监听提交
     form.on('submit(formDemo)', function(data){
+        let group_id  = $('select[name="group_id"]').val()
         let layer_index = $("form[class='layui-form']").val()
         var province =  $('#province').find("option:selected").text();
         var city =  $('#city').find("option:selected").text();
@@ -253,6 +175,10 @@
         delete insert.province;
         delete insert.city;
         delete insert.area;
+        if(group_id===-1||group_id==='-1'){
+            delete insert.group_id;
+            insert.group_id=''
+        }
         insert['p_c_a_text'] = p_c_a_text;
         insert['p_c_a_id'] = p_c_a_id;
 
