@@ -249,6 +249,17 @@
 							})
 						}
 
+						function get_qrcode_url(){
+							return new Promise((resolve,reject)=>{
+								$.ajax({
+									url:`/api/tool/get_shop_agent_qrcode?shop_or_agent_id=${obj.data.agent_id}&scene_type=30`,
+									type:'GET',
+									success:result=>resolve(result),
+									error:err=>reject(err)
+								})
+							})
+						}
+
 						layer.open({
 						type: 2 ,
 						area: ['500px', '500px'],
@@ -275,7 +286,6 @@
 								//获得市
 								get_city(body.find("#province").val())
 								.then(result=>{
-							
 									body.find("#city").empty()
 									body.find("#area").empty()
 		
@@ -309,6 +319,19 @@
 							.catch(err=>{
 								console.error('err:',err);
 								body.find("#province").append(`<option value=''>获取数据失败</option>`);
+								iframe.layui.form.render();
+							})
+
+							//返回二维码url
+							get_qrcode_url()
+							.then(result=>{
+								body.find('#agent_qrcode').empty();
+								body.find('#agent_qrcode').append(`<img src='${result}' style="width:100%;" alt="经营商二维码">`);
+								iframe.layui.form.render();
+							})
+							.catch(err=>{
+								console.error('err:',err);
+								body.find('#agent_qrcode').append(` <b>获取二维码失败</b>`)
 								iframe.layui.form.render();
 							})
 

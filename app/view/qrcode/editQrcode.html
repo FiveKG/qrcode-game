@@ -42,10 +42,10 @@
                     </div>
 
                     <div class="layui-form" lay-filter="agent_id">
-                        <label class="layui-form-label">生成于代理商</label>
+                        <label class="layui-form-label">生成于经营商</label>
                     <div class="layui-input-block">
                         <select id = 'agent_id' name="agent_id" lay-search  >   
-                            <!-- <option value=-1 selected>选择代理商</option> -->
+                            <!-- <option value=-1 selected>选择经营商</option> -->
                         </select>
                     </div>
 
@@ -99,7 +99,7 @@
                         form.render('select','group_id');
                     }
                 })
-                //获取代理商
+                //获取经营商
                 $.ajax({
                     url : `/data/agent?select=agent_id,name`,
                     type:"GET",

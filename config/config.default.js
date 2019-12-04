@@ -173,11 +173,16 @@ module.exports = appInfo => {
             param3:"&g_id=",
             param4:'&hash=',
             param5:'&seq='
-        },
-        url:function(data){
-            return `https://www.qrcode.isecsp.com/entry_page?id=${data.id}&s_id=${data.s_id}&g_id=${data.g_id}&hash=${data.hash}`
         }
+      },
+    shop_agent_qrcode:{
+      url_option:{
+        //http://192.168.1.150:7001/shop/get_bind_staff_code_for_sys?shop_or_agent_id=A2UI-tbCv2hCy&scene_type=20
+        host  : 'http://192.168.1.150:7001/shop/get_bind_staff_code_for_sys?',
+        param1: 'shop_or_agent_id=',
+        param2: '&scene_type='
       }
+    }
 
   };
 

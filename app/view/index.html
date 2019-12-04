@@ -7,6 +7,7 @@
 	<title>扫码游戏平台--管理后台</title>
 	<link rel="stylesheet" href="/static/admin/layui/css/layui.css">
 	<link rel="stylesheet" href="/static/admin/css/main.css">
+	{% include "script.html" %}
 </head>
 
 <body>
@@ -16,16 +17,16 @@
 			<div class="m-logo">
 			</div>
 			<ul class="layui-nav layui-nav-tree" style="background-color: #444C63;" lay-filter="main-menu">
-				<li data-name="user" class="layui-nav-item">
+				<li data-name="user" class="layui-nav-item" >
 					<a href="javascript:;" lay-tips="用户管理" lay-direction="2">
 						<i class="layui-icon layui-icon-user"></i>
 						<cite>用户管理</cite>
 					</a>
-					<dl class="layui-nav-child">
+					<dl class="layui-nav-child"  lay-filter="user">
 						<dd data-name="user-manage">
-							<a href="javascript:;" data-url="/page/user/user_manage" data-id="user-manage" data-text="用户列表">用户列表</a>
+							<a href="javascript:;" data-url="/page/user/user_manage"  data-id="user-manage" data-text="用户列表">用户列表</a>
 						</dd>
-						<dd data-name="user-log" style="display: none">
+						<dd data-name="user-log" style="display: none" >
 							<a href="javascript:;" data-url="/page/user/user_log" data-id="user-log" data-text="用户日志">用户日志</a>
 						</dd>
 					</dl>
@@ -99,9 +100,9 @@
 					</dl>
 				</li>
 				<li data-name="agent" class="layui-nav-item">
-					<a href="javascript:;" lay-tips="经销商" lay-direction="2">
+					<a href="javascript:;" lay-tips="经销商团队" lay-direction="2">
 						<i class="layui-icon layui-icon-vercode"></i>
-						<cite>经销商</cite>
+						<cite>经销商团队</cite>
 					</a>
 					<dl class="layui-nav-child">
 						<dd data-name="agent-manage">
@@ -193,10 +194,14 @@
 		<!--遮罩-->
 	</div>
 	<script>
-
+		//解决每次点击左边导航栏时刷新主体内容
+		$('dd a').on('click',function(){
+			let url = $(this).attr('data-url')+'?r='+Math.random()
+			this.setAttribute('data-url',url)
+			$("iframe").attr("src",url);
+		})
 	</script>
-	<script src="/static/admin/layui/layui.js"></script>
-	<script src="/static/admin/js/main.js"></script>
+
 </body>
 
 </html>

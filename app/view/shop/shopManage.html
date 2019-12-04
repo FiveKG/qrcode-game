@@ -279,6 +279,17 @@
 								})
 							})
 						}
+
+						function get_qrcode_url(){
+							return new Promise((resolve,reject)=>{
+								$.ajax({
+									url:`/api/tool/get_shop_agent_qrcode?shop_or_agent_id=${obj.data.shop_id}&scene_type=20`,
+									type:'GET',
+									success:result=>resolve(result),
+									error:err=>reject(err)
+								})
+							})
+						}
 						layer.open({
 						type: 2 ,
 						area: ['500px','650px'],
@@ -305,7 +316,6 @@
 								//获得市
 								get_city(body.find("#province").val())
 								.then(result=>{
-							
 									body.find("#city").empty()
 									body.find("#area").empty()
 		
@@ -341,10 +351,10 @@
 								body.find("#province").append(`<option value=''>获取数据失败</option>`);
 								iframe.layui.form.render();
 							})
-
+							//初始化品牌
 							get_group()
 							.then(result=>{
-								$('#group_id').empty()
+								body.find("select[name='group_id']").empty()
 								result.map(element=>{
 									body.find("select[name='group_id']").append(`<option value=${element.group_id}>${element.group_name}</option>`)
 								})
@@ -360,6 +370,20 @@
 								body.find("select[name='group_id']").append(`<option value=''>获取数据失败</option>`);
 								iframe.layui.form.render();
 							})
+							//返回二维码url
+							get_qrcode_url()
+							.then(result=>{
+								body.find('#shop_qrcode').empty();
+								body.find('#shop_qrcode').append(`<img src='${result}' style="width:100%;" alt="店铺二维码">`);
+								iframe.layui.form.render();
+							})
+							.catch(err=>{
+								console.error('err:',err);
+								body.find('#shop_qrcode').append(` <b>获取二维码失败</b>`)
+								iframe.layui.form.render();
+							})
+
+
 							//var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
 							body.find("input[name='shop_id']").val(obj.data.shop_id);
 							body.find("input[name='name']").val(obj.data.name);
@@ -373,7 +397,7 @@
 							body.find("input[name='license']").val(obj.data.license);
 							body.find("input[name='longitude']").val(obj.data.longitude);
 							body.find("input[name='latitude']").val(obj.data.latitude);
-				
+							
 							
 
 							//iframe.init(data)//第一时间要执行的函数
