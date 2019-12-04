@@ -77,14 +77,33 @@ class ToolController extends Controller {
     async generateQrcode(data){
         const { logger,ctx,config} = this;
         try{        
-
             const qrcode = qr.image(data,config.qrcode.option)
             return qrcode  
         }catch(err){
             logger.error(err)
             throw err
         }
+    }
 
+    /**
+     * 店铺和经营商的二维码调用
+     */
+    async getShopAgentQrcodeByUrl(){
+        const { logger,ctx,config} = this;
+        try{
+            const reqData = this.ctx.query;
+            //获取url
+            const url = await ctx.helper.getShopAgentQrcodeUrl(reqData)
+            const result = await ctx.curl(url,{  
+                // 3 秒超时
+                timeout: 3000,})
+            ctx.status = result.status;
+            ctx.set(result.headers);
+            ctx.body = result.data;
+        }catch(err){
+            logger.error(err)
+            throw err
+        }
     }
 
     /**

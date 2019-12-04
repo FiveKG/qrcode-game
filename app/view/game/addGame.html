@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
-                    <label class="layui-form-label">支付价格</label>
+                    <label class="layui-form-label">支付价格(元)</label>
                     <div class="layui-input-block ">
                         <input type="text"  name="price"   autocomplete="off" class="layui-input">
                     </div>
@@ -100,6 +100,9 @@
     //监听提交
     form.on('submit(formDemo)', function(data){
         let layer_index = $("form[class='layui-form']").val();
+        //转换金额为分
+        data.field.price = (new Decimal(data.field.price).mul(100).toNumber());
+
         $.ajax({
             url        : `/data/game`,
             type       : "POST",

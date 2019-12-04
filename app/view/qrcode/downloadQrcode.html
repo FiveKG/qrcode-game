@@ -125,7 +125,7 @@ function makePdf(pdfName) {
 
             function download_qrcode(){
                 return new Promise((resolve,reject)=>{
-                     //目前做法是根据用户店铺id搜索出所有二维码，包括不同代理商，所以打印出来的二维码是包括不同代理商的，需注意
+                     //目前做法是根据用户店铺id搜索出所有二维码，包括不同经营商，所以打印出来的二维码是包括不同经营商的，需注意
                 $.ajax({
                 url : `/data/qrcode_view?select=qrcode_id&is_enable=eq.1&shop_name=eq.${data.field.shop_name}`,
                 type:"GET",

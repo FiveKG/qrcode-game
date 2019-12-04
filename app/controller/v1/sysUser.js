@@ -101,21 +101,21 @@ class SysUserController extends Controller {
             //登录检测
             const result= await service.sysUser.login(reqData);
             if(!result.is_pass){
-                console.log('reuslt',result)
                 ctx.body = await ctx.helper.renderError(result.explainCode);
                 return
             }
             
             //设置cookies
             const option = {
-                user_id       : result.user_id,
-                user_name     : result.user_name,
-                user_type     : result.user_type,
-                open_id       : result.open_id,
-                user_nick_name: result.user_nick_name,
-                wx_url        : result.wx_url,
-                is_enable     : result.is_enable
+                user_id       : result.data.user_id,
+                user_name     : result.data.user_name,
+                user_type     : result.data.user_type,
+                open_id       : result.data.open_id,
+                user_nick_name: result.data.user_nick_name,
+                wx_url        : result.data.wx_url,
+                is_enable     : result.data.is_enable
             }
+
             await ctx.helper.setJWTToken(option);
             ctx.body = await ctx.helper.renderSuccess(result.explainCode);
 

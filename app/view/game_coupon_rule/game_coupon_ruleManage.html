@@ -353,6 +353,7 @@
 								title:"添加",
 								content: "/page/add_game_coupon_rule",
 								success: function(layero, index){
+                                    var body = layer.getChildFrame('body', index);
                                     var iframe = window['layui-layer-iframe' + index];
 
                                     //网络请求，动态生成子页面列表
@@ -371,8 +372,8 @@
                                             //console.log("coupon:",coupon)
                                         }
                                         iframe.layui.form.render();
+                                        console.log(iframe)
                                     })
-									var body = layer.getChildFrame('body', index);
 									body.find("form[class='layui-form']").val(index);
 								},
 							})

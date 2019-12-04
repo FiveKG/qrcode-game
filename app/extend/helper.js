@@ -57,7 +57,7 @@ module.exports = {
     generateToken(accountInfo) {
         const { secret, expiresIn } = this.config.token;
         return jwt.sign(accountInfo, secret, {
-            expiresIn,
+            expiresIn:expiresIn,
         });
     },
     /**
@@ -125,6 +125,7 @@ module.exports = {
                    .digest('hex');
         return hash
     },
+
     /**
      * 获得url
      * @param {Object} reqData
@@ -134,12 +135,6 @@ module.exports = {
         const {config} = this;
 
         //http://域名/entry_page?id=$id&s_id=$shop_id&g_id=&$group_id&hash=xxxxxxxxx
-        let url_option = {
-            id:reqData.qrcode_id||null,
-            s_id:reqData.shop_id||null,
-            g_id:reqData.group_id||null,
-            hash:reqData.hash_str||null
-        }
         const host      = config.qrcode.url_option.host;
         const id        = config.qrcode.url_option.param1+reqData.qrcode_id||null;
         const s_id      = config.qrcode.url_option.param2+reqData.shop_id||null;
@@ -150,12 +145,27 @@ module.exports = {
         //const qrcodeUrl = config.qrcode.url(url_option)
         return qrcodeUrl
     },
+
+    /**
+     * 拼接店铺/经营商url
+     * @param {{shop_or_agent_id:String,
+     *           scene_type:String }} reqData 
+     */
+    async getShopAgentQrcodeUrl(reqData){
+        const {config} = this;
+        //http://192.168.1.150:7001/shop/get_bind_staff_code_for_sys?shop_or_agent_id=A2UI-tbCv2hCy&scene_type=20
+        const host             = config.shop_agent_qrcode.url_option.host;
+        const shop_or_agent_id = config.shop_agent_qrcode.url_option.param1+reqData.shop_or_agent_id||null;
+        const scene_type       = config.shop_agent_qrcode.url_option.param2+reqData.scene_type||null;
+        const qrcodeUrl = host+shop_or_agent_id+scene_type;
+        return qrcodeUrl
+    },
     /**
      * 
-     * @param {Object} option
+     * @param {Object} accountInfo
      */
-    async setJWTToken(option){
-        const token = await this.generateToken(option)
+    async setJWTToken(accountInfo){
+        const token = await this.generateToken(accountInfo)
         const {jwt_key,cookies_options} = this.config.cookies
         this.ctx.cookies.set(jwt_key,token,cookies_options)
     },

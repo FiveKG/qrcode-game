@@ -156,6 +156,8 @@
                     data    : {provinceCode:data.value},
                     contentType: 'application/json; charset=utf-8',
                     success: function(result){
+                        city_object.empty();
+                        area_object.empty();
                         city_object.append(`<option value="-1" selected>请选择市</option>`)
                         area_object.append(`<option value="-1" selected>请选择区</option>`)
                         for(element of result.data){
@@ -172,6 +174,7 @@
                     data    : {cityCode:data.value},
                     contentType: 'application/json; charset=utf-8',
                     success: function(result){
+                        area_object.empty();
                         area_object.append(`<option value="-1" selected>请选择区</option>`)
                         for(element of result.data){
                             area_object.append(`<option value=${element.value}>${element.label}</option>`);

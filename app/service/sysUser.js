@@ -264,6 +264,7 @@ class SysUserService extends Service {
             //通过
             result.is_pass = true;
             result.explainCode = 200000;
+            result.data = sql_result
             return result
         } catch (err) {
             logger.error(err)
