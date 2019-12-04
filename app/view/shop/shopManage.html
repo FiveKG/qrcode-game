@@ -379,6 +379,7 @@
 							})
 							.catch(err=>{
 								console.error('err:',err);
+								body.find('#shop_qrcode').empty();
 								body.find('#shop_qrcode').append(` <b>获取二维码失败</b>`)
 								iframe.layui.form.render();
 							})

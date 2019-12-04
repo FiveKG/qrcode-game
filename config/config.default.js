@@ -176,9 +176,10 @@ module.exports = appInfo => {
         }
       },
     shop_agent_qrcode:{
+      timeout:10000,
       url_option:{
         //http://192.168.1.150:7001/shop/get_bind_staff_code_for_sys?shop_or_agent_id=A2UI-tbCv2hCy&scene_type=20
-        host  : 'http://192.168.1.150:7001/shop/get_bind_staff_code_for_sys?',
+        host  : 'https://www.qrcode.isecsp.com/api/system/shop_agent_qrcode?',
         param1: 'shop_or_agent_id=',
         param2: '&scene_type='
       }
