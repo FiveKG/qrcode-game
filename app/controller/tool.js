@@ -96,7 +96,7 @@ class ToolController extends Controller {
             const url = await ctx.helper.getShopAgentQrcodeUrl(reqData)
             const result = await ctx.curl(url,{  
                 // 3 秒超时
-                timeout: 3000,})
+                timeout: config.shop_agent_qrcode.timeout,})
             ctx.status = result.status;
             ctx.set(result.headers);
             ctx.body = result.data;
