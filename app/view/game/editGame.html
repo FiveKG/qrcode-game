@@ -45,9 +45,15 @@
                         <label class="layui-form-label">游戏类型</label>
                         <div class="layui-input-block">
                         <select id = 'game_type' name="game_type" lay-search  >   
-                            <option value="1" >积分类游戏</option>
-                            <option value='2' >过关类游戏</option>
+                            <option value="1" >射击类游戏</option>
+                            <option value='2' >休闲类游戏</option>
                         </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">游戏描述</label>
+                        <div class="layui-input-block ">
+                            <textarea name="game_desc" autocomplete="off" placeholder="请输入" class="layui-textarea"></textarea>
                         </div>
                     </div>
                     <div class="layui-form-item">
@@ -60,14 +66,7 @@
         </div>
     </div>
 
-    <script>
-        function init(data){
-            layui.use('form', function(){
-            var form = layui.form;
-            form.render('select')
-            })
-        }
-    </script>
+
     <script>
     //监听提交
     layui.use('form', function(){

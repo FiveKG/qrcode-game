@@ -43,7 +43,7 @@
 		</div>
 		<script type="text/html" id="toolpay_order">
 			<div class="layui-btn-container">
-				<button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button>
+				<!-- <button class="layui-btn layui-btn-sm layui-icon layui-icon-add-1" title="新增" lay-event="add"></button> -->
 				<!-- <button class="layui-btn layui-btn-danger layui-btn-sm layui-icon layui-icon-close" title="删除"lay-event="is_enable"></button> -->
 			</div>
 		</script>
@@ -205,7 +205,7 @@
 						}
 					}
 					else if(layEvent === 'edit'){ //编辑
-						//layer.msg('编辑');
+						//
 						//弹出层引入用户修改页面
 						//同步更新缓存对应的值 也可以直接重载表格
 						layer.open({
@@ -248,7 +248,7 @@
 
 					switch(obj.event){
 						case 'add':
-							layer.msg('添加');
+							 
 							layer.open({
 								type: 2 ,
 								area: ['500px', '450px'],

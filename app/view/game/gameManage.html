@@ -136,6 +136,7 @@
 								return '休闲类游戏'
 							}
 						} }
+						,{field:'game_desc', title:'游戏描述',}
 						,{field:'add_time', title:'添加时间',hide:true }
 						,{field:'is_enable', title:'是否启用',hide:true }
 						,{field:'user_name', title:'录入人',}
@@ -223,17 +224,18 @@
 						}
 					}
 					else if(layEvent === 'edit'){ //编辑
-						//layer.msg('编辑');
+						//
 						//弹出层引入用户修改页面
 						//同步更新缓存对应的值 也可以直接重载表格
 						layer.open({
 						type: 2 ,
-						area: ['500px','500px'],
+						area: ['500px','600px'],
 						resize  :false,//是否允许拉伸
 						title:"编辑",
 						content:`/page/edit_game`,
 						success: function(layero, index){
 							var body = layer.getChildFrame('body', index);
+							var iframe = window['layui-layer-iframe' + index];
 							//console.log(obj.data)
 							//var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
 							body.find("input[name='game_id']").val(obj.data.game_id);
@@ -246,11 +248,8 @@
 							body.find("input[name='add_time']").val(obj.data.add_time);
 							body.find("input[name='is_enable']").val(obj.data.is_enable);
 							body.find("input[name='add_user_id']").val(obj.data.add_user_id);
-							var iframe = window['layui-layer-iframe' + index];
-							var data = {
-								
-							}
-							iframe.init(data)//第一时间要执行的函数
+							body.find("textarea[name='game_desc']").val(obj.data.game_desc);
+							
 						},
 						});    
 						// obj.update({
@@ -266,10 +265,10 @@
 
 					switch(obj.event){
 						case 'add':
-							layer.msg('添加');
+							 
 							layer.open({
 								type: 2 ,
-								area: ['500px','450px'],
+								area: ['500px','600px'],
 								title:"添加",
 								content: "/page/add_game",
 								success: function(layero, index){

@@ -48,9 +48,10 @@ class GameService extends Service {
                 game.add_time,
                 game.is_enable,
                 game.add_user_id,
-                u.user_name
+                game.game_desc,
+                sys_user.user_name
             FROM
-            "public".game as game inner join "public".sys_user as u on u.user_id = game.add_user_id ${joinStr} `;
+            "public".game as game inner join "public".sys_user as sys_user on sys_user.user_id = game.add_user_id ${joinStr} `;
 
             let searchSql = await this.service.tool.joinSearchSql(sql, start, size);
             let total = await this.service.tool.findRowCount(sql, params);
