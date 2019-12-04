@@ -167,7 +167,7 @@ module.exports = appInfo => {
           margin :4,//白色边框，png默认是4，其他为1
         },
         url_option:{
-            host:"https://www.qrcode.isecsp.com/entry_page?",
+            host:"https://www.qrcode.isecsp.com/api/entry_page?",
             param1:'id=',
             param2:'&s_id=',
             param3:"&g_id=",

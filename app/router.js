@@ -19,7 +19,6 @@ module.exports = app => {
   router.get('/api/common/get_area',controller.tool.getArea);
   router.get('/api/tool/get_captcha',controller.tool.getCaptcha);
   router.get('/api/tool/getJwtInfo',controller.tool.getJwtInfo);
-  router.get('/api/tool/generateQrcode',controller.tool.generateQrcode);
   router.get('/api/tool/get_shop_agent_qrcode',controller.tool.getShopAgentQrcodeByUrl);
 
   /** ----------------------------Api-account---------------------------- */

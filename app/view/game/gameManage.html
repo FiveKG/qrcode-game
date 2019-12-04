@@ -125,8 +125,8 @@
 						,{field:'game_img', title:'游戏大图', }
 						,{field:'game_img_small', title:'游戏小图', }
 						,{field:'price', title:'支付价格(元)',templet:function(d){
-							       //转换金额为分
-								return  new Decimal(d.price).div(100).toNumber();
+							//转换金额为分
+							return  new Decimal(d.price).div(100).toNumber();
 						} }
 						,{field:'game_url', title:'游戏打开路径', }
 						,{field:'game_type', title:'游戏类型',templet:function(d){

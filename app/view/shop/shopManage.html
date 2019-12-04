@@ -97,6 +97,54 @@
 		</script>
 
 		<script>
+			function get_province(){
+				return new Promise((resolve,reject)=>{
+					$.ajax({
+						url     : `/api/common/get_province`,
+						type    : "get",
+						success: (result)=>resolve(result),
+						error:(err)=>reject(err)
+					})
+				})
+			}
+			function get_city(provinceCode){
+				return new Promise((resolve,reject)=>{
+					$.ajax({
+						url     : `/api/common/get_city`,
+						type    : "get",
+						dataType: "json",
+						data    :  {provinceCode:provinceCode},
+						contentType: 'application/json; charset=utf-8',
+						success: (result)=>resolve(result),
+						error:(err)=>reject(err)
+					})
+				})
+			}
+			function get_area(cityCode){
+				return new Promise((resolve,reject)=>{
+					$.ajax({
+						url     :`/api/common/get_area`,
+						type    : "get",
+						data    : {cityCode:cityCode},
+						contentType: 'application/json; charset=utf-8',
+						success: (result)=>resolve(result),
+						error:(err)=>reject(err)
+					})
+				})
+			}
+
+			function get_group(){
+				return new Promise((resolve,reject)=>{
+					$.ajax({
+						url:'/data/shop_group?select=group_id,group_name',
+						type:'GET',
+						success:result=>resolve(result),
+						error:err=>reject(err)
+					})
+				})
+			}
+
+			
 			layui.use(['table', 'dialog', 'jquery'], function() {
 				var table = layui.table;
 				var dialog = layui.dialog;
@@ -233,53 +281,6 @@
 						//layer.msg('编辑');
 						//弹出层引入用户修改页面
 						//同步更新缓存对应的值 也可以直接重载表格
-						function get_province(){
-							return new Promise((resolve,reject)=>{
-								$.ajax({
-									url     : `/api/common/get_province`,
-									type    : "get",
-									success: (result)=>resolve(result),
-									error:(err)=>reject(err)
-								})
-							})
-						}
-						function get_city(provinceCode){
-							return new Promise((resolve,reject)=>{
-								$.ajax({
-									url     : `/api/common/get_city`,
-									type    : "get",
-									dataType: "json",
-									data    :  {provinceCode:provinceCode},
-									contentType: 'application/json; charset=utf-8',
-									success: (result)=>resolve(result),
-									error:(err)=>reject(err)
-								})
-							})
-						}
-						function get_area(cityCode){
-							return new Promise((resolve,reject)=>{
-								$.ajax({
-									url     :`/api/common/get_area`,
-									type    : "get",
-									data    : {cityCode:cityCode},
-                					contentType: 'application/json; charset=utf-8',
-									success: (result)=>resolve(result),
-									error:(err)=>reject(err)
-								})
-							})
-						}
-
-						function get_group(){
-							return new Promise((resolve,reject)=>{
-								$.ajax({
-									url:'/data/shop_group?select=group_id,group_name',
-									type:'GET',
-									success:result=>resolve(result),
-									error:err=>reject(err)
-								})
-							})
-						}
-
 						function get_qrcode_url(){
 							return new Promise((resolve,reject)=>{
 								$.ajax({

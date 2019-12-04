@@ -126,7 +126,10 @@
 								return '未知'
 							}
 						}}
-						,{field:'amount', title:'支付金额', }
+						,{field:'amount', title:'支付金额(元)',templet:function(d){
+							//转换金额为分
+							return  new Decimal(d.amount).div(100).toNumber();
+						} }
 						,{field:'pay_way_order_id', title:'在支付渠道的订单id', }
 						,{field:'payment_time', title:'到账时间',templet:function(d){
 							return dateFns.format(d.add_time,'YYYY-MM-DD HH:mm')
