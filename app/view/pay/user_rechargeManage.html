@@ -95,7 +95,10 @@
 						,{field:'recharge_id', title:'充值记录id', hide:true}
 						,{field:'user_id', title:'用户id', hide:true}
 						,{field:'user_name', title:'用户名', }
-						,{field:'recharge_amount', title:'充值金额', }
+						,{field:'recharge_amount', title:'充值金额(元)',templet:function(d){
+							//转换金额为分
+							return  new Decimal(d.recharge_amount).div(100).toNumber();
+						} }
 						,{field:'add_time', title:'时间',hide:true }
 						,{field:'add_time', title:'添加时间', templet:function(d){
 							return dateFns.format(d.add_time,'YYYY-MM-DD HH:mm')

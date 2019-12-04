@@ -70,20 +70,6 @@ class ToolController extends Controller {
         }
     }
 
-    /**
-     * 返回二维码图像
-     * @param {*} data 
-     */
-    async generateQrcode(data){
-        const { logger,ctx,config} = this;
-        try{        
-            const qrcode = qr.image(data,config.qrcode.option)
-            return qrcode  
-        }catch(err){
-            logger.error(err)
-            throw err
-        }
-    }
 
     /**
      * 店铺和经营商的二维码调用

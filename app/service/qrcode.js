@@ -130,8 +130,6 @@ class QrcodeService extends Service {
             let {rows} = await this.app.pg.query(sql)
 
             const url =await  ctx.helper.qrcode_url(rows.pop())
-
-            //const qrcode = await this.app.controller.tool.generateQrcode(url)
             const qrcode = qr.image(url,config.qrcode.option)
             return qrcode            
         }catch(e){

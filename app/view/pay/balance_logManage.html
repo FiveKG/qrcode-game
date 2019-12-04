@@ -94,8 +94,14 @@
 						,{field:'id', title:'id',hide:true }
 						,{field:'user_id', title:'用户id',hide:true }
 						,{field:'user_name', title:'用户名', }
-						,{field:'before', title:'变化前的余额', }
-						,{field:'after', title:'变化后的余额', }
+						,{field:'before', title:'变化前的余额(元)', templet:function(d){
+							//转换金额为分
+							return  new Decimal(d.before).div(100).toNumber();
+						}}
+						,{field:'after', title:'变化后的余额(元)',templet:function(d){
+							//转换金额为分
+							return  new Decimal(d.after).div(100).toNumber();
+						} }
 						,{field:'change_reason', title:'变动的原因', templet:function(d){
 							if(d.change_reason==1){
 								return '充值'
