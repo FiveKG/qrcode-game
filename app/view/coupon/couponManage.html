@@ -306,36 +306,42 @@
 
                         var index=layer.open({
 						type: 2 ,
-						area: ['500px', '650px'],
-						title:"编辑",
+						area: ['500px', '550px'],
+                        title:"编辑",
+                        resize  :false,//是否允许拉伸
 						content:`/page/edit_coupon`,
 						success: function(layero, index){
                             var body = layer.getChildFrame('body', index);
                             var iframe = window['layui-layer-iframe' + index];
-                            const ajax1 = getGroup()
-                            const ajax2 = getShop()
-                            //todo bug:没有显示出店铺和品牌
-                            ajax1.then((res)=>{
-
+                            getGroup().then((res)=>{
                                 res.map(group=>{
                                     body.find("select[name='group_id']").append(`<option value=${group.group_id}>${group.group_name}</option>`)
                                 })
-                                body.find("select[name='group_id']").append(`<option  value=-1>无所属品牌</option>`)
-                                if(!data.group_id){
-                                    body.find("select[name='group_id']").val(-1);//group_id=-1，则表示没有品牌
+                                body.find("select[name='group_id']").append(`<option  value="-1">请选择</option>`)
+                                iframe.layui.form.render();
+
+                                if(!obj.data.group_id){
+                                    body.find("select[name='group_id']").val("-1");//group_id=-1，则表示没有品牌
+                                    body.find("#group").attr("style","display:none;")
                                 }else{
-                                    body.find("select[name='group_id']").val(data.group_id);
+                                    body.find("select[name='group_id']").val(obj.data.group_id);
                                 }
                                 iframe.layui.form.render();
-                                console.log('group:',res)
                             })
-                            ajax2.then((res)=>{
+                            getShop().then((res)=>{
                                 for(shop of res){
                                     body.find("select[name='shop_id']").append(`<option value=${shop.shop_id}>${shop.name}</option>`);
                                 }
-                                body.find("select[name='shop_id']").val(obj.data.shop_id);
+                                body.find("select[name='shop_id']").append(`<option  value="-1">请选择</option>`)
                                 iframe.layui.form.render();
-                                console.log('shop:',res)
+                                
+                                if(!obj.data.shop_id){
+                                    body.find("select[name='shop_id']").val("-1");//shop_id=-1，则表示没有品牌
+                                    body.find("#shop").attr("style","display:none;")
+                                }else{
+                                    body.find("select[name='shop_id']").val(obj.data.shop_id);
+                                }
+                                iframe.layui.form.render();
                             })
                             
 							body.find("input[name='coupon_id']").val(obj.data.coupon_id);
@@ -352,18 +358,6 @@
 							body.find("input[name='add_time']").val(obj.data.add_time);
 							body.find("input[name='is_enable']").val(obj.data.is_enable);
 							
-
-							var data = {
-                                coupon_type: obj.data.coupon_type,
-                                shop_id    : obj.data.shop_id,
-                                group_id   : obj.data.group_id,
-                                shop_name  : obj.data.shop_name,
-                                group_name : obj.data.group_name
-							}
-                          // iframe.init(data)
-
-							//重新渲染
-							iframe.layui.form.render();
 						},
 
 						});    
@@ -379,8 +373,9 @@
 							 
 							layer.open({
 								type: 2 ,
-								area: ['500px', '450px'],
-								title:"添加",
+								area: ['500px', '550px'],
+                                title:"添加",
+                                resize  :false,//是否允许拉伸
 								content: "/page/add_coupon",
 								success: function(layero, index){
 									var body = layer.getChildFrame('body', index);

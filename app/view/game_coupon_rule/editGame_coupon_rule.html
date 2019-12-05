@@ -91,29 +91,98 @@
 
     <!-- 监听提交 -->
     <script>
+    //要先检查是否有覆盖，根据游戏和优惠券筛选但不包括自身
+     function check_range(id,game_id,coupon_id){
+        return new Promise((resolve,reject)=>{
+            $.ajax({
+                url     : `/data/game_coupon_rule?select=play_count_range,rule_name&game_id=eq.${game_id}&coupon_id=eq.${coupon_id}&id=not.eq.${id}`,
+                type    : 'GET',
+                dataType: "json",
+                success : result=>resolve(result),
+                error   : err=>reject(err),
+            })
+        })
+    }   
+
     layui.use('form', function(){
     var form = layui.form;
     form.on('submit(formDemo)', function(data){
-        $.ajax({
-            url     : `/data/game_coupon_rule?id=eq.${data.field.id}`,
-            type    : "PATCH",
-            dataType: "json",
-            data    : JSON.stringify(data.field),
-            contentType: 'application/json; charset=utf-8',
-            success: function(data){
-                if(!data){
-                    layer.msg('更新成功!');
-                    setTimeout(function(){ 
-                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-                        parent.layer.close(index); //再执行关闭   
-                        parent.layui.table.reload('game_coupon_ruleTable');//刷新父表格  
-                    }, 1000);
-                }
-                else{
-                    layer.msg('更新失败!');
-                }
+        let edit_range = eval(data.field.play_count_range)
+        let comparison;
+
+        check_range(data.field.id,data.field.game_id,data.field.coupon_id)
+        .then(result=>{
+            if(result.length!==0){
+                /**存在优惠券,检查区间.判断思路:如果区间不相交，要么添加区间的最小值应该大于比较区间的最大值，要么添加区间的最大值小于比较区间的最小值
+                 * 只要有存在一个就返回含有该元素的数组，否则返回undefined**/
+                comparison=result.find(element=>{
+                    let sql_range = eval(element.play_count_range)
+                    if(Math.min(...edit_range) > Math.max(...sql_range)){
+                        //通过
+                        return false
+                    }
+                    else if(Math.max(...edit_range)<Math.min(...sql_range)){
+                        //通过
+                        return false
+                    }
+                    else{
+                        layer.msg(`存在玩的次数有交集的规则,规则名为：${element.rule_name}`);
+                        return element
+                    }
+                })
+            }
+           // 如果数据库无此数据或者无交集区间
+            if(!comparison||result.length===0){
+                $.ajax({
+                    url        : `/api/game_coupon_rule/edit_rule`,
+                    type       : "POST",
+                    dataType   : "json",
+                    data       : JSON.stringify(data.field),
+                    contentType: 'application/json; charset=utf-8',
+                    //由于插入成功后postres没有返回数据
+                    success:function(data){
+                        console.log(data)
+                        if(data.success===true){
+                            layer.msg('更新成功!');
+                            setTimeout(function(){ 
+                                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                                parent.layer.close(index); //再执行关闭   
+                                parent.layui.table.reload('game_coupon_ruleTable');//刷新父表格  
+                            }, 1000);
+                        }
+                        else{
+                            layer.msg('更新失败!');
+                            return false
+                        }
+                    },
+
+                })
             }
         })
+        .catch(err=>{
+            console.error(err)
+            return false
+        })
+        // $.ajax({
+        //     url     : `/data/game_coupon_rule?id=eq.${data.field.id}`,
+        //     type    : "PATCH",
+        //     dataType: "json",
+        //     data    : JSON.stringify(data.field),
+        //     contentType: 'application/json; charset=utf-8',
+        //     success: function(data){
+        //         if(!data){
+        //             layer.msg('更新成功!');
+        //             setTimeout(function(){ 
+        //                 var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        //                 parent.layer.close(index); //再执行关闭   
+        //                 parent.layui.table.reload('game_coupon_ruleTable');//刷新父表格  
+        //             }, 1000);
+        //         }
+        //         else{
+        //             layer.msg('更新失败!');
+        //         }
+        //     }
+        // })
         return false;
     });
     });

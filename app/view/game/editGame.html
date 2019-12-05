@@ -6,7 +6,7 @@
         <div class="layui-card-body">
                 <form class="layui-form"  action="">
                     <div class="layui-form-item layui-row"  style="display:none">
-                        <label class="layui-form-label"></label>
+                        <label class="layui-form-label">ID</label>
                         <div class="layui-input-block ">
                             <input type="text"  name="game_id"   autocomplete="off" class="layui-input">
                         </div>
@@ -14,37 +14,37 @@
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">游戏名称</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="game_name"   autocomplete="off" class="layui-input">
+                            <input type="text"  name="game_name"  lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">游戏大图</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="game_img"   autocomplete="off" class="layui-input">
+                            <input type="text"  name="game_img"  lay-verify="required"  autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">游戏小图</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="game_img_small"   autocomplete="off" class="layui-input">
+                            <input type="text"  name="game_img_small"   lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">支付价格(元)</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="price"   autocomplete="off" class="layui-input">
+                            <input type="text"  name="price"  lay-verify="required|number"  autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">游戏打开路径</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="game_url"   autocomplete="off" class="layui-input">
+                            <input type="text"  name="game_url"  lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">游戏类型</label>
                         <div class="layui-input-block">
-                        <select id = 'game_type' name="game_type" lay-search  >   
+                        <select id = 'game_type' name="game_type" lay-search  lay-verify="required" >   
                             <option value="1" >射击类游戏</option>
                             <option value='2' >休闲类游戏</option>
                         </select>
