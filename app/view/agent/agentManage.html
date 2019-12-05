@@ -117,7 +117,10 @@
 						,{field:'local_address', title:'地址', }
 						,{field:'is_enable', title:'是否启用',hide:true }
 						,{field:'add_user_id', title:'操作人id',hide:true }
-						,{field:'balance', title:'余额', }
+						,{field:'balance', title:'余额(元)', templet:function(d){
+							//转换金额为分
+							return  new Decimal(d.balance).div(100).toNumber();
+						} }
 						,{field:'add_time', title:'添加时间', hide:true}
 						,{field:'user_name', title:'录入人', }
 						,{field:'is_enable', title:'是否启用', templet: function(d){
@@ -363,11 +366,11 @@
 
 					switch(obj.event){
 						case 'add':
-							 
 							layer.open({
 								type: 2 ,
-								area: ['500px', '450px'],
+								area: ['500px', '530px'],
 								title:"添加",
+								resize  :false,//是否允许拉伸
 								content: "/page/add_agent",
 								success: function(layero, index){
 									var body = layer.getChildFrame('body', index);

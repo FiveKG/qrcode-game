@@ -63,6 +63,45 @@ class Game_coupon_ruleService extends Service {
             return null;
         }
     }
+
+    async editRule(reqData){
+        const { logger } = this;
+        logger.debug(`editRule,,search:${JSON.stringify(reqData,null,4)}`)
+        try{
+            let select_sql = `SELECT * FROM game_coupon_rule WHERE id = '${reqData.id}'`
+
+            let delete_sql = `DELETE FROM game_coupon_rule WHERE  id = '${reqData.id}'`
+
+            let insert_sql = `
+            INSERT INTO public."game_coupon_rule"
+                ("id"
+                ,"game_id"
+                ,"coupon_id"
+                ,"score"
+                ,"play_count_range"
+                ,"add_user_id"
+                ,"add_time"
+                ,"is_enable"
+                ,"rule_name")
+            VALUES
+                ($1,$2,$3,$4,$5,$6,$7,$8,$9);  `
+
+            //先获取原数据进行构造数据
+            const { rows } = await this.app.pg.query(select_sql);
+            let select_data = rows.pop()
+
+            await this.app.pg.query('BEGIN');
+            await this.app.pg.query(delete_sql);
+            await this.app.pg.query(insert_sql,[reqData.id,reqData.game_id,reqData.coupon_id,reqData.score,reqData.play_count_range,select_data.add_user_id,select_data.add_time,select_data.is_enable,reqData.rule_name]);
+            await this.app.pg.query('COMMIT');
+
+            return true
+        }catch(err){
+            await this.app.pg.query('ROLLBACK');
+            logger.error(err);
+            return null;
+        }
+    }
 }
 
 module.exports = Game_coupon_ruleService;

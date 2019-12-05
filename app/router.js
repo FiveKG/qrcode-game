@@ -28,6 +28,8 @@ module.exports = app => {
   router.post('/api/qrcode/add_qrcode',controller.v1.qrcode.insertQrcode);
   router.get('/api/qrcode/generate_qr_code',controller.v1.qrcode.GenerateQrcode);
   
+  /** ----------------------------Api-game_coupon_rule---------------------------- */
+  router.post('/api/game_coupon_rule/edit_rule',controller.v1.gameCouponRule.editRule)
 
   /** ----------------------------Api-showManage---------------------------- */
   router.post('/api/account/search', controller.v1.sysUser.getSysUser);

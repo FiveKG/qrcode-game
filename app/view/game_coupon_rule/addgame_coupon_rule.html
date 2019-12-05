@@ -8,7 +8,7 @@
                 <div class="layui-form-item layui-row" style="display: none">
                     <label class="layui-form-label">主键id</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="id" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text"  name="id"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
@@ -20,34 +20,34 @@
                 <div class="layui-form-item layui-row" >
                     <label class="layui-form-label">游戏</label>
                     <div class="layui-input-block">
-                    <select id = 'game_id' name="game_id" lay-search  >   
+                    <select id = 'game_id' name="game_id" lay-search lay-verify="required"  >   
                     </select>
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
                     <label class="layui-form-label">优惠券</label>
                     <div class="layui-input-block">
-                    <select id = 'coupon_id' name="coupon_id" lay-search  >   
+                    <select id = 'coupon_id' name="coupon_id" lay-search lay-verify="required" >   
                     </select>
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
                     <label class="layui-form-label">得分</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="score" required  lay-verify="required|number"  autocomplete="off" class="layui-input">
+                        <input type="text"  name="score"  lay-verify="required|number"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
                     <label class="layui-form-label">玩的次数</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="play_count_range" value='[0,50]' disabled  autocomplete="off" class="layui-input">
+                        <input type="text"  name="play_count_range" value='[0,50]' disabled   autocomplete="off" class="layui-input">
                         <div id="play_count_range_slide"></div>
                     </div>
                 </div>
                 <div class="layui-form-item layui-row"  style="display: none">
                     <label class="layui-form-label">操作的用户的id</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="add_user_id" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text"  name="add_user_id"   autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -103,36 +103,78 @@
             form.render();
          });
     </script>
+
     <!-- 提交监听 -->
     <script>
+     //要先检查是否有覆盖，根据游戏和优惠券筛选
+     function check_range(game_id,coupon_id){
+        return new Promise((resolve,reject)=>{
+            $.ajax({
+                url     : `/data/game_coupon_rule?select=play_count_range,rule_name&game_id=eq.${game_id}&coupon_id=eq.${coupon_id}`,
+                type    : 'GET',
+                dataType: "json",
+                success : result=>resolve(result),
+                error   : err=>reject(err),
+            })
+        })
+    }   
     layui.use('form', function(){
     var form = layui.form;
-    //监听提交
     form.on('submit(formDemo)', function(data){
-        let layer_index = $("form[class='layui-form']").val()
-        console.log(data.field)
-        $.ajax({
-            url        : `/data/game_coupon_rule`,
-            type       : "POST",
-            dataType   : "json",
-            data       : JSON.stringify(data.field),
-            contentType: 'application/json; charset=utf-8',
-            //由于插入成功后postres
-            error:function(data){
-                if(data.status=="201"){
-                    layer.msg('添加成功!');
-                    setTimeout(function(){ 
-                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-                        parent.layer.close(index); //再执行关闭   
-                        parent.layui.table.reload('game_coupon_ruleTable');//刷新父表格
-                    }, 1000);
-                }else{
-                    layer.msg('添加失败!');
-                }
-            },
-            complete:function(XHR){
-               //console.log(XHR.responseJSON)
+        let add_range = eval(data.field.play_count_range)
+        let comparison;
+        //先检查该游戏的优惠券的玩的次数区间
+        check_range(data.field.game_id,data.field.coupon_id)
+        .then(result=>{
+            if(result.length!==0){
+                /**存在优惠券,检查区间.判断思路:如果区间不相交，要么添加区间的最小值应该大于比较区间的最大值，要么添加区间的最大值小于比较区间的最小值
+                 * 只要有存在一个就返回含有该元素的数组，否则返回undefined**/
+                comparison=result.find(element=>{
+                    let sql_range = eval(element.play_count_range)
+                    if(Math.min(...add_range) > Math.max(...sql_range)){
+                        //通过
+                        return false
+                    }
+                    else if(Math.max(...add_range)<Math.min(...sql_range)){
+                        //通过
+                        return false
+                    }
+                    else{
+                        layer.msg(`存在玩的次数有交集的规则,规则名为：${element.rule_name}`);
+                        return element
+                    }
+                })
             }
+            //如果数据库无此数据或者无交集区间
+            if(!comparison||result.length===0){
+                $.ajax({
+                    url        : `/data/game_coupon_rule`,
+                    type       : "POST",
+                    dataType   : "json",
+                    data       : JSON.stringify(data.field),
+                    contentType: 'application/json; charset=utf-8',
+                    //由于插入成功后postres没有返回数据
+                    error:function(data){
+                        if(data.status=="201"){
+                            layer.msg('添加成功!');
+                            setTimeout(function(){ 
+                                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                                parent.layer.close(index); //再执行关闭   
+                                parent.layui.table.reload('game_coupon_ruleTable');//刷新父表格
+                            }, 1000);
+                        }else{
+                            layer.msg('添加失败!');
+                        }
+                    },
+                    complete:function(XHR){
+                    //console.log(XHR.responseJSON)
+                    }
+        })
+            }
+        })
+        .catch(err=>{
+            console.error(err)
+            return false
         })
         return false;
     });

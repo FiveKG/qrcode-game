@@ -14,7 +14,7 @@
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">优惠券名称</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="coupon_name"   autocomplete="off" class="layui-input">
+                            <input type="text"  name="coupon_name" lay-verify="required"  autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
@@ -33,21 +33,21 @@
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">优惠券的类型</label>
                         <div class="layui-input-block">
-                        <select id = 'coupon_type' name="coupon_type" lay-search  >   
+                        <select id = 'coupon_type' name="coupon_type" lay-search lay-filter="coupon_type" >   
                             <option value=10 >通用优惠券</option>
                             <option value=20 >店铺优惠券</option>
                             <option value=30 >连锁品牌优惠券</option>
                         </select>
                         </div>
                     </div>
-                    <div class="layui-form-item layui-row" >
+                    <div class="layui-form-item layui-row" id = 'shop' >
                         <label class="layui-form-label">所属店铺</label>
                         <div class="layui-input-block">
                         <select id = 'shop_id' name="shop_id" lay-search  >   
                         </select>
                         </div>
                     </div>
-                    <div class="layui-form-item layui-row" >
+                    <div class="layui-form-item layui-row" id = 'group'>
                         <label class="layui-form-label">所属连锁店</label>
                         <div class="layui-input-block">
                         <select id = 'group_id' name="group_id" lay-search  >   
@@ -57,13 +57,13 @@
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">有效期(天)</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="validity_period"   autocomplete="off" class="layui-input">
+                            <input type="text"  name="validity_period"  lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">面值(元)</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="amount"   autocomplete="off" class="layui-input">
+                            <input type="text"  name="amount" lay-verify="required"  autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" style="display: none" >
@@ -81,51 +81,67 @@
                 </form>
         </div>
     </div>
-    
+
+
+    <!-- 监听优惠卷的选择 -->
     <script>
-        function init(data){
-            layui.use('form', function(){
-                var form = layui.form;
-                //店铺列表,仅is_enable=1
-                $.ajax({
-                    url : `/data/shop?select=shop_id,name&is_enable=eq.1`,
-                    type:"GET",
-                    success:function(result){
-                        for(element of result){
-                            $("#shop_id").append(`<option value=${element.shop_id}>${element.name}</option>`);
-                        }
-                        $('#shop_id').val(data.shop_id);
-                        form.render();
-                    }
-                })
-
-                $.ajax({
-                    url:'/data/shop_group?select=group_id,group_name&is_enable=eq.1',
-                    type:'GET',
-                    success:function(result){
-                        $('#group_id').empty()
-                        result.map(element=>{
-                            $('#group_id').append(`<option value=${element.group_id}>${element.group_name}</option>`)
-                        })
-                        $('#group_id').append(`<option  value=''>无所属品牌</option>`)
-                        if(!data.group_id){
-                            $('#group_id').append(`<option selected value="">无所属品牌</option>`)
-                        }else{
-                            $('#group_id').val(data.group_id);
-                        }
-                        form.render()
-                    }
-                })
-                 
-            })
-        }
+         layui.use('form', function(){
+            var form = layui.form;
+            //判断select
+            form.on('select(coupon_type)', function(data){
+                    //判断是否通用券
+                if(data.value==10){
+                    $('#shop_id').val(-1)
+                    $('#group_id').val(-1)
+                    $('#shop').attr("style","display:none;")
+                    $('#group').attr("style","display:none;")
+                    form.render()
+                }
+                //判断是否店铺优惠券
+                else if(data.value==20){
+                    $('#group_id').val(-1)
+                    $('#shop_id').val(-1)
+                    $('#shop').attr("style","display:block;")
+                    $('#group').attr("style","display:none;")
+                    form.render()
+                }
+                //判断是否连锁店品牌优惠券
+                else if(data.value==30){
+                    $('#group_id').val(-1)
+                    $('#shop_id').val(-1)
+                    $('#group').attr("style","display:block;")
+                    $('#shop').attr("style","display:none;")
+                    form.render()
+                }
+            });    
+         })
     </script>
-
     <!-- 监听提交 -->
     <script>
     layui.use('form', function(){
     var form = layui.form;
     form.on('submit(formDemo)', function(data){
+        //判断在选择非通用优惠券的情况下是否有选择项
+        if(data.field.coupon_type==10){
+            if(data.field.shop_id!=-1&&data.field.group_id!=-1){
+                layer.msg('在选择通用券的情况下无所属连锁品牌和店铺')
+                return false
+            }
+        }else if(data.field.coupon_type==20){
+            if(data.field.shop_id==-1){
+                layer.msg('请选择店铺')
+                return false
+            }
+        }else if(data.field.coupon_type==30){
+            if(data.field.group_id==-1){
+                layer.msg('请选择连锁品牌')
+                return false
+            }
+        }
+        else{
+            layer.msg('选择错误，检查值')
+            return false
+        }
         //转换金额为分
         data.field.amount = (new Decimal(data.field.amount).mul(100).toNumber());
         //group_id=-1，则表示没有品牌，如果没有品牌，则为空

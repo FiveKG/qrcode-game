@@ -289,7 +289,8 @@
 						layer.open({
 						type: 2 ,
 						area: ['500px', '400px'],
-						title:"编辑",
+                        title:"编辑",
+                        resize  :false,//是否允许拉伸
 						content:`/page/edit_game_coupon_rule`,
 						success: function(layero, index){
                             var body = layer.getChildFrame('body', index);
@@ -349,8 +350,9 @@
 							 
 							layer.open({
 								type: 2 ,
-								area: ['500px', '450px'],
-								title:"添加",
+								area: ['500px', '420px'],
+                                title:"添加",
+                                resize  :false,//是否允许拉伸
 								content: "/page/add_game_coupon_rule",
 								success: function(layero, index){
                                     var body = layer.getChildFrame('body', index);
