@@ -2,6 +2,8 @@
 <html>
     {%include "head.html" %}
     {% include "script.html" %}
+    {% include "js/getShop.html"%}
+    {% include "js/getShopGroup.html"%}
     <div class="layui-card">
         <div class="layui-card-body">
         <form class="layui-form"  action="">
@@ -109,31 +111,47 @@
             })
 
             //店铺列表,仅is_enable=1
-            $.ajax({
-                url : `/data/shop?select=shop_id,name&is_enable=eq.1`,
-                type:"GET",
-                success:function(result){
+            getShop(true)
+            .then(result=>{
+                if(result){
+                    $("#shop_id").empty()
                     for(element of result){
                         $("#shop_id").append(`<option value=${element.shop_id}>${element.name}</option>`);
                     }
-                    $('#shop_id').append(`<option selected value=-1>无所属店铺</option>`)//group_id=-1，则表示没有品牌
+                    $("#shop_id").append(`<option selected value='-1'>请选择</option>`)
+                    form.render();
+                }
+                else{
+                    $("#shop_id").append(`<option value='' disable>无数据</option>`);
                     form.render();
                 }
             })
+            .catch(err=>{
+                console.err(err)
+                $("#shop_id").append(`<option value='-1' disable selected>获取失败</option>`);
+                form.render();
+            })
 
             //品牌，仅is_enable=1
-            $.ajax({
-                url:'/data/shop_group?select=group_id,group_name&is_enable=eq.1',
-                type:'GET',
-                success:function(result){
-                    $('#group_id').empty()
-                    result.map(element=>{
+            getShopGroup()
+            .then(result=>{
+                if(result){
+                    for(element of result){
                         $('#group_id').append(`<option value=${element.group_id}>${element.group_name}</option>`)
-                    })
-                    $('#group_id').append(`<option selected value=-1>无所属品牌</option>`)//group_id=-1，则表示没有品牌
+                    }
+                    $('#group_id').append(`<option selected value='-1'>请选择</option>`)//group_id=-1，则表示没有品牌
                     form.render()
                 }
+                else{
+                    $('select[name="group_id"]').append(`<option value='' disable>无数据</option>`);
+                }
             })
+            .catch(err=>{
+                $('select[name="group_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
+                form.render();
+                console.error(err)
+            })
+
 
              //判断select
             form.on('select(coupon_type)', function(data){
@@ -172,11 +190,13 @@
        //转换金额为分
         data.field.amount = (new Decimal(data.field.amount).mul(100).toNumber());
         //group_id=-1，则表示没有品牌，如果没有品牌，则为空,店铺亦是
-        if(data.field.group_id==-1){
-            data.field.group_id=''
+        if(data.field.group_id=="-1"){
+            layer.msg('请选择连锁品牌');
+            return false
         }
-        if(data.field.shop_id==-1){
-            data.field.shop_id=''
+        if(data.field.shop_id=="-1"){
+            layer.msg('请选择店铺');
+            return false
         }
         $.ajax({
             url        : `/data/coupon`,

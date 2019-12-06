@@ -1,0 +1,27 @@
+<script>
+//解/禁用
+    function is_enable(url,boolean,tab){
+        layui.use('table', function() {
+		var table = layui.table;
+        return new Promise((resolve,reject)=>{
+                $.ajax({
+                    url        : url,
+                    type       : "PATCH",
+                    dataType   : "json",
+                    data       : JSON.stringify({"is_enable":boolean}),
+                    contentType: 'application/json; charset=utf-8',
+                    success    : result=>{
+                                    if(!result){
+                                        layer.msg('禁用成功!');
+                                    }
+                                    table.reload(tab)
+                                },
+                    error      : err=>{
+                                    layer.msg('禁用失败!');
+                                    console.error(err)
+                                }
+                })
+            })
+        })
+    }
+</script>

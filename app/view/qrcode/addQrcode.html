@@ -8,7 +8,7 @@
                 <div class="layui-form-item layui-row" >
                     <label class="layui-form-label">扫码后的动作</label>
                     <div class="layui-input-block ">
-                        <textarea name="scan_action" required lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-textarea"></textarea>
+                        <textarea name="scan_action" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-textarea"></textarea>
                     </div>
                 </div>
 
@@ -16,7 +16,6 @@
                     <label class="layui-form-label">所属店铺</label>
                 <div class="layui-input-block">
                     <select id = 'shop_id' name="shop_id" lay-search>
-                        <option value=-1 selected>选择店铺</option>
                     </select>   
                     </select>
                 </div>
@@ -25,7 +24,6 @@
                     <label class="layui-form-label">生成于经营商</label>
                 <div class="layui-input-block">
                     <select id = 'agent_id' name="agent_id" lay-search  >   
-                        <option value=-1 selected>选择经营商</option>
                     </select>
                 </div>
                 <!-- <div class="layui-form-item layui-row"  style="display: none">
@@ -37,14 +35,14 @@
                 <div class="layui-form-item layui-row">
                     <label class="layui-form-label "style=" margin-top:12px;">生成数量</label>
                     <div class="layui-input-block ">
-                        <input type="text"   style="display: none"  name="seq" required  lay-verify="required|number"  autocomplete="off" class="layui-input">
+                        <input type="text"   style="display: none"  name="seq"  lay-verify="required|number"  autocomplete="off" class="layui-input">
                         <div id="slide" style=" margin-top:30px;"></div>
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" style="display: none" >
                     <label class="layui-form-label">创建二维码的用户的id</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="add_user_id" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text"  name="add_user_id"  lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -79,7 +77,6 @@
             var form = layui.form;
             //初始化textarea
             $('textarea[name="scan_action"]').val(JSON.stringify({"redirect": "https://www.qrcode.isecsp.com"},null,4))
-
              //解析getJWT
              $.ajax({
                 url     : `/api/tool/getJwtInfo`,
@@ -89,6 +86,7 @@
                     form.render();
                 }
             })
+            
             
             //获取店铺
             $.ajax({

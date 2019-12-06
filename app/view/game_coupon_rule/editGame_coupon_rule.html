@@ -43,7 +43,13 @@
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">玩的次数</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="play_count_range" disabled  autocomplete="off" class="layui-input">
+                                <input type="text"  name="play_count_range" id='play_count_range' disabled style="display: none" autocomplete="off" class="layui-input">
+                            <div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
+                                    <input type="text"  id="play_count_range_start" placeholder='开始值'  value = 0 lay-verify="required|number"  autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
+                                    <input type="text"  id="play_count_range_end" placeholder='结束值'  value = 50  lay-verify="required|number"  autocomplete="off" class="layui-input">
+                            </div>
                             <div id="play_count_range_slide"></div>
                         </div>
                     </div>
@@ -71,17 +77,60 @@
                 var form = layui.form;
                 var slider = layui.slider;  
                 //滑块渲染
-                slider.render({
+                var ins = slider.render({
                     elem: '#play_count_range_slide',  //绑定元素
-                    min:1,
-                    max:100,
+                    min:0,
+                    max:10000,
                     range:true,//出现两个可拖拽的环
-                    value:value,//滑块初始值，若开启了滑块为范围拖拽（即 range: true），则需赋值数组
+                    value:[0,50],//滑块初始值，若开启了滑块为范围拖拽（即 range: true），则需赋值数组
                     input:true,//双环滑块时无效
                     change:function(value){
-                        $('input[name="play_count_range"]').val(`[${value}]`)
+                        $('#play_count_range_start').val(`${value[0]}`)
+                        $('#play_count_range_end').val(`${value[1]}`)
+                        $('#play_count_range').val(`[${value}]`)
+                        form.render();
                     }
                 });
+            //绑定的input也一起初始化
+            $('input[name="play_count_range"]').val('[0,50]')
+            form.render();
+
+
+            //监控input改变
+            $("#play_count_range_start").bind("change", function() {
+                let value =$(this).val()
+                if(value<ins.config.min)value = ins.config.min;
+                if(value>ins.config.max)value = ins.config.max;
+                let range_value = eval($('#play_count_range').val())
+
+                //如果开始值大于结束值，则调回位置
+                if(value>range_value[1]){
+                   layer.msg('开始值要小于结束值')
+                   ins.setValue(ins.config.min,0 )
+                   return false
+                }else{
+                    ins.setValue(value, 0) //设置开始值
+                }
+                form.render()
+                
+            });
+            $("#play_count_range_end").bind("change", function() {
+                let value =$(this).val()
+                if(value<ins.config.min)value = ins.config.min;
+                if(value>ins.config.max)value = ins.config.max;
+                let range_value = eval($('#play_count_range').val())
+
+                //如果结束值小于开始值，则调回位置
+                if(value<range_value[0]){
+                    layer.msg('结束值要 大于开始值')
+                    ins.setValue(ins.config.max,1)
+                   return false
+                }else{
+                    ins.setValue(value, 1) //设置末尾值
+                }
+                form.render()
+ 
+            });
             })
         }
     </script>
@@ -141,7 +190,6 @@
                     contentType: 'application/json; charset=utf-8',
                     //由于插入成功后postres没有返回数据
                     success:function(data){
-                        console.log(data)
                         if(data.success===true){
                             layer.msg('更新成功!');
                             setTimeout(function(){ 
@@ -163,26 +211,6 @@
             console.error(err)
             return false
         })
-        // $.ajax({
-        //     url     : `/data/game_coupon_rule?id=eq.${data.field.id}`,
-        //     type    : "PATCH",
-        //     dataType: "json",
-        //     data    : JSON.stringify(data.field),
-        //     contentType: 'application/json; charset=utf-8',
-        //     success: function(data){
-        //         if(!data){
-        //             layer.msg('更新成功!');
-        //             setTimeout(function(){ 
-        //                 var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-        //                 parent.layer.close(index); //再执行关闭   
-        //                 parent.layui.table.reload('game_coupon_ruleTable');//刷新父表格  
-        //             }, 1000);
-        //         }
-        //         else{
-        //             layer.msg('更新失败!');
-        //         }
-        //     }
-        // })
         return false;
     });
     });

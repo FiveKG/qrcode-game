@@ -2,6 +2,7 @@
 <html>
 {%include "head.html" %}
 {% include "script.html" %}
+{% include "js/is_enable.html"%}
 	<body>
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="user-from">
@@ -12,7 +13,7 @@
 					</div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">所属品牌</label>
+                    <label class="layui-form-label">连锁品牌</label>
                     <div class="layui-input-inline">
 						<select name="group_id" lay-search></select>
                     </div>
@@ -166,8 +167,8 @@
 						,{field:'download_url', title:'下载地址', }
 						,{field:'agent_name', title:'生成于经销商', }
 						,{field:'shop_name', title:'所属店铺', }
-						,{field:'group_name', title:'所属品牌', }
-						,{field:'hash_str', title:'内容hash', }
+						,{field:'group_name', title:'连锁品牌', }
+						,{field:'hash_str', title:'内容hash',hide:true }
 						,{field:'seq', title:'序号', }
 						,{field:'is_enable', title:'是否可用',hide:true }
 						,{field:'add_time', title:'添加的时间', hide:true}
@@ -186,10 +187,10 @@
 						,{fixed:'right', title: "操作", align:'center', templet:function(d){
 							
 							if(d.is_enable===true){
-								return `<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+								return `
 							<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">禁用</a>`
 							}else{
-								return `<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+								return `
 							<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">解禁</a>`
 							}
 							
@@ -211,6 +212,7 @@
 				//监听行工具事件
 				table.on('tool(qrcode_table)', function(obj){
 					var layEvent = obj.event; //获得 lay-event 对应的值
+					const url = `/data/qrcode?qrcode_id=eq.${obj.data.qrcode_id}`
 					if(layEvent === 'detail'){ //查看
 						layer.msg('查看');
 						//弹出层引入用户详情页面
@@ -219,44 +221,14 @@
 						
 						if(obj.data.is_enable==true){
 						layer.confirm(`禁用：shop_name=${obj.data.shop_name},seq=${obj.data.seq}`, function(index){
-							//向服务端发送禁用指令
-							$.ajax({
-								url     : `/data/qrcode?qrcode_id=eq.${obj.data.qrcode_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":false}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-									setTimeout(function(){ 
-										table.reload("qrcodeTable")
-										}, 1000);	
-								}
-							})
+							//向服务端发送禁用指令qrcodeTable
+							is_enable(url,false,'qrcodeTable')
 							});
 						}
 						else{		
 							layer.confirm(`解禁：shop_name=${obj.data.shop_name},seq=${obj.data.seq}`, function(index){
 							//向服务端发送接近指令
-							$.ajax({
-								url     : `/data/qrcode?qrcode_id=eq.${obj.data.qrcode_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":true}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-										table.reload("qrcodeTable")	
-								}
-							})
+							is_enable(url,true,'qrcodeTable')
 							});
 						}
 					}

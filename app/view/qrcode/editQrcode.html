@@ -14,7 +14,7 @@
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">扫码后的动作</label>
                         <div class="layui-input-block ">
-                            <textarea name="scan_action" required lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-textarea"></textarea>
+                            <textarea name="scan_action"  lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-textarea"></textarea>
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
@@ -22,14 +22,6 @@
                         <div class="layui-input-block ">
                             <input type="text"  name="download_url"   autocomplete="off" class="layui-input">
                         </div>
-                    </div>
-                    
-                    <div class="layui-form" lay-filter="group_id">
-                        <label class="layui-form-label">所属品牌</label>
-                    <div class="layui-input-block">
-                        <select id = 'group_id' name="group_id" lay-search  >   
-                            <option value="" >无所属品牌</option>
-                        </select>
                     </div>
 
                     <div class="layui-form" lay-filter="shop_id">
@@ -52,7 +44,7 @@
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">二维码的内容hash</label>
                         <div class="layui-input-block ">
-                            <textarea name="hash_str" required lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-textarea"></textarea>
+                            <textarea name="hash_str" lay-verify="required" autocomplete="off" placeholder="请输入" class="layui-textarea"></textarea>
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
@@ -122,26 +114,27 @@
     var form = layui.form;
     form.on('submit(formDemo)', function(data){
         data.field.scan_action=(JSON.parse(data.field.scan_action))
-        $.ajax({
-            url     : `/data/qrcode?qrcode_id=eq.${data.field.qrcode_id}`,
-            type    : "PATCH",
-            dataType: "json",
-            data    : JSON.stringify(data.field),
-            contentType: 'application/json; charset=utf-8',
-            success: function(data){
-                if(!data){
-                    layer.msg('更新成功!');
-                    setTimeout(function(){ 
-                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-                        parent.layer.close(index); //再执行关闭   
-                        parent.layui.table.reload('qrcodeTable');//刷新父表格  
-                    }, 1000);
-                }
-                else{
-                    layer.msg('更新失败!');
-                }
-            }
-        })
+        console.log(data.field)
+        // $.ajax({
+        //     url     : `/data/qrcode?qrcode_id=eq.${data.field.qrcode_id}`,
+        //     type    : "PATCH",
+        //     dataType: "json",
+        //     data    : JSON.stringify(data.field),
+        //     contentType: 'application/json; charset=utf-8',
+        //     success: function(data){
+        //         if(!data){
+        //             layer.msg('更新成功!');
+        //             setTimeout(function(){ 
+        //                 var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        //                 parent.layer.close(index); //再执行关闭   
+        //                 parent.layui.table.reload('qrcodeTable');//刷新父表格  
+        //             }, 1000);
+        //         }
+        //         else{
+        //             layer.msg('更新失败!');
+        //         }
+        //     }
+        // })
         return false;
     });
     });

@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html>
-{%include "head.html" %}
+{% include "head.html" %}
 {% include "script.html" %}
+{% include "js/getPCAscript.html"%}
+{% include "js/getAgent.html"%}
+{% include "js/is_enable.html"%}
 	<body>
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="agent-from">
 				<div class="layui-inline">
 					<label class="layui-form-label">经销商</label>
 					<div class="layui-input-inline">
-						<select name="agent_id" lay-search>
+						<select name="agent_id" id='agent_id' lay-search>
 						</select>
 					</div>
 				</div>
@@ -37,23 +40,26 @@
 			<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">禁用</a>
 		</script> -->
 		
-		<!-- 搜索下拉 -->
+		<!-- 方法 -->
 		<script>
-			//请求经销商
-			function getAgent(){
+			//获得二维码url
+			function get_qrcode_url(agent_id){
 				return new Promise((resolve,reject)=>{
 					$.ajax({
-					url        : `/data/agent?select=agent_id,name`,
-					type       : "GET",
-					success	:function(result){
-						resolve(result)
-					}
-					})		
+						url:`/api/tool/get_shop_agent_qrcode?shop_or_agent_id=${agent_id}&scene_type=30`,
+						type:'GET',
+						success:result=>resolve(result),
+						error:err=>reject(err)
+					})
 				})
 			}
+		</script>
+
+		<!-- 搜索下拉 -->
+		<script>
 			layui.use('form',function(){
 				var form = layui.form
-				getAgent()
+				getAgent(false)
 				.then((result)=>{
 					if(result){
 					$('select[name="agent_id"]').empty()
@@ -72,7 +78,6 @@
 					form.render('select')
 				})
 			})
-		
 		</script>
 		<script>
 			layui.use(['table', 'dialog', 'jquery'], function() {
@@ -161,54 +166,46 @@
 	
 				//监听行工具事件
 				table.on('tool(agent_table)', function(obj){
+					const url = `/data/agent?agent_id=eq.${obj.data.agent_id}`
 					var layEvent = obj.event; //获得 lay-event 对应的值
 					if(layEvent === 'detail'){ //查看
 						layer.msg('查看');
 						//弹出层引入用户详情页面
 					} 
-					else if(layEvent === 'is_enable'){ //删除
+					else if(layEvent === 'is_enable'){ 
 						//console.log(obj.data)
 						if(obj.data.is_enable==true){
-						layer.confirm(`禁用：${obj.data.name}`, function(index){
-							//向服务端发送禁用指令
-							$.ajax({
-								url     : `/data/agent?agent_id=eq.${obj.data.agent_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":false}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-									setTimeout(function(){ 
-										table.reload("agentTable")
-										}, 1000);	
-								}
-							})
+							layer.confirm(`禁用：${obj.data.name}`, function(index){
+								//向服务端发送禁用指令
+								is_enable(url,false,"agentTable")
+								// is_enable(url,false)
+								// .then(result=>{
+								// 	if(!result){
+								// 		layer.msg('禁用成功!');
+								// 	}
+								// 	table.reload("agentTable")
+								// })
+								// .catch(err=>{
+								// 	layer.msg('禁用失败!');
+								// 	console.error(err)
+								// })
 							});
 						}
 						else{		
 							layer.confirm(`解禁：${obj.data.name}`, function(index){
-							//向服务端发送接近指令
-							$.ajax({
-								url     : `/data/agent?agent_id=eq.${obj.data.agent_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":true}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-									table.reload("agentTable")
-	
-								}
-							})
+								//向服务端发送解禁指令
+								is_enable(url,true,"agentTable")
+								// is_enable(url,true)
+								// .then(result=>{
+								// 	if(!result){
+								// 		layer.msg('解禁成功!');
+								// 	}
+								// 	table.reload("agentTable")
+								// })
+								// .catch(err=>{
+								// 	layer.msg('解禁失败!');
+								// 	console.error(err)
+								// })
 							});
 						}
 					}
@@ -216,52 +213,6 @@
 						//
 						//弹出层引入用户修改页面
 						//同步更新缓存对应的值 也可以直接重载表格
-						function get_province(){
-							return new Promise((resolve,reject)=>{
-								$.ajax({
-									url     : `/api/common/get_province`,
-									type    : "get",
-									success: (result)=>resolve(result),
-									error:(err)=>reject(err)
-								})
-							})
-						}
-						function get_city(provinceCode){
-							return new Promise((resolve,reject)=>{
-								$.ajax({
-									url     : `/api/common/get_city`,
-									type    : "get",
-									dataType: "json",
-									data    :  {provinceCode:provinceCode},
-									contentType: 'application/json; charset=utf-8',
-									success: (result)=>resolve(result),
-									error:(err)=>reject(err)
-								})
-							})
-						}
-						function get_area(cityCode){
-							return new Promise((resolve,reject)=>{
-								$.ajax({
-									url     :`/api/common/get_area`,
-									type    : "get",
-									data    : {cityCode:cityCode},
-                					contentType: 'application/json; charset=utf-8',
-									success: (result)=>resolve(result),
-									error:(err)=>reject(err)
-								})
-							})
-						}
-
-						function get_qrcode_url(){
-							return new Promise((resolve,reject)=>{
-								$.ajax({
-									url:`/api/tool/get_shop_agent_qrcode?shop_or_agent_id=${obj.data.agent_id}&scene_type=30`,
-									type:'GET',
-									success:result=>resolve(result),
-									error:err=>reject(err)
-								})
-							})
-						}
 
 						layer.open({
 						type: 2 ,
@@ -272,61 +223,17 @@
 						success: function(layero, index){
 							var body = layer.getChildFrame('body', index);
 							var iframe = window['layui-layer-iframe' + index];
-							let p_c_a = {
+							let p_c_a_value = {
 								provinceCode: obj.data.p_c_a_id[0],
 								cityCode    : obj.data.p_c_a_id[1],
 								areaCode    : obj.data.p_c_a_id[2],
 							}
-							//初始化省份
-							get_province()
-							.then(result=>{
-								body.find("#province").empty()
-								for(element of result.data){
-									body.find("#province").append(`<option value=${element.value}>${element.label}</option>`);
-								}
-								body.find("#province").val(`${p_c_a.provinceCode}`);
-								iframe.layui.form.render();
-								//获得市
-								get_city(body.find("#province").val())
-								.then(result=>{
-									body.find("#city").empty()
-									body.find("#area").empty()
-		
-									for(element of result.data){
-										body.find("#city").append(`<option value=${element.value}>${element.label}</option>`);
-									}
-									body.find("#city").val(`${p_c_a.cityCode}`);
-									iframe.layui.form.render();
-									//获得区
-									get_area(body.find("#city").val())
-									.then(result=>{
-										body.find("#area").empty()
-										for(element of result.data){
-											body.find("#area").append(`<option value=${element.value}>${element.label}</option>`);
-										}
-										body.find("#area").val(`${p_c_a.areaCode}`);
-										iframe.layui.form.render();
-									})
-									.catch(err=>{
-										console.error('err:',err);
-										body.find("#area").append(`<option value=''>获取数据失败</option>`);
-										iframe.layui.form.render();
-									})
-								})
-								.catch(err=>{
-								console.error('err:',err);
-								body.find("#city").append(`<option value=''>获取数据失败</option>`);
-								iframe.layui.form.render();
-								})
-							})
-							.catch(err=>{
-								console.error('err:',err);
-								body.find("#province").append(`<option value=''>获取数据失败</option>`);
-								iframe.layui.form.render();
-							})
 
+							//初始化省市区
+							init_p_c_a(p_c_a_value,body,iframe)
+					
 							//返回二维码url
-							get_qrcode_url()
+							get_qrcode_url(obj.data.agent_id)
 							.then(result=>{
 								body.find('#agent_qrcode').empty();
 								body.find('#agent_qrcode').append(`<img src='${result}' style="width:100%;" alt="经营商二维码">`);
@@ -350,6 +257,7 @@
 							body.find("input[name='add_user_id']").val(obj.data.add_user_id);
 							body.find("input[name='balance']").val(obj.data.balance);
 							body.find("input[name='add_time']").val(obj.data.add_time);
+							iframe.layui.form.render();
 							var data = {
 								gain_rate   : obj.data.gain_rate,
 							}
@@ -374,8 +282,14 @@
 								content: "/page/add_agent",
 								success: function(layero, index){
 									var body = layer.getChildFrame('body', index);
-									body.find("form[class='layui-form']").val(index);
-									body.find('input[name="gain_rate"]').val(0);
+									var iframe = window['layui-layer-iframe' + index];
+									let p_c_a_dom={
+										provinceDom : body.find("#province"),
+										cityDom		: body.find("#city"),
+										areaDom		: body.find("#area"),
+									}
+									//初始化省市区
+
 								},
 							})
 						break;

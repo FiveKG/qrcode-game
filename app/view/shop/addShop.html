@@ -8,49 +8,49 @@
                 <div class="layui-form-item layui-row" style="display:none" >
                     <label class="layui-form-label">ID</label>
                     <div class="layui-input-block ">
-                        <input type="text" id = 'shop_id'  required  lay-verify="required" name="shop_id"  defaultVal='noId'  autocomplete="off" class="layui-input">
+                        <input type="text" id = 'shop_id'   lay-verify="required" name="shop_id"  defaultVal='noId'  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row">
                     <label class="layui-form-label">店铺名</label>
                     <div class="layui-input-block ">
-                        <input type="text" name="name" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text" name="name"   lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form" lay-filter="province">
                     <label class="layui-form-label">省份</label>
                     <div class="layui-input-block">
-                        <select id = 'province' name="province"  lay-search required  lay-verify="required" lay-filter="province">   
+                        <select id = 'province' name="province"  lay-search   lay-verify="required" lay-filter="province">   
                         </select>
                 </div>
                 <div class="layui-form" lay-filter="city">
                     <label class="layui-form-label">市</label>
                     <div class="layui-input-block">
-                        <select id = 'city' name="city" lay-search required  lay-verify="required" lay-filter="city" >   
+                        <select id = 'city' name="city" lay-search   lay-verify="required" lay-filter="city" >   
                         </select>
                 </div>
                 <div class="layui-form" lay-filter="area">
                     <label class="layui-form-label">区</label>
                     <div class="layui-input-block">
-                        <select id = 'area' name="area" lay-search required  lay-verify="required"  lay-filter="area" >   
+                        <select id = 'area' name="area" lay-search   lay-verify="required"  lay-filter="area" >   
                         </select>
                 </div>
                 <div class="layui-form-item" >
                     <label class="layui-form-label">详细地址</label>
                     <div class="layui-input-block">
-                        <input type="text" name="local_address"  lay-search required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text" name="local_address"  lay-search   lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">负责人名称</label>
                     <div class="layui-input-block">
-                        <input type="text" name="shop_manager" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text" name="shop_manager"   lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">负责人手机号码	</label>
                     <div class="layui-input-block">
-                        <input type="text" name="mobile" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text" name="mobile"  lay-verify="required|number|phone"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form" lay-filter="group_id">
@@ -63,19 +63,19 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">营业执照编号</label>
                     <div class="layui-input-block">
-                        <input type="text" name="license" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text" name="license"  lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">经度</label>
                     <div class="layui-input-block">
-                        <input type="text" name="longitude" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text" name="longitude"  lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">纬度</label>
                     <div class="layui-input-block">
-                        <input type="text" name="latitude" required  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text" name="latitude"  lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item "style="display:none">
@@ -106,7 +106,7 @@
             var province_object =  $('#province');
             var city_object =  $('#city');
             var area_object =  $('#area');
-            
+
             $.ajax({
                     url     : `/data/shop_group?select=group_id,group_name`,
                     type    : "GET",

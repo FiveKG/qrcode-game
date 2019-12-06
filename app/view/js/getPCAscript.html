@@ -1,0 +1,92 @@
+
+<script>
+//获得省
+function get_province(){
+    return new Promise((resolve,reject)=>{
+        $.ajax({
+            url     : `/api/common/get_province`,
+            type    : "get",
+            success: (result)=>resolve(result),
+            error:(err)=>reject(err)
+        })
+    })
+}
+//获得市
+function get_city(provinceCode){
+    return new Promise((resolve,reject)=>{
+        $.ajax({
+            url     : `/api/common/get_city`,
+            type    : "get",
+            dataType: "json",
+            data    :  {provinceCode:provinceCode},
+            contentType: 'application/json; charset=utf-8',
+            success: (result)=>resolve(result),
+            error:(err)=>reject(err)
+        })
+    })
+}
+//获得区
+function get_area(cityCode){
+    return new Promise((resolve,reject)=>{
+        $.ajax({
+            url     :`/api/common/get_area`,
+            type    : "get",
+            data    : {cityCode:cityCode},
+            contentType: 'application/json; charset=utf-8',
+            success: (result)=>resolve(result),
+            error:(err)=>reject(err)
+        })
+    })
+}
+
+function init_p_c_a(p_c_a_value,body,iframe){
+    get_province()
+    .then(result=>{
+        body.find("#province").empty()
+        for(element of result.data){
+            body.find("#province").append(`<option value=${element.value}>${element.label}</option>`);
+        }
+        body.find("#province").val(`${p_c_a_value.provinceCode}`);
+        iframe.layui.form.render();
+        //获得市
+        get_city(body.find("#province").val())
+        .then(result=>{
+            body.find("#city").empty()
+            body.find("#area").empty()
+
+            for(element of result.data){
+                body.find("#city").append(`<option value=${element.value}>${element.label}</option>`);
+            }
+            body.find("#city").val(`${p_c_a_value.cityCode}`);
+            iframe.layui.form.render();
+            //获得区
+            get_area(body.find("#city").val())
+            .then(result=>{
+                body.find("#area").empty()
+                for(element of result.data){
+                    body.find("#area").append(`<option value=${element.value}>${element.label}</option>`);
+                }
+                body.find("#area").val(`${p_c_a_value.areaCode}`);
+                iframe.layui.form.render();
+            })
+            .catch(err=>{
+                console.error('err:',err);
+                body.find("#area").append(`<option value=''>获取数据失败</option>`);
+                iframe.layui.form.render();
+            })
+        })
+        .catch(err=>{
+        console.error('err:',err);
+        body.find("#city").append(`<option value=''>获取数据失败</option>`);
+        iframe.layui.form.render();
+        })
+    })
+    .catch(err=>{
+        console.error('err:',err);
+        body.find("#province").append(`<option value=''>获取数据失败</option>`);
+        iframe.layui.form.render();
+    })
+}
+
+
+</script>
