@@ -2,6 +2,8 @@
 <html>
 {%include "head.html" %}
 {% include "script.html" %}
+{% include "js/getGame.html"%}
+{% include "js/is_enable.html"%}
 	<body>
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="user-from">
@@ -49,22 +51,10 @@
 
 			<!-- 搜索下拉 -->
 			<script>
-
 				//获取游戏
-				function getGame(){
-					return new Promise((resolve,reject)=>{
-						$.ajax({
-						url        : `/data/game?select=game_id,game_name`,
-						type       : "GET",
-						success	:function(result){
-							resolve(result)
-						}
-						})		
-					})
-				}
 				layui.use('form',function(){
 					var form = layui.form
-					getGame()
+					getGame(false)
 					.then((result)=>{
 						if(result){
 						$('select[name="game_id"]').empty()
@@ -175,6 +165,7 @@
 
 				//监听行工具事件
 				table.on('tool(game_table)', function(obj){
+					const url = `/data/game?game_id=eq.${obj.data.game_id}`;
 					var layEvent = obj.event; //获得 lay-event 对应的值
 					if(layEvent === 'detail'){ //查看
 						layer.msg('查看');
@@ -184,42 +175,12 @@
 						
 						if(obj.data.is_enable==true){
 						layer.confirm(`禁用游戏：${obj.data.game_name}`, function(index){
-							$.ajax({
-								url     : `/data/game?game_id=eq.${obj.data.game_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":false}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-									setTimeout(function(){ 
-										table.reload("gameTable")
-										}, 1000);	
-								}
-							})
+							is_enable(url,false,'gameTable')
 							});
 						}
 						else{		
 							layer.confirm(`解禁游戏：${obj.data.game_name}`, function(index){
-							$.ajax({
-								url     : `/data/game?game_id=eq.${obj.data.game_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":true}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-										table.reload("gameTable")	
-								}
-							})
+								is_enable(url,true,'gameTable')
 							});
 						}
 					}
@@ -249,7 +210,7 @@
 							body.find("input[name='is_enable']").val(obj.data.is_enable);
 							body.find("input[name='add_user_id']").val(obj.data.add_user_id);
 							body.find("textarea[name='game_desc']").val(obj.data.game_desc);
-							
+							iframe.layui.form.render();
 						},
 						});    
 						// obj.update({

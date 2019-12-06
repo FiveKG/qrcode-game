@@ -2,6 +2,7 @@
 <html>
 {%include "head.html" %}
 {% include "script.html" %}
+{% include "js/is_enable.html"%}
 	<body>
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="user-from">
@@ -231,7 +232,8 @@
 				//监听行工具事件
 				table.on('tool(game_coupon_rule_table)', function(obj){
                     var layEvent = obj.event; //获得 lay-event 对应的值
-                    
+                    const url = `/data/game_coupon_rule?id=eq.${obj.data.id}`
+
 					if(layEvent === 'detail'){ //查看
 						layer.msg('查看');
 						//弹出层引入用户详情页面
@@ -241,43 +243,13 @@
 						if(obj.data.is_enable==true){
 						layer.confirm(`禁用：${obj.data.rule_name}`, function(index){
 							//向服务端发送禁用指令
-							$.ajax({
-								url     : `/data/game_coupon_rule?id=eq.${obj.data.id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":false}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-									setTimeout(function(){ 
-										table.reload("game_coupon_ruleTable")
-										}, 1000);	
-								}
-							})
+							is_enable(url,false,"game_coupon_ruleTable")
 							});
 						}
 						else{		
 							layer.confirm(`解禁：${obj.data.rule_name}`, function(index){
 							//向服务端发送接近指令
-							$.ajax({
-								url     : `/data/game_coupon_rule?id=eq.${obj.data.id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":true}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-										table.reload("game_coupon_ruleTable")	
-								}
-							})
+							is_enable(url,true,"game_coupon_ruleTable")
 							});
 						}
 					}
@@ -357,25 +329,6 @@
 								success: function(layero, index){
                                     var body = layer.getChildFrame('body', index);
                                     var iframe = window['layui-layer-iframe' + index];
-
-                                    //网络请求，动态生成子页面列表
-                                    Promise.all([getGame(),getCoupon()]).then((res) => {
-                   
-                                        const [games,coupons] = res
-                                        //初始化游戏列表
-                                        for(game of games){
-                                            body.find("select[name='game_id']").append(`<option value=${game.game_id}>${game.game_name}</option>`);
-                                        // console.log("game:",game)
-                                        }
-                                    
-                                        //初始化优惠券列表
-                                        for(coupon of coupons){
-                                            body.find("select[name='coupon_id']").append(`<option value=${coupon.coupon_id}>${coupon.coupon_name}</option>`);
-                                            //console.log("coupon:",coupon)
-                                        }
-                                        iframe.layui.form.render();
-                                        console.log(iframe)
-                                    })
 									body.find("form[class='layui-form']").val(index);
 								},
 							})

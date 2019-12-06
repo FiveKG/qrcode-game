@@ -2,6 +2,7 @@
 <html>
     {%include "head.html" %}
     {% include 'script.html' %}
+    {% include "js/getPCAscript.html"%}
     <div class="layui-card">
         <div class="layui-card-body">
                 <form class="layui-form" id="editForm" action="">
@@ -75,83 +76,89 @@
     </div>
 
 
-  
-     <script>
-       //   <!-- 滑块 -->
-        function init(data){
-        //获取父界面的传值
-            var edit_slider=layui.use('slider', function(){
-            var slider = layui.slider;
-            //渲染
-            slider.render({
-                elem: '#slideTest1',  //绑定元素
-                min:0,
-                max:100,
-                input:true,
-                value: data.gain_rate,
-                change:function(value){
-                    $('input[name="gain_rate"]').val(value)
-                }
-            });
-        });      
-    }
-    </script>
-    <!-- 动态赋值 -->
-    <script>
-      
-        layui.use('form', function(){
-        var form = layui.form;
-        var province_object =  $('#province');
-        var city_object =  $('#city');
-        var area_object =  $('#area');
-        
-        $.ajax({
-            url     : `/api/common/get_province`,
-            type    : "get",
-            success: function(result){
-                for(element of result.data){
-                    province_object.append(`<option value=${element.value}>${element.label}</option>`);
-                    }
-                form.render('select','province');
+<script>
+    //   <!-- 滑块 -->
+    function init(data){
+    //获取父界面的传值
+        var edit_slider=layui.use('slider', function(){
+        var slider = layui.slider;
+        //渲染
+        slider.render({
+            elem: '#slideTest1',  //绑定元素
+            min:0,
+            max:100,
+            input:true,
+            value: data.gain_rate,
+            change:function(value){
+                $('input[name="gain_rate"]').val(value)
             }
-        })
-
-        form.on('select(province)', function(data){
-            $.ajax({
-                url     : `/api/common/get_city`,
-                type    : "get",
-                dataType: "json",
-                data    : {provinceCode:data.value},
-                contentType: 'application/json; charset=utf-8',
-                success: function(result){
-                    city_object.empty()
-                    area_object.empty()
-                    for(element of result.data){
-                        city_object.append(`<option value=${element.value}>${element.label}</option>`);
-                        }
-                    city_object.val('')
-                    form.render('select','city');
-                }
-            })
-        });     
-        form.on('select(city)', function(data){
-            $.ajax({
-                url     : `/api/common/get_area`,
-                type    : "get",
-                data    : {cityCode:data.value},
-                contentType: 'application/json; charset=utf-8',
-                success: function(result){
-                    area_object.empty()
-                    for(element of result.data){
-                        area_object.append(`<option value=${element.value}>${element.label}</option>`);
-                        }
-                    area_object.val('')
-                    form.render('select','area');
-                }
-            })
-        });       
         });
-    </script>
+    });      
+    }
+
+    
+</script>
+    <!-- 动态赋值 -->
+<script>
+    layui.use('form', function(){
+    var form = layui.form; 
+
+        //获得省
+    get_province()
+    .then(result=>{
+        $('#province').append(`<option value="-1" selected>请选择省</option>`);
+        $('#city').append(`<option value="-1" selected>请选择市</option>`);
+        $('#area').append(`<option value="-1" selected>请选择区</option>`);
+        for(element of result.data){
+            $('#province').append(`<option value=${element.value}>${element.label}</option>`);
+                }
+            form.render('select','province');
+    })
+    .catch(err=>{
+        $('#province').empty()
+        $('#province').append(`<option value="-1" selected>获取失败</option>`);
+        console.error(err)
+    })
+
+    //动态获得市
+    form.on('select(province)', function(data){
+        get_city(data.value)
+        .then(result=>{
+            $('#city').empty();
+            $('#area').empty();
+            $('#city').append(`<option value="-1" selected>请选择市</option>`);
+            $('#area').append(`<option value="-1" selected>请选择区</option>`);
+            for(element of result.data){
+                $('#city').append(`<option value=${element.value}>${element.label}</option>`);
+            }
+            form.render('select','city');
+        })
+        .catch(err=>{
+        $('#province').empty()
+        $('#province').append(`<option value="-1" selected>获取失败</option>`);
+        console.error(err)
+        })
+    });    
+    
+    //获得区
+    form.on('select(city)', function(data){
+        get_area(data.value)
+        .then(result=>{
+            $('#area').empty()
+            $('#area').append(`<option value="-1" selected>请选择区</option>`)
+            for(element of result.data){
+                $('#area').append(`<option value=${element.value}>${element.label}</option>`);
+            }
+            form.render('select','area');
+        })
+        .catch(err=>{
+        $('#province').empty()
+        $('#province').append(`<option value="-1" selected>获取失败</option>`);
+        console.error(err)
+        })
+    });   
+});
+</script>
     <script>
     //Demo
     layui.use('form', function(){

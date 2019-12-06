@@ -2,6 +2,8 @@
 <html>
     {%include "head.html" %}
     {% include "script.html" %}
+    {% include "js/getGame.html" %}
+    {% include "js/getCoupon.html" %}
     <div class="layui-card">
         <div class="layui-card-body">
         <form class="layui-form"  action="">
@@ -40,7 +42,13 @@
                 <div class="layui-form-item layui-row" >
                     <label class="layui-form-label">玩的次数</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="play_count_range" value='[0,50]' disabled   autocomplete="off" class="layui-input">
+                            <input type="text"  name="play_count_range" id='play_count_range' disabled style="display: none" autocomplete="off" class="layui-input">
+                        <div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
+                                <input type="text"  id="play_count_range_start" placeholder='开始值'  value = 0 lay-verify="required|number"  autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-col-md6 layui-col-sm6 layui-col-xs6">
+                                <input type="text"  id="play_count_range_end" placeholder='结束值'  value = 50  lay-verify="required|number"  autocomplete="off" class="layui-input">
+                        </div>
                         <div id="play_count_range_slide"></div>
                     </div>
                 </div>
@@ -64,8 +72,9 @@
 
     <!-- 动态赋值 -->
     <script>
+
           layui.use(['form','slider'], function(){
-            var form = layui.form;
+            let form = layui.form;
 
             //解析getJWT
             $.ajax({
@@ -86,22 +95,85 @@
                 }
             })
             //滑块
-            var form = layui.form;
             var slider = layui.slider;  
             //滑块渲染
-            slider.render({
+            var ins = slider.render({
                 elem: '#play_count_range_slide',  //绑定元素
-                min:1,
-                max:100,
+                min:0,
+                max:10000,
                 range:true,//出现两个可拖拽的环
                 value:[0,50],//滑块初始值，若开启了滑块为范围拖拽（即 range: true），则需赋值数组
                 input:true,//双环滑块时无效
                 change:function(value){
-                    $('input[name="play_count_range"]').val(`[${value}]`)
+                    $('#play_count_range_start').val(`${value[0]}`)
+                    $('#play_count_range_end').val(`${value[1]}`)
+                    $('#play_count_range').val(`[${value}]`)
+                    form.render();
                 }
             });
+            //绑定的input也一起初始化
+            $('input[name="play_count_range"]').val('[0,50]')
             form.render();
-         });
+
+            //游戏和优惠券
+            Promise.all([getGame(),getCoupon()]).then((res) => {
+            const [games,coupons] = res
+            //初始化游戏列表
+            for(game of games){
+                $("select[name='game_id']").append(`<option value=${game.game_id}>${game.game_name}</option>`);
+            // console.log("game:",game)
+            }
+            $("select[name='game_id']").append(`<option selected value='-1'>请选择</option>`);
+            //初始化优惠券列表
+            for(coupon of coupons){
+                $("select[name='coupon_id']").append(`<option value=${coupon.coupon_id}>${coupon.coupon_name}</option>`);
+                //console.log("coupon:",coupon)
+            }
+            $("select[name='coupon_id']").append(`<option selected value='-1'>请选择</option>`);
+                form.render();
+            }) 
+
+
+            //监控input改变
+            $("#play_count_range_start").bind("change", function() {
+                let value =$(this).val()
+                if(value<ins.config.min)value = ins.config.min;
+                if(value>ins.config.max)value = ins.config.max;
+                let range_value = eval($('#play_count_range').val())
+
+                //如果开始值大于结束值，则调回位置
+                if(value>range_value[1]){
+                   layer.msg('开始值要小于结束值')
+                   ins.setValue(ins.config.min,0 )
+                   return false
+                }else{
+                    ins.setValue(value, 0) //设置开始值
+                }
+                form.render()
+                
+            });
+            $("#play_count_range_end").bind("change", function() {
+                let value =$(this).val()
+                if(value<ins.config.min)value = ins.config.min;
+                if(value>ins.config.max)value = ins.config.max;
+                let range_value = eval($('#play_count_range').val())
+
+                //如果结束值小于开始值，则调回位置
+                if(value<range_value[0]){
+                    layer.msg('结束值要 大于开始值')
+                    ins.setValue(ins.config.max,1)
+                   return false
+                }else{
+                    ins.setValue(value, 1) //设置末尾值
+                }
+                form.render()
+ 
+            });
+    });
+
+
+
+    
     </script>
 
     <!-- 提交监听 -->
@@ -121,16 +193,34 @@
     layui.use('form', function(){
     var form = layui.form;
     form.on('submit(formDemo)', function(data){
+    
+        //检查下拉框
+        if(data.field.game_id=='-1'){
+            layer.msg('请选择游戏')
+            return false
+        }
+        if(data.field.coupon_id=='-1'){
+            layer.msg('请选择优惠券')
+            return false
+        }
         let add_range = eval(data.field.play_count_range)
         let comparison;
         //先检查该游戏的优惠券的玩的次数区间
         check_range(data.field.game_id,data.field.coupon_id)
         .then(result=>{
             if(result.length!==0){
-                /**存在优惠券,检查区间.判断思路:如果区间不相交，要么添加区间的最小值应该大于比较区间的最大值，要么添加区间的最大值小于比较区间的最小值
-                 * 只要有存在一个就返回含有该元素的数组，否则返回undefined**/
+                /**存在优惠券,检查区间.判断思路:
+                 * 1.先判断这个数组是否存在一个一模一样的，存在是允许再添加的
+                 * 2.如果区间不相交，要么添加区间的最小值应该大于比较区间的最大值，要么添加区间的最大值小于比较区间的最小值
+                 * 只要有存在一个就返回含有该元素的数组，否则返回undefined
+                 **/
                 comparison=result.find(element=>{
                     let sql_range = eval(element.play_count_range)
+                    //先检查是否存在一模一样份的区间，不存在返回值，存在返回false
+                    if(sql_range[0]===add_range[0]&&sql_range[1]===sql_range[1]){
+                        //通过
+                        return false
+                    }
                     if(Math.min(...add_range) > Math.max(...sql_range)){
                         //通过
                         return false
@@ -169,7 +259,7 @@
                     complete:function(XHR){
                     //console.log(XHR.responseJSON)
                     }
-        })
+                })
             }
         })
         .catch(err=>{

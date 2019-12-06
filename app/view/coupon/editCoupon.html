@@ -2,6 +2,7 @@
 <html>
     {%include "head.html" %}
     {% include 'script.html' %}
+
     <div class="layui-card">
         <div class="layui-card-body">
                 <form class="layui-form"  action="">
@@ -156,7 +157,7 @@
             contentType: 'application/json; charset=utf-8',
             success: function(data){
                 if(!data){
-                    layer.msg('更新成功!');
+                    layer.msg('更新成功!'); 
                     setTimeout(function(){ 
                         var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
                         parent.layer.close(index); //再执行关闭   

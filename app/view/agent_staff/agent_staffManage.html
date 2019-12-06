@@ -2,6 +2,10 @@
 <html>
 {%include "head.html" %}
 {% include "script.html" %}
+{% include "js/getPCAscript.html"%}
+{% include "js/getAgent.html"%}
+{% include "js/getAgent_staff.html"%}
+{% include "js/is_enable.html"%}
 	<body>
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="agent_staff_user_from">
@@ -47,32 +51,9 @@
 
 		<!-- 搜索下拉 -->
 		<script>
-			//请求经销商
-			function getAgent_staff(){
-				return new Promise((resolve,reject)=>{
-					$.ajax({
-					url        : `/data/agent_staff_view?select=agent_staff_id,user_name`,
-					type       : "GET",
-					success	:function(result){
-						resolve(result);
-					}
-					})		
-				})
-			}
-			function getAgent(){
-				return new Promise((resolve,reject)=>{
-					$.ajax({
-					url        : `/data/agent?select=agent_id,name`,
-					type       : "GET",
-					success	:function(result){
-						resolve(result);
-					}
-					})
-				})
-			}
 			layui.use('form',function(){
 				var form = layui.form
-				Promise.all([getAgent_staff(),getAgent()])
+				Promise.all([getAgent_staff(false),getAgent()])
 				.then(result=>{
 					const [agent_staffs,agents] = result;
 					if(agent_staffs){
@@ -197,6 +178,7 @@
 	
 				//监听行工具事件
 				table.on('tool(agent_staff_table)', function(obj){
+					const url = `/data/agent_staff?agent_staff_id=eq.${obj.data.agent_staff_id}`;
 					var layEvent = obj.event; //获得 lay-event 对应的值
 					if(layEvent === 'detail'){ //查看
 						layer.msg('查看');
@@ -205,46 +187,15 @@
 					else if(layEvent === 'is_enable'){ //删除
 						
 						if(obj.data.is_enable==true){
-						layer.confirm(`禁用：${obj.data.user_name}`, function(index){
+							layer.confirm(`禁用：${obj.data.user_name}`, function(index){
 							//向服务端发送禁用指令
-							$.ajax({
-								url     : `/data/agent_staff?agent_staff_id=eq.${obj.data.agent_staff_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":false}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-									setTimeout(function(){ 
-										table.reload("agent_staffTable")
-										}, 1000);	
-								}
-							})
+								is_enable(url,false,"agent_staffTable")
 							});
 						}
 						else{		
-                            //console.log(obj.data)
 							layer.confirm(`解禁：${obj.data.user_name}`, function(index){
 							//向服务端发送接近指令
-							$.ajax({
-								url     : `/data/agent_staff?agent_staff_id=eq.${obj.data.agent_staff_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":true}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-										table.reload("agent_staffTable")	
-								}
-							})
+								is_enable(url,true,"agent_staffTable")
 							});
 						}
 					}
@@ -260,19 +211,19 @@
 						content:`/page/edit_agent_staff`,
 						success: function(layero, index){
 							var body = layer.getChildFrame('body', index);
-							//.log(obj.data)
-							//var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+							var iframe = window['layui-layer-iframe' + index];
+
 							body.find("input[name='agent_staff_id']").val(obj.data.agent_staff_id);
                             body.find("input[name='user_id']").val(obj.data.user_id);
                             body.find("input[name='user_name']").val(obj.data.user_name);
                             body.find("input[name='agent_id']").val(obj.data.agent_id);
                             body.find("input[name='agent_name']").val(obj.data.agent_name);
-							body.find("input[name='agent_staff_type']").val(obj.data.agent_staff_type);
-							body.find("input[name='can_withdraw']").val(obj.data.can_withdraw);
+							body.find("#agent_staff_type").val(obj.data.agent_staff_type);
+							body.find("#can_withdraw").val(obj.data.can_withdraw);
 							body.find("input[name='is_enable']").val(obj.data.is_enable);
 							body.find("input[name='add_user_id']").val(obj.data.add_user_id);
 							body.find("input[name='add_time']").val(obj.data.add_time);
-							var iframe = window['layui-layer-iframe' + index];
+							
                             let data = {
                                 can_withdraw    : obj.data.can_withdraw,
                                 agent_staff_type: obj.data.agent_staff_type,
@@ -280,6 +231,7 @@
                             }
 
 							iframe.init(data)
+							iframe.layui.form.render();
 						},
 
 						});    

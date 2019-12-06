@@ -2,6 +2,7 @@
 <html>
 {%include "head.html" %}
 {% include "script.html" %}
+{% include "js/is_enable.html"%}
 	<body>
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="user-from">
@@ -43,7 +44,7 @@
 			<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">禁用</a>
 		</script> -->
 
-		<!-- 搜索下拉 -->
+		<!-- 管理页面搜索下拉 -->
 		<script>
 			layui.use('form',function(){
 				var form = layui.form;
@@ -136,7 +137,7 @@
 			function get_group(){
 				return new Promise((resolve,reject)=>{
 					$.ajax({
-						url:'/data/shop_group?select=group_id,group_name',
+						url:'/data/shop_group?select=group_id,group_name&is_enable=eq.1',
 						type:'GET',
 						success:result=>resolve(result),
 						error:err=>reject(err)
@@ -228,6 +229,7 @@
 				//监听行工具事件
 				table.on('tool(shop_table)', function(obj){
 					var layEvent = obj.event; //获得 lay-event 对应的值
+					const url = `/data/shop?shop_id=eq.${obj.data.shop_id}`
 					if(layEvent === 'detail'){ //查看
 						layer.msg('查看');
 						//弹出层引入用户详情页面
@@ -237,43 +239,13 @@
 						if(obj.data.is_enable==true){
 						layer.confirm(`禁用用户：${obj.data.name}`, function(index){
 							//向服务端发送删除指令
-							$.ajax({
-								url     : `/data/shop?shop_id=eq.${obj.data.shop_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":false}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-									setTimeout(function(){ 
-										window.location.reload()  
-										}, 1000);	
-								}
-							})
+							is_enable(url,false,"shopTable")
 							});
 						}
 						else{		
 							layer.confirm(`解禁用户：${obj.data.name}`, function(index){
 							//向服务端发送删除指令
-							$.ajax({
-								url     : `/data/shop?shop_id=eq.${obj.data.shop_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":true}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-									table.reload("shopTable")	
-								}
-							})
+							is_enable(url,true,"shopTable")
 							});
 						}
 					}

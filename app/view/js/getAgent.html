@@ -1,0 +1,17 @@
+<script>
+    //请求经销商
+    function getAgent(is_enable=true){
+        let url =  `/data/agent?select=agent_id,name&is_enable=eq.1`;
+        if(!is_enable){
+            url =`/data/agent?select=agent_id,name`;
+        }
+        return new Promise((resolve,reject)=>{
+            $.ajax({
+            url    : url,
+            type   : "GET",
+            success: result=>resolve(result),
+            error  : err=>reject(err)
+            })		
+        })
+    }
+</script>

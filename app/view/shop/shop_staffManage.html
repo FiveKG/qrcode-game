@@ -2,6 +2,7 @@
 <html>
 {%include "head.html" %}
 {% include "script.html" %}
+{% include "js/is_enable.html"%}
 	<body>
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="user-from">
@@ -207,6 +208,7 @@
 				//监听行工具事件
 				table.on('tool(shop_staff_table)', function(obj){
 					var layEvent = obj.event; //获得 lay-event 对应的值
+					const url = `/data/shop_staff?shop_staff_id=eq.${obj.data.shop_staff_id}`;
 					if(layEvent === 'detail'){ //查看
 						layer.msg('查看');
 						//弹出层引入用户详情页面
@@ -216,43 +218,13 @@
 						if(obj.data.is_enable==true){
 						layer.confirm(`禁用：${obj.data.staff_name}`, function(index){
 							//向服务端发送禁用指令
-							$.ajax({
-								url     : `/data/shop_staff?shop_staff_id=eq.${obj.data.shop_staff_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":false}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-									setTimeout(function(){ 
-										table.reload("shop_staffTable")
-										}, 1000);	
-								}
-							})
+							is_enable(url,false,'shop_staffTable')
 							});
 						}
 						else{		
 							layer.confirm(`解禁：${obj.data.staff_name}`, function(index){
 							//向服务端发送接近指令
-							$.ajax({
-								url     : `/data/shop_staff?shop_staff_id=eq.${obj.data.shop_staff_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":true}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-										table.reload("shop_staffTable")	
-								}
-							})
+							is_enable(url,true,'shop_staffTable')
 							});
 						}
 					}

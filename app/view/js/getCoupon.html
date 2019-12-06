@@ -1,0 +1,17 @@
+<script>
+    //请求优惠券
+    function getCoupon(is_enable=true){
+        let url = `/data/coupon?select=coupon_id,coupon_name&is_enable=eq.1`;
+        if(!is_enable){
+            url = `/data/coupon?select=coupon_id,coupon_name`;
+        }
+        return new Promise((resolve,reject)=>{
+            $.ajax({
+            url    :  url,
+            type   : "GET",
+            success: result=>resolve(result),
+            error  : err=>reject(err)
+            })		
+        })
+    }
+</script>

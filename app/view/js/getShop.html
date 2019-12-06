@@ -1,0 +1,17 @@
+<script>
+    //请求店铺
+    function getShop(is_enable=true){
+        let url = `/data/shop?select=shop_id,name&is_enable=eq.1`;
+        if(!is_enable){
+            url =`/data/shop?select=shop_id,name`;
+        }
+        return new Promise((resolve,reject)=>{
+            $.ajax({
+            url    : url,
+            type   : "GET",
+            success: result=>resolve(result),
+            error  : err=>reject(err)
+            })		
+        })
+    }
+</script>

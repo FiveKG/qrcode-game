@@ -182,7 +182,11 @@ module.exports = {
      */
     async getJWTInfo(){
         const jwtToken =await this.getJWTToken();
-        const jwtInfo = await this.decodeToken(jwtToken);
-        return jwtInfo
+        if(jwtToken){
+            const jwtInfo = await this.decodeToken(jwtToken);
+            return jwtInfo
+        }
+        return false
+
     }
 }

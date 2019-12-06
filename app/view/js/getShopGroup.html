@@ -1,0 +1,17 @@
+<script>
+    //请求店铺
+    function getShopGroup(is_enable=true){
+        let url = `/data/shop_group?select=group_id,group_name&is_enable=eq.1`;
+        if(!is_enable){
+            url = `/data/shop_group?select=group_id,group_name`;
+        }
+        return new Promise((resolve,reject)=>{
+            $.ajax({
+            url    : url,
+            type   : "GET",
+            success: result=>resolve(result),
+            error  : err=>reject(err)
+            })		
+        })
+    }
+</script>

@@ -1,0 +1,16 @@
+<script>
+    function getAgent_staff(is_enable=true){
+        let url =  `/data/agent_staff_view?select=agent_staff_id,user_name&is_enable=eq.1`;
+        if(!is_enable){
+            url = `/data/agent_staff_view?select=agent_staff_id,user_name`;
+        }
+        return new Promise((resolve,reject)=>{
+            $.ajax({
+            url    : url,
+            type   : "GET",
+            success: result=>resolve(result),
+            error  : err=>reject(err)
+            })		
+        })
+    }
+</script>

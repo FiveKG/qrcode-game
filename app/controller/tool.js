@@ -39,7 +39,16 @@ class ToolController extends Controller {
         const { ctx,logger } = this;
         try{
             const data = await ctx.helper.getJWTInfo()
-            ctx.body = await ctx.helper.renderSuccess(200,'',data); 
+            if(!data){
+
+                ctx.body = await ctx.helper.messageByCode(400003)
+                ctx.redirect('/login')
+                return
+            }
+            else{
+                ctx.body = await ctx.helper.renderSuccess(200,'',data); 
+                return
+            }
         }catch(err){
             logger.error(err)
             throw err

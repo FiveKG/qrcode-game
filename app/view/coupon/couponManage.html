@@ -2,6 +2,10 @@
 <html>
 {%include "head.html" %}
 {% include "script.html" %}
+{% include "js/getCoupon.html"%}
+{% include "js/getShop.html"%}
+{% include "js/getShopGroup.html"%}
+{% include "js/is_enable.html"%}
 	<body>
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="user-from">
@@ -15,7 +19,7 @@
                 <div class="layui-inline">
                     <label class="layui-form-label">所属店铺</label>
                     <div class="layui-input-inline">
-                        <select name="shop_id" lay-search>
+                        <select name="shop_id" id="shop_id" lay-search>
                         </select>
                     </div>
                 </div>
@@ -55,11 +59,9 @@
 		<script>
             layui.use('form',function(){
                 var form = layui.form;
-                    //获取经销商
-                    $.ajax({
-                    url        : `/data/coupon?select=coupon_id,coupon_name`,
-                    type       : "GET",
-                    success	:function(result){
+                    //获取券名  
+                    getCoupon(false)
+                    .then(result=>{
                         if(result){
                             $('select[name="coupon_id"]').empty();
                             $('select[name="coupon_id"]').append(`<option value=''  selected>所有</option>`);
@@ -71,41 +73,38 @@
                             $('select[name="coupon_id"]').append(`<option value='' disable>无数据</option>`);
                         }
                         form.render();
-                    },
-                    error:function(err){
-                        console.log('select[name="coupon_id"] err:',err)
+                    })
+                    .catch(err=>{
                         $('select[name="coupon_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
                         form.render();
-                    }
-                })
-                //获取店铺
-                    $.ajax({
-                    url        : `/data/shop?select=shop_id,name`,
-                    type       : "GET",
-                    success	:function(result){
-                        if(result){
-                            $('select[name="shop_id"]').empty();
-                            $('select[name="shop_id"]').append(`<option value=''  selected>所有</option>`);
-                            for(element of result){
-                                $('select[name="shop_id"]').append(`<option value=${element.shop_id}>${element.name}</option>`);
-                            }
-                        }else{
-                            $('select[name="shop_id"]').append(`<option value='' disable>无数据</option>`);
+                        console.error(err)
+                    })
+                
+                 //店铺列表,所有
+                getShop(false)
+                .then(result=>{
+                    if(result){
+                        $("#shop_id").empty()
+                        for(element of result){
+                            $("#shop_id").append(`<option value=${element.shop_id}>${element.name}</option>`);
                         }
-                        form.render();
-                    },
-                    error:function(err){
-                        console.log('select[name="shop_id"] err:',err)
-                        $('select[name="shop_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
+                        $("#shop_id").append(`<option selected value='-1'>请选择</option>`)
                         form.render();
                     }
-                    
+                    else{
+                        $("#shop_id").append(`<option value='' disable>无数据</option>`);
+                        form.render();
+                    }
                 })
+                .catch(err=>{
+                    console.err(err)
+                    $("#shop_id").append(`<option value='-1' disable selected>获取失败</option>`);
+                    form.render();
+                })
+                
                 //获取品牌
-                    $.ajax({
-                    url        : `/data/shop_group?select=group_id,group_name`,
-                    type       : "GET",
-                    success	:function(result){
+                    getShopGroup()
+                    .then(result=>{
                         if(result){
                             $('select[name="group_id"]').empty();
                             $('select[name="group_id"]').append(`<option value=''  selected>所有</option>`);
@@ -116,13 +115,12 @@
                             $('select[name="group_id"]').append(`<option value='' disable>无数据</option>`);
                         }
                         form.render();
-                    },
-                    error:function(err){
-                        console.log('select[name="group_id"] err:',err)
+                    })
+                    .catch(err=>{
                         $('select[name="group_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
                         form.render();
-                    }
-                })
+                        console.error(err)
+                    })
             }) 
         </script>
 
@@ -225,53 +223,24 @@
 	
 				//监听行工具事件
 				table.on('tool(coupon_table)', function(obj){
+                    const url = `/data/coupon?coupon_id=eq.${obj.data.coupon_id}`;
 					var layEvent = obj.event; //获得 lay-event 对应的值
 					if(layEvent === 'detail'){ //查看
 						layer.msg('查看');
 						//弹出层引入用户详情页面
 					} 
-					else if(layEvent === 'is_enable'){ //删除
+					else if(layEvent === 'is_enable'){ //
 						
 						if(obj.data.is_enable==true){
 						layer.confirm(`禁用：${obj.data.coupon_name}`, function(index){
 							//向服务端发送禁用指令
-							$.ajax({
-								url     : `/data/coupon?coupon_id=eq.${obj.data.coupon_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":false}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-									setTimeout(function(){ 
-										table.reload("couponTable")
-										}, 1000);	
-								}
-							})
+                            is_enable(url,false,'couponTable')
 							});
 						}
 						else{		
-							layer.confirm(`解禁：${obj.data.name}`, function(index){
+							layer.confirm(`解禁：${obj.data.coupon_name}`, function(index){
 							//向服务端发送接近指令
-							$.ajax({
-								url     : `/data/coupon?coupon_id=eq.${obj.data.coupon_id}`,
-								type    : "PATCH",
-								dataType: "json",
-								data    : JSON.stringify({"is_enable":true}),
-								contentType: 'application/json; charset=utf-8',
-								success: function(data){
-									if(!data){
-										layer.msg('更新成功!');
-									}else{
-										layer.msg('更新失败!');
-									}
-										table.reload("couponTable")	
-								}
-							})
+							is_enable(url,true,"couponTable")
 							});
 						}
                     }
@@ -336,7 +305,7 @@
                                 iframe.layui.form.render();
                                 
                                 if(!obj.data.shop_id){
-                                    body.find("select[name='shop_id']").val("-1");//shop_id=-1，则表示没有品牌
+                                    body.find("select[name='shop_id']").val("-1");
                                     body.find("#shop").attr("style","display:none;")
                                 }else{
                                     body.find("select[name='shop_id']").val(obj.data.shop_id);
@@ -356,8 +325,15 @@
 							body.find("input[name='amount']").val(new Decimal(obj.data.amount).div(100));
 							body.find("input[name='add_user_id']").val(obj.data.add_user_id);
 							body.find("input[name='add_time']").val(obj.data.add_time);
-							body.find("input[name='is_enable']").val(obj.data.is_enable);
-							
+                            body.find("input[name='is_enable']").val(obj.data.is_enable);
+                            let data = {
+                                shop_id : obj.data.shop_id,
+                                agent_id: obj.data.agent_id
+                            }
+
+                           // iframe.init(data)
+                            
+							iframe.layui.form.render();
 						},
 
 						});    

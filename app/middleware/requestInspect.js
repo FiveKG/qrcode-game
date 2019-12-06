@@ -10,8 +10,10 @@ module.exports = option=>{
     return async function requestInspect(ctx, next){  
         const jwtToken = await ctx.helper.getJWTToken();
         if(!jwtToken){
+
             ctx.body = await ctx.helper.messageByCode(400003)
-            return;
+            ctx.redirect('/login')
+            return
         }
         try{
             let user_info = await ctx.helper.decodeToken(jwtToken);
@@ -31,30 +33,3 @@ module.exports = option=>{
         }
     } 
 }
-// module.exports = options => {
-//     return async function requestInspect(ctx, next) {
-//         let token = ctx.header.token;
-//         if (!token) {
-//             ctx.status = 403;
-//             ctx.body = await ctx.helper.renderError(403, 'token invalid');
-//             return;
-//         }
-//         try {
-//             let user = await ctx.helper.decodeToken(token);
-//             ctx.logger.debug('user: ', user);
-//             if (!user['is_enable']) {
-//                 ctx.body = await ctx.helper.renderError(501, '用户状态不可用');
-//                 return;
-//             }
-//             if ('admin' != user['user_type']) {
-//                 ctx.body = await ctx.helper.renderError(502, '权限不足');
-//                 return;
-//             }
-//             await next();
-//             return;
-//         } catch (e) {
-//             ctx.status = 403;
-//             ctx.body = await ctx.helper.renderError(403, 'token invalid');
-//         }
-//     }
-// }
