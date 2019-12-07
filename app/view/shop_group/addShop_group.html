@@ -6,15 +6,15 @@
         <div class="layui-card-body">
         <form class="layui-form"  action="">
                 <div class="layui-form-item layui-row" style="display:none" >
-                    <label class="layui-form-label"></label>
+                    <label class="layui-form-label">ID</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="group_id" required  autocomplete="off" class="layui-input">
+                        <input type="text"  name="group_id" lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
                     <label class="layui-form-label">名称</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="group_name"   autocomplete="off" class="layui-input">
+                        <input type="text"  name="group_name" lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" style="display:none">

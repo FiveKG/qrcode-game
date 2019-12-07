@@ -2,6 +2,7 @@
 <html>
 {%include "head.html" %}
 {% include "script.html" %}
+{% include "js/getShop.html" %}
 <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
 <script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
 </style>
@@ -11,10 +12,10 @@
                 <div class="layui-container">  
                 <div class="layui-row">
                     <div class="layui-col-md9 layui-col-xs9 layui-col-sm9">
-                        <div class="layui-form-item layui-row" lay-filter="shop_name">
+                        <div class="layui-form-item layui-row" lay-filter="shop_id">
                             <label class="layui-form-label">所属店铺</label>
                             <div class="layui-input-block">
-                                <select id = 'shop_name' name="shop_name" lay-search  >   
+                                <select id = 'shop_id' name="shop_id" lay-search  >   
                                 </select>
                             </div> 
                         </div>
@@ -47,15 +48,22 @@
     layui.use('form', function(){
         var form = layui.form;
         //获取店铺
-        $.ajax({
-            url : `/data/shop?select=name&is_enable=eq.1`,
-            type:"GET",
-            success:function(result){
+        getShop(true)
+        .then(result=>{
+            if(result){
+                $("#shop_id").empty()
                 for(element of result){
-                    $("#shop_name").append(`<option value=${element.name}>${element.name}</option>`);
+                    $("#shop_id").append(`<option value=${element.shop_id}>${element.name}</option>`);
                 }
+                $("#shop_id").append(`<option selected value='-1'>请选择</option>`)
                 form.render();
             }
+            
+        })
+        .catch(err=>{
+            console.error(err)
+            $("#shop_id").append(`<option value='-1' disable selected>获取失败</option>`);
+            form.render();
         })
     })
 </script>
@@ -68,7 +76,6 @@ function makePdf(pdfName) {
     return new Promise((resolve,reject)=>{
         var target = $('#img_container');//目标dom
         $('#img_container').css("background", "#fff")//设置颜色
-
         if(pdfName==''||pdfName==undefined) pdfName='a4';
         
         html2canvas(target, {
@@ -121,6 +128,10 @@ function makePdf(pdfName) {
         let layer = layui.layer;
         //监听提交
         form.on('submit(formDemo)', function(data){
+            if(data.field.shop_id==='-1'){
+                layer.msg('请选择店铺')
+                return false
+            }
             const loading_index = layer.load(); //风格1的加载
 
             function download_qrcode(){

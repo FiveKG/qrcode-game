@@ -1,0 +1,17 @@
+<script>
+        //请求用户
+        function getUser(is_enable=true){
+            let url = `/data/sys_user?select=user_id,user_name&is_enable=eq.1`;
+            if(!is_enable){
+                url = `/data/sys_user?select=user_id,user_nam`;
+            }
+            return new Promise((resolve,reject)=>{
+                $.ajax({
+                url    : url,
+                type   : "GET",
+                success: result=>resolve(result),
+                error  : err=>reject(err)
+                })		
+            })
+        }
+    </script>

@@ -2,7 +2,11 @@
 <html>
 {%include "head.html" %}
 {% include "script.html" %}
+{% include "js/getAgent.html"%}
+{% include "js/getShop.html" %}
+{% include "js/getShopGroup.html" %}
 {% include "js/is_enable.html"%}
+
 	<body>
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="user-from">
@@ -57,71 +61,60 @@
 		layui.use('form',function(){
 			var form = layui.form;
 				//获取经销商
-				$.ajax({
-					url        : `/data/agent?select=agent_id,name`,
-					type       : "GET",
-					success	:function(result){
-						if(result){
+				getAgent(true)
+				.then(result=>{
+					if(result){
 						$('select[name="agent_id"]').empty();
 						$('select[name="agent_id"]').append(`<option value=''  selected>所有</option>`);
 						for(element of result){
-						$('select[name="agent_id"]').append(`<option value=${element.agent_id}>${element.name}</option>`);
+							$('select[name="agent_id"]').append(`<option value=${element.agent_id}>${element.name}</option>`);
 						}
-						}else{
-							$('select[name="agent_id"]').append(`<option value='' disable>无数据</option>`);
-						}
-					},
-					error:function(err){
-						console.log('select[name="agent_id"] err:',err)
-						$('select[name="agent_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
 						form.render();
 					}
-				})		
+				
+				})
+				.catch(err=>{
+					console.error(err)
+					$('select[name="agent_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
+					form.render();
+				})
 
 			//获取店铺
-				$.ajax({
-				url        : `/data/shop?select=shop_id,name`,
-				type       : "GET",
-				success	:function(result){
-					if(result){
-						$('select[name="shop_id"]').empty();
-						$('select[name="shop_id"]').append(`<option value=''  selected>所有</option>`);
-						for(element of result){
-							$('select[name="shop_id"]').append(`<option value=${element.shop_id}>${element.name}</option>`);
-						}
-					}else{
-						$('select[name="shop_id"]').append(`<option value='' disable>无数据</option>`);
+			getShop(true)
+			.then(result=>{
+				if(result){
+					$('select[name="shop_id"]').empty();
+					$('select[name="shop_id"]').append(`<option value=''  selected>所有</option>`);
+					for(element of result){
+						$('select[name="shop_id"]').append(`<option value=${element.shop_id}>${element.name}</option>`);
 					}
 					form.render();
-				},
-				error:function(err){
-					console.log('select[name="shop_id"] err:',err)
-					$('select[name="shop_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
-					form.render();
 				}
-				
 			})
+			.catch(err=>{
+				console.error(err)
+				$('select[name="shop_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
+				form.render();
+			})
+			
+			
 			//获取品牌
-				$.ajax({
-				url        : `/data/shop_group?select=group_id,group_name`,
-				type       : "GET",
-				success	:function(result){
-					if(result){
-						$('select[name="group_id"]').empty();
-						$('select[name="group_id"]').append(`<option value=''  selected>所有</option>`);
-						for(element of result){
-							$('select[name="group_id"]').append(`<option value=${element.group_id}>${element.group_name}</option>`);
-						}
-					}else{
-						$('select[name="group_id"]').append(`<option value='' disable>无数据</option>`);
+			getShopGroup(true)
+			.then(result=>{
+				if(result){
+					$('select[name="group_id"]').empty();
+					$('select[name="group_id"]').append(`<option value=''  selected>所有</option>`);
+					for(element of result){
+						$('select[name="group_id"]').append(`<option value=${element.group_id}>${element.group_name}</option>`);
 					}
 					form.render();
-				},
-				error:function(err){
-					console.log('select[name="group_id"] err:',err)
-					$('select[name="group_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
-					form.render();
 				}
+
+			})
+			.catch(err=>{
+				console.error(err)
+				$('select[name="group_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
+				form.render();
 			})
 		}) 
     	</script>

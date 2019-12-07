@@ -66,11 +66,8 @@
                             $('select[name="coupon_id"]').empty();
                             $('select[name="coupon_id"]').append(`<option value=''  selected>所有</option>`);
                             for(element of result){
-                            $('select[name="coupon_id"]').append(`<option value=${element.coupon_id}>${element.coupon_name}</option>`);
+                                $('select[name="coupon_id"]').append(`<option value=${element.coupon_id}>${element.coupon_name}</option>`);
                             }
-                        }
-                        else{
-                            $('select[name="coupon_id"]').append(`<option value='' disable>无数据</option>`);
                         }
                         form.render();
                     })
@@ -91,36 +88,30 @@
                         $("#shop_id").append(`<option selected value='-1'>请选择</option>`)
                         form.render();
                     }
-                    else{
-                        $("#shop_id").append(`<option value='' disable>无数据</option>`);
-                        form.render();
-                    }
                 })
                 .catch(err=>{
-                    console.err(err)
+                    console.error(err)
                     $("#shop_id").append(`<option value='-1' disable selected>获取失败</option>`);
                     form.render();
                 })
                 
                 //获取品牌
-                    getShopGroup()
-                    .then(result=>{
-                        if(result){
-                            $('select[name="group_id"]').empty();
-                            $('select[name="group_id"]').append(`<option value=''  selected>所有</option>`);
-                            for(element of result){
-                                $('select[name="group_id"]').append(`<option value=${element.group_id}>${element.group_name}</option>`);
-                            }
-                        }else{
-                            $('select[name="group_id"]').append(`<option value='' disable>无数据</option>`);
+                getShopGroup()
+                .then(result=>{
+                    if(result){
+                        $('select[name="group_id"]').empty();
+                        $('select[name="group_id"]').append(`<option value=''  selected>所有</option>`);
+                        for(element of result){
+                            $('select[name="group_id"]').append(`<option value=${element.group_id}>${element.group_name}</option>`);
                         }
                         form.render();
-                    })
-                    .catch(err=>{
-                        $('select[name="group_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
-                        form.render();
-                        console.error(err)
-                    })
+                    }
+                })
+                .catch(err=>{
+                    $('select[name="group_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
+                    form.render();
+                    console.error(err)
+                })
             }) 
         </script>
 

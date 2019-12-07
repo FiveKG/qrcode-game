@@ -9,7 +9,7 @@
                     <div class="layui-form-item layui-row"  style="display:none">
                         <label class="layui-form-label" >员工id</label>
                         <div class="layui-input-block ">
-                            <input type="text" disabled name="agent_staff_id"   autocomplete="off" class="layui-input">
+                            <input type="text" disabled name="agent_staff_id" lay-verify="required"  autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form layui-row" lay-filter="agent_id">
@@ -62,6 +62,7 @@
                 $('#agent_staff_type').val(`${data.agent_staff_type}`)
                 form.render('select','agent_staff_type');  
 
+                //获取经营商
                 getAgent()
                 .then(result=>{
                     if(result){

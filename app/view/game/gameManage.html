@@ -62,15 +62,13 @@
 						for(element of result){
 							$('select[name="game_id"]').append(`<option value=${element.game_id}>${element.game_name}</option>`);
 							}
-						}else{
-							$('select[name="game_id"]').append(`<option value='' disable>无数据</option>`);
 						}
-						form.render('select')
+						form.render()
 					})
 					.catch(err=>{
 						console.log('err:',err);
 						$('select[name="game_id"]').append(`<option value='-1'>获取数据失败</option>`);
-						form.render('select')
+						form.render()
 					})
 				})
 			

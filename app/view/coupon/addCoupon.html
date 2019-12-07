@@ -10,7 +10,7 @@
                 <div class="layui-form-item layui-row" style="display: none">
                     <label class="layui-form-label">优惠券id</label>
                     <div class="layui-input-block ">
-                        <input type="text"  name="coupon_id"   autocomplete="off" class="layui-input">
+                        <input type="text"  name="coupon_id" lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
@@ -121,13 +121,10 @@
                     $("#shop_id").append(`<option selected value='-1'>请选择</option>`)
                     form.render();
                 }
-                else{
-                    $("#shop_id").append(`<option value='' disable>无数据</option>`);
-                    form.render();
-                }
+
             })
             .catch(err=>{
-                console.err(err)
+                console.error(err)
                 $("#shop_id").append(`<option value='-1' disable selected>获取失败</option>`);
                 form.render();
             })
@@ -142,9 +139,7 @@
                     $('#group_id').append(`<option selected value='-1'>请选择</option>`)//group_id=-1，则表示没有品牌
                     form.render()
                 }
-                else{
-                    $('select[name="group_id"]').append(`<option value='' disable>无数据</option>`);
-                }
+    
             })
             .catch(err=>{
                 $('select[name="group_id"]').append(`<option value='-1' disable>获取数据失败</option>`);

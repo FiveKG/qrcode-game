@@ -67,8 +67,6 @@
 					for(element of result){
 						$('select[name="agent_id"]').append(`<option value=${element.agent_id}>${element.name}</option>`);
 						}
-					}else{
-						$('select[name="agent_id"]').append(`<option value='' disable>无数据</option>`);
 					}
 					form.render('select')
 				})
@@ -79,6 +77,7 @@
 				})
 			})
 		</script>
+		
 		<script>
 			layui.use(['table', 'dialog', 'jquery'], function() {
 				var table = layui.table;
