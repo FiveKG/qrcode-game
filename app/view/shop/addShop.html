@@ -2,6 +2,8 @@
 <html>
     {%include "head.html" %}
     {% include "script.html" %}
+    {% include "js/getShopGroup.html" %}
+    {% include "js/getPCAscript.html"%}
     <div class="layui-card">
         <div class="layui-card-body">
         <form class="layui-form"  action="">
@@ -57,13 +59,12 @@
                 <label class="layui-form-label">所属品牌</label>
                 <div class="layui-input-block">
                     <select id = 'group_id' name="group_id" lay-search  >   
-                        <option value="" selected>无所属品牌</option>
                     </select>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">营业执照编号</label>
                     <div class="layui-input-block">
-                        <input type="text" name="license"  lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text" name="license"  lay-verify="required"  lay-verify="required" autocomplete="off" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -100,28 +101,11 @@
     <script>
         layui.use('form', function(){
             var form = layui.form;
-            var group_obj = $('#group_id');
-            var id_object = $('#shop_id');
-            var user_id_object = $('#add_user_id');
-            var province_object =  $('#province');
-            var city_object =  $('#city');
-            var area_object =  $('#area');
-
-            $.ajax({
-                    url     : `/data/shop_group?select=group_id,group_name`,
-                    type    : "GET",
-                    success: function(data){
-                        for(element of data){
-                            group_obj.append(`<option value=${element.group_id}>${element.group_name}</option>`);
-                        }
-                        form.render('select','group_id');
-                    }
-                })
             $.ajax({
                 url     : `/api/tool/getJwtInfo`,
                 type    : "get",
                 success: function(result){
-                    user_id_object.val(result.data.user_id)
+                    $('#add_user_id').val(result.data.user_id)
                     form.render();
                 }
             })
@@ -129,60 +113,85 @@
                 url     : `/api/common/generate_key`,
                 type    : "get",
                 success: function(result){
-                    id_object.val(result.data)
+                    $('#shop_id').val(result.data)
                     form.render();
                 }
             })
 
-            $.ajax({
-                url     : `/api/common/get_province`,
-                type    : "get",
-                success: function(result){
-                    province_object.append(`<option value="-1" selected>请选择省</option>`)
-                    city_object.append(`<option value="-1" selected>请选择市</option>`)
-                    area_object.append(`<option value="-1" selected>请选择区</option>`)
-                    for(element of result.data){
-                        province_object.append(`<option value=${element.value}>${element.label}</option>`);
-                        }
-                    form.render('select','province');
+             //品牌，仅is_enable=1
+             getShopGroup()
+            .then(result=>{
+                if(result){
+                    for(element of result){
+                        $('#group_id').append(`<option value=${element.group_id}>${element.group_name}</option>`)
+                    }
+                    $('#group_id').append(`<option selected value='-1'>请选择</option>`)
+                    $('#group_id').append(`<option selected value=''>无所属品牌</option>`)//group_id=''，则表示没有品牌
+                    form.render()
                 }
+              
+            })
+            .catch(err=>{
+                $('select[name="group_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
+                form.render();
+                console.error(err)
             })
 
+            //获得省
+            get_province()
+            .then(result=>{
+                $('#province').append(`<option value="-1" selected>请选择省</option>`);
+                $('#city').append(`<option value="-1" selected>请选择市</option>`);
+                $('#area').append(`<option value="-1" selected>请选择区</option>`);
+                for(element of result.data){
+                    $('#province').append(`<option value=${element.value}>${element.label}</option>`);
+                        }
+                    form.render('select','province');
+            })
+            .catch(err=>{
+                $('#province').empty()
+                $('#province').append(`<option value="-1" selected>获取失败</option>`);
+                console.error(err)
+            })
+
+            //动态获得市
             form.on('select(province)', function(data){
-                $.ajax({
-                    url     : `/api/common/get_city`,
-                    type    : "get",
-                    dataType: "json",
-                    data    : {provinceCode:data.value},
-                    contentType: 'application/json; charset=utf-8',
-                    success: function(result){
-                        city_object.empty();
-                        area_object.empty();
-                        city_object.append(`<option value="-1" selected>请选择市</option>`)
-                        area_object.append(`<option value="-1" selected>请选择区</option>`)
-                        for(element of result.data){
-                            city_object.append(`<option value=${element.value}>${element.label}</option>`);
-                            }
-                        form.render('select','city');
+                get_city(data.value)
+                .then(result=>{
+                    $('#city').empty();
+                    $('#area').empty();
+                    $('#city').append(`<option value="-1" selected>请选择市</option>`);
+                    $('#area').append(`<option value="-1" selected>请选择区</option>`);
+                    for(element of result.data){
+                        $('#city').append(`<option value=${element.value}>${element.label}</option>`);
                     }
+                    form.render('select','city');
                 })
-            });     
+                .catch(err=>{
+                $('#province').empty()
+                $('#province').append(`<option value="-1" selected>获取失败</option>`);
+                console.error(err)
+                })
+            });    
+            
+            //获得区
             form.on('select(city)', function(data){
-                $.ajax({
-                    url     : `/api/common/get_area`,
-                    type    : "get",
-                    data    : {cityCode:data.value},
-                    contentType: 'application/json; charset=utf-8',
-                    success: function(result){
-                        area_object.empty();
-                        area_object.append(`<option value="-1" selected>请选择区</option>`)
-                        for(element of result.data){
-                            area_object.append(`<option value=${element.value}>${element.label}</option>`);
-                            }
-                            form.render('select','area');
+                get_area(data.value)
+                .then(result=>{
+                    $('#area').empty()
+                    $('#area').append(`<option value="-1" selected>请选择区</option>`)
+                    for(element of result.data){
+                        $('#area').append(`<option value=${element.value}>${element.label}</option>`);
                     }
+                    form.render('select','area');
                 })
-            });       
+                .catch(err=>{
+                $('#province').empty()
+                $('#province').append(`<option value="-1" selected>获取失败</option>`);
+                console.error(err)
+                })
+            });  
+   
 
          });
        
@@ -193,6 +202,7 @@
     var form = layui.form;
     //监听提交
     form.on('submit(formDemo)', function(data){
+        //判断省份
         if(data.field.province==='-1'||data.field.province===''){
             layer.msg('请选择省份');
             return false
@@ -204,9 +214,12 @@
             layer.msg('请选择区');
             return false
         }
+        //判断品牌
+        if(data.field.group_id==='-1'){
+            layer.msg('请选择品牌');
+            return false
+        }
 
-
-        let layer_index = $("form[class='layui-form']").val()
         var province =  $('#province').find("option:selected").text();
         var city =  $('#city').find("option:selected").text();
         var area =  $('#area').find("option:selected").text();

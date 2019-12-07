@@ -2,13 +2,16 @@
 <html>
     {%include "head.html" %}
     {% include 'script.html' %}
+    {% include "js/getShop.html" %}
+    {% include "js/getShopGroup.html" %}
+    {% include "js/getAgent.html"%}
     <div class="layui-card">
         <div class="layui-card-body">
                 <form class="layui-form"  action="">
                     <div class="layui-form-item layui-row" style="display: none" >
                         <label class="layui-form-label">主键</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="qrcode_id"   autocomplete="off" class="layui-input">
+                            <input type="text"  name="qrcode_id"  lay-verify="required"  autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
@@ -67,42 +70,59 @@
         function init(data){
             layui.use('form', function(){
                 var form = layui.form;
-                //获取店铺
-                $.ajax({
-                    url : `/data/shop?select=shop_id,name`,
-                    type:"GET",
-                    success:function(result){
+                 //获取店铺
+                getShop(true)
+                .then(result=>{
+                    if(result){
+                        $("#shop_id").empty()
                         for(element of result){
                             $("#shop_id").append(`<option value=${element.shop_id}>${element.name}</option>`);
                         }
-                        $("#shop_id").val(`${data.shop_id}`);
-                        form.render('select','shop_id');
+                        $("#shop_id").append(`<option selected value='-1'>请选择</option>`)
+                        form.render();
                     }
+            
                 })
-                //获取品牌
-                $.ajax({
-                    url : `/data/shop_group?select=group_id,group_name`,
-                    type:"GET",
-                    success:function(result){
-                        for(element of result){
-                            $("#group_id").append(`<option value=${element.group_id}>${element.group_name}</option>`);
-                        }
-                        $("#group_id").val(`${data.group_id}`);
-                        form.render('select','group_id');
-                    }
+                .catch(err=>{
+                    console.error(err)
+                    $("#shop_id").append(`<option value='-1' disable selected>获取失败</option>`);
+                    form.render();
                 })
-                //获取经营商
-                $.ajax({
-                    url : `/data/agent?select=agent_id,name`,
-                    type:"GET",
-                    success:function(result){
-                        for(element of result){
-                            $("#agent_id").append(`<option value=${element.agent_id}>${element.name}</option>`);
-                        }
 
-                        $("#agent_id").val(`${data.agent_id}`);
-                        form.render('select','agent_id');
+                 //品牌，仅is_enable=1
+                getShopGroup()
+                .then(result=>{
+                    if(result){
+                        for(element of result){
+                            $('#group_id').append(`<option value=${element.group_id}>${element.group_name}</option>`)
+                        }
+                        $('#group_id').append(`<option selected value='-1'>请选择</option>`)
+                        $('#group_id').append(`<option selected value=''>无所属品牌</option>`)//group_id=''，则表示没有品牌
+                        form.render()
                     }
+                
+                })
+                .catch(err=>{
+                    $('select[name="group_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
+                    form.render();
+                    console.error(err)
+                })
+
+                 //获取经营商
+                getAgent()
+                .then(result=>{
+                    if(result){
+                        for(element of result){
+                            $('#agent_id').append(`<option value=${element.agent_id}>${element.name}</option>`);
+                        }
+                        $("#agent_id").append(`<option selected value='-1'>请选择</option>`)
+                        form.render();
+                    }
+                })
+                .catch(err=>{
+                    console.log('err:',err);
+                    $('select[name="agent_id"]').append(`<option value='-1'>获取数据失败</option>`);
+                    form.render()
                 })
             })
         }
@@ -113,28 +133,38 @@
     layui.use('form', function(){
     var form = layui.form;
     form.on('submit(formDemo)', function(data){
-        data.field.scan_action=(JSON.parse(data.field.scan_action))
-        console.log(data.field)
-        // $.ajax({
-        //     url     : `/data/qrcode?qrcode_id=eq.${data.field.qrcode_id}`,
-        //     type    : "PATCH",
-        //     dataType: "json",
-        //     data    : JSON.stringify(data.field),
-        //     contentType: 'application/json; charset=utf-8',
-        //     success: function(data){
-        //         if(!data){
-        //             layer.msg('更新成功!');
-        //             setTimeout(function(){ 
-        //                 var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-        //                 parent.layer.close(index); //再执行关闭   
-        //                 parent.layui.table.reload('qrcodeTable');//刷新父表格  
-        //             }, 1000);
-        //         }
-        //         else{
-        //             layer.msg('更新失败!');
-        //         }
-        //     }
-        // })
+        if(data.field.agent_id==='-1'){
+            layer.msg('请选择运营商')
+            return false
+        }
+        if(data.field.group_id==='-1'){
+            layer.msg('请选择连锁品牌')
+            return false
+        }
+        if(data.field.shop_id==='-1'){
+            layer.msg('请选择店铺')
+            return false
+        }
+        $.ajax({
+            url     : `/data/qrcode?qrcode_id=eq.${data.field.qrcode_id}`,
+            type    : "PATCH",
+            dataType: "json",
+            data    : JSON.stringify(data.field),
+            contentType: 'application/json; charset=utf-8',
+            success: function(data){
+                if(!data){
+                    layer.msg('更新成功!');
+                    setTimeout(function(){ 
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭   
+                        parent.layui.table.reload('qrcodeTable');//刷新父表格  
+                    }, 1000);
+                }
+                else{
+                    layer.msg('更新失败!');
+                }
+            }
+        })
         return false;
     });
     });

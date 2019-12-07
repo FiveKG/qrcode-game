@@ -60,22 +60,19 @@
 						$('select[name="agent_staff_id"]').empty();
 						$('select[name="agent_staff_id"]').append(`<option value=''  selected>所有</option>`);
 						for(element of agent_staffs){
-						$('select[name="agent_staff_id"]').append(`<option value=${element.agent_staff_id}>${element.user_name}</option>`);
+							$('select[name="agent_staff_id"]').append(`<option value=${element.agent_staff_id}>${element.user_name}</option>`);
 						}
-					}else{
-							$('select[name="agent_staff_id"]').append(`<option value='' disable>无数据</option>`);
-						}
+						form.render()
 
+					}
 					if(agents){
 						$('select[name="agent_id"]').empty();
 						$('select[name="agent_id"]').append(`<option value=''  selected>所有</option>`);
 						for(element of agents){
 						$('select[name="agent_id"]').append(`<option value=${element.agent_id}>${element.name}</option>`);
 						}
-					}else{
-							$('select[name="agent_id"]').append(`<option value='' disable>无数据</option>`);
-						}
-					form.render('select')
+					}
+					form.render()
 				})
 				.catch(err=>{
 					console.log('err:',err);

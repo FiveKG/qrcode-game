@@ -2,6 +2,8 @@
 <html>
 {%include "head.html" %}
 {% include "script.html" %}
+{% include "js/getPCAscript.html"%}
+{% include "js/getShopGroup.html"%}
 {% include "js/is_enable.html"%}
 	<body>
 		<div class="page-content-wrap">
@@ -60,8 +62,6 @@
 							for(element of result){
 								$('select[name="shop_id"]').append(`<option value=${element.shop_id}>${element.name}</option>`);
 							}
-						}else{
-							$('select[name="shop_id"]').append(`<option value='' disable>无数据</option>`);
 						}
 						form.render();
 					},
@@ -83,8 +83,6 @@
 							for(element of result){
 								$('select[name="group_id"]').append(`<option value=${element.group_id}>${element.group_name}</option>`);
 							}
-						}else{
-							$('select[name="group_id"]').append(`<option value='' disable>无数据</option>`);
 						}
 						form.render();
 					},
@@ -272,60 +270,17 @@
 						success: function(layero, index){
 							var body = layer.getChildFrame('body', index);
 							var iframe = window['layui-layer-iframe' + index];
-							let p_c_a = {
+							let p_c_a_value = {
 								provinceCode: obj.data.p_c_a_id[0],
 								cityCode    : obj.data.p_c_a_id[1],
 								areaCode    : obj.data.p_c_a_id[2],
 							}
-							//初始化省份
-							get_province()
-							.then(result=>{
-								body.find("#province").empty()
-								for(element of result.data){
-									body.find("#province").append(`<option value=${element.value}>${element.label}</option>`);
-								}
-								body.find("#province").val(`${p_c_a.provinceCode}`);
-								iframe.layui.form.render();
-								//获得市
-								get_city(body.find("#province").val())
-								.then(result=>{
-									body.find("#city").empty()
-									body.find("#area").empty()
-		
-									for(element of result.data){
-										body.find("#city").append(`<option value=${element.value}>${element.label}</option>`);
-									}
-									body.find("#city").val(`${p_c_a.cityCode}`);
-									iframe.layui.form.render();
-									//获得区
-									get_area(body.find("#city").val())
-									.then(result=>{
-										body.find("#area").empty()
-										for(element of result.data){
-											body.find("#area").append(`<option value=${element.value}>${element.label}</option>`);
-										}
-										body.find("#area").val(`${p_c_a.areaCode}`);
-										iframe.layui.form.render();
-									})
-									.catch(err=>{
-										console.error('err:',err);
-										body.find("#area").append(`<option value=''>获取数据失败</option>`);
-										iframe.layui.form.render();
-									})
-								})
-								.catch(err=>{
-								console.error('err:',err);
-								body.find("#city").append(`<option value=''>获取数据失败</option>`);
-								iframe.layui.form.render();
-								})
-							})
-							.catch(err=>{
-								console.error('err:',err);
-								body.find("#province").append(`<option value=''>获取数据失败</option>`);
-								iframe.layui.form.render();
-							})
+
+							//初始化省市区
+							init_p_c_a(p_c_a_value,body,iframe)
+
 							//初始化品牌
-							get_group()
+							getShopGroup()
 							.then(result=>{
 								body.find("select[name='group_id']").empty()
 								result.map(element=>{
@@ -334,7 +289,7 @@
 								body.find("select[name='group_id']").val(obj.data.group_id);
 								//如果无所属品牌
 								if(!body.find("select[name='group_id']").val()){
-									body.find("select[name='group_id']").append(`<option selected value='-1'>无所属品牌</option>`)
+									body.find("select[name='group_id']").append(`<option selected value=''>无所属品牌</option>`)
 								}
 								iframe.layui.form.render();
 							})
@@ -343,6 +298,7 @@
 								body.find("select[name='group_id']").append(`<option value=''>获取数据失败</option>`);
 								iframe.layui.form.render();
 							})
+							
 							//返回二维码url
 							get_qrcode_url()
 							.then(result=>{
@@ -374,7 +330,6 @@
 							
 							
 
-							//iframe.init(data)//第一时间要执行的函数
 
 							iframe.layui.form.render();
 						},

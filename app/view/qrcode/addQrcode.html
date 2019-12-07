@@ -2,6 +2,8 @@
 <html>
     {%include "head.html" %}
     {% include "script.html" %}
+    {% include "js/getShop.html" %}
+    {% include "js/getAgent.html"%}
     <div class="layui-card">
         <div class="layui-card-body">
         <form class="layui-form"  action="" id='add_qrcode'>
@@ -89,27 +91,42 @@
             
             
             //获取店铺
-            $.ajax({
-                url : `/data/shop?select=shop_id,name&is_enable=eq.1`,
-                type:"GET",
-                success:function(result){
+            getShop(true)
+            .then(result=>{
+                if(result){
+                    $("#shop_id").empty()
                     for(element of result){
                         $("#shop_id").append(`<option value=${element.shop_id}>${element.name}</option>`);
                     }
-                    form.render('select','shop_id');
+                    $("#shop_id").append(`<option selected value='-1'>请选择</option>`)
+                    form.render();
                 }
+        
             })
+            .catch(err=>{
+                console.error(err)
+                $("#shop_id").append(`<option value='-1' disable selected>获取失败</option>`);
+                form.render();
+            })
+
             //获取经营商
-            $.ajax({
-                url : `/data/agent?select=agent_id,name&is_enable=eq.1`,
-                type:"GET",
-                success:function(result){
+            getAgent()
+            .then(result=>{
+                if(result){
                     for(element of result){
-                        $("#agent_id").append(`<option value=${element.agent_id}>${element.name}</option>`);
+                        $('#agent_id').append(`<option value=${element.agent_id}>${element.name}</option>`);
                     }
-                    form.render('select','agent_id');
+                    $("#agent_id").append(`<option selected value='-1'>请选择</option>`)
+                    form.render();
                 }
             })
+            .catch(err=>{
+                console.log('err:',err);
+                $('select[name="agent_id"]').append(`<option value='-1'>获取数据失败</option>`);
+                form.render()
+            })
+            
+
         })
     </script>
 
@@ -120,8 +137,6 @@
     let layer = layui.layer;
     //监听提交
     form.on('submit(formDemo)', function(data){
-        let loading_index = layer.load(1); //风格1的加载
-
         if(data.field.shop_id=="-1"){
             layer.msg('请选择店铺')
             return false
@@ -129,6 +144,8 @@
             layer.msg('请选择经营商');
             return false
         }
+        
+        let loading_index = layer.load(1); //风格1的加载
         //解析一下，不然会有转义字符
         data.field.scan_action=(JSON.parse(data.field.scan_action))
 

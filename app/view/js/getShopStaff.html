@@ -1,0 +1,17 @@
+<script>
+        //请求店员
+        function getShopStaff(is_enable=true){
+            let url = `/data/shop_staff?select=shop_staff_id,staff_name&is_enable=eq.1`;
+            if(!is_enable){
+                url = `/data/shop_staff?select=shop_staff_id,staff_name`;
+            }
+            return new Promise((resolve,reject)=>{
+                $.ajax({
+                url    : url,
+                type   : "GET",
+                success: result=>resolve(result),
+                error  : err=>reject(err)
+                })		
+            })
+        }
+    </script>

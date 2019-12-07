@@ -2,6 +2,7 @@
 <html>
 {%include "head.html" %}
 {% include "script.html" %}
+{% include "js/getUser.html" %}
 {% include "js/is_enable.html"%}
 	<body>
 		<div class="page-content-wrap">
@@ -59,26 +60,21 @@
 			layui.use('form',function(){
 				var form = layui.form;
 				//获取用户
-					$.ajax({
-					url        : `/data/sys_user?select=user_id,user_name`,
-					type       : "GET",
-					success	:function(result){
-						if(result){
-							$('select[name="user_id"]').empty();
-							$('select[name="user_id"]').append(`<option value=''  selected>所有</option>`);
-							for(element of result){
-								$('select[name="user_id"]').append(`<option value=${element.user_id}>${element.user_name}</option>`);
-							}
-						}else{
-							$('select[name="user_id"]').append(`<option value='' disable>无数据</option>`);
+				getUser(true)
+				.then(result=>{
+					if(result){
+						$('select[name="user_id"]').empty();
+						$('select[name="user_id"]').append(`<option value=''  selected>所有</option>`);
+						for(element of result){
+							$('select[name="user_id"]').append(`<option value=${element.user_id}>${element.user_name}</option>`);
 						}
-						form.render();
-					},
-					error:function(err){
-						console.log('select[name="user_id"] err:',err)
-						$('select[name="user_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
-						form.render();
 					}
+					form.render();
+				})
+				.catch(err=>{
+					console.error(err)
+					$('select[name="user_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
+					form.render();
 				})
 			}) 
 		</script>
