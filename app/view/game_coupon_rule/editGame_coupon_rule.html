@@ -27,7 +27,7 @@
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
-                        <label class="layui-form-label">优惠券</label>
+                        <label class="layui-form-label">代金券</label>
                         <div class="layui-input-block">
                         <select id = 'coupon_id' name="coupon_id" lay-search  >   
                         </select>
@@ -140,7 +140,7 @@
 
     <!-- 监听提交 -->
     <script>
-    //要先检查是否有覆盖，根据游戏和优惠券筛选但不包括自身
+    //要先检查是否有覆盖，根据游戏和代金券筛选但不包括自身
      function check_range(id,game_id,coupon_id){
         return new Promise((resolve,reject)=>{
             $.ajax({
@@ -162,7 +162,7 @@
         check_range(data.field.id,data.field.game_id,data.field.coupon_id)
         .then(result=>{
             if(result.length!==0){
-                /**存在优惠券,检查区间.判断思路:如果区间不相交，要么添加区间的最小值应该大于比较区间的最大值，要么添加区间的最大值小于比较区间的最小值
+                /**存在代金券,检查区间.判断思路:如果区间不相交，要么添加区间的最小值应该大于比较区间的最大值，要么添加区间的最大值小于比较区间的最小值
                  * 只要有存在一个就返回含有该元素的数组，否则返回undefined**/
                 comparison=result.find(element=>{
                     let sql_range = eval(element.play_count_range)

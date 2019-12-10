@@ -2,42 +2,56 @@
 <html>
     {%include "head.html" %}
     {% include 'script.html' %}
+    {% include "js/uploadImg.html"%}
+    {% include "js/uploadCSS.html"%}
 
     <div class="layui-card">
         <div class="layui-card-body">
                 <form class="layui-form"  action="">
                     <div class="layui-form-item layui-row" style="display: none" >
-                        <label class="layui-form-label">优惠券id</label>
+                        <label class="layui-form-label">代金券id</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="coupon_id" lay-verify="required"  autocomplete="off" class="layui-input">
+                            <input type="text" id='coupon_id' disabled name="coupon_id" lay-verify="required"  autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
-                        <label class="layui-form-label">优惠券名称</label>
+                        <label class="layui-form-label">代金券名称</label>
                         <div class="layui-input-block ">
                             <input type="text"  name="coupon_name" lay-verify="required"  autocomplete="off" class="layui-input">
                         </div>
                     </div>
+
                     <div class="layui-form-item layui-row" >
-                        <label class="layui-form-label">优惠券备注</label>
+                        <label class="layui-form-label">代金券图片</label>
+                        <div class="layui-input-block ">
+                            <a href="javascript:;" class="file">
+                                    <i class="layui-icon">&#xe67c;</i>上传图片
+                                <input type="file" id="upload" class="">
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">代金券备注</label>
                         <div class="layui-input-block ">
                             <input type="text"  name="coupon_remark"   autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
-                        <label class="layui-form-label">优惠券的logo图片</label>
+                        <label class="layui-form-label">代金券的logo图片</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="logo"   autocomplete="off" class="layui-input">
+                            <input type="text"  name="logo"  disabled autocomplete="off" class="layui-input">
                         </div>
                     </div>
 
                     <div class="layui-form-item layui-row" >
-                        <label class="layui-form-label">优惠券的类型</label>
+                        <label class="layui-form-label">代金券的类型</label>
                         <div class="layui-input-block">
                         <select id = 'coupon_type' name="coupon_type" lay-search lay-filter="coupon_type" >   
-                            <option value=10 >通用优惠券</option>
-                            <option value=20 >店铺优惠券</option>
-                            <option value=30 >连锁品牌优惠券</option>
+                            <option value="-1" >请选择</option>
+                            <option value='10' >通用代金券</option>
+                            <option value='20' >店铺代金券</option>
+                            <option value='30' >连锁品牌代金券</option>
                         </select>
                         </div>
                     </div>
@@ -83,38 +97,68 @@
         </div>
     </div>
 
+    <!-- 上传图片 -->
+    <script>
+         layui.use(['form'], function(){
+            var form = layui.form;
+            $('#upload').bind("change", function(e){
+                let id = $('#coupon_id').val() //因为异步的关系，id必须是在方法里面
+                let upload = $('#upload');
+                let url = '/api/tool/upload_img_coupon'
+                uploadImg(upload,id,url)
+                .then(result=>{
+                    layer.msg('上传成功')
+                    $('input[name="logo"]').val(result.data.url);
+                    form.render();
+                    return false
+                })
+                .catch(err=>{
+                    layer.msg('上传失败')
+                    console.error(err)
+                    return false
+                })
+            })
+        })
+    </script>   
 
     <!-- 监听优惠卷的选择 -->
     <script>
          layui.use('form', function(){
             var form = layui.form;
             //判断select
-            form.on('select(coupon_type)', function(data){
-                    //判断是否通用券
-                if(data.value==10){
-                    $('#shop_id').val(-1)
-                    $('#group_id').val(-1)
+            form.on('select(coupon_type)', function(data){ 
+                if(data.value==='-1'){
+                    $('#shop_id').val('-1')
+                    $('#group_id').val('-1')
+                    $('#shop').attr("style","display:none;")
+                    $('#group').attr("style","display:none;")
+                    return
+                }
+                //判断是否通用券
+                if(data.value==='10'){
+                    $('#shop_id').val('')
+                    $('#group_id').val('')
                     $('#shop').attr("style","display:none;")
                     $('#group').attr("style","display:none;")
                     form.render()
                 }
-                //判断是否店铺优惠券
-                else if(data.value==20){
-                    $('#group_id').val(-1)
-                    $('#shop_id').val(-1)
+                //判断是否店铺代金券
+                else if(data.value==='20'){
+                    $('#shop_id').val('-1')
+                    $('#group_id').val('')
                     $('#shop').attr("style","display:block;")
                     $('#group').attr("style","display:none;")
                     form.render()
                 }
-                //判断是否连锁店品牌优惠券
-                else if(data.value==30){
-                    $('#group_id').val(-1)
-                    $('#shop_id').val(-1)
+                //判断是否连锁店品牌代金券
+                else if(data.value==='30'){
+                    $('#group_id').val('-1')
+                    $('#shop_id').val('')
                     $('#group').attr("style","display:block;")
                     $('#shop').attr("style","display:none;")
                     form.render()
                 }
-            });    
+            });   
          })
     </script>
     <!-- 监听提交 -->
@@ -122,33 +166,22 @@
     layui.use('form', function(){
     var form = layui.form;
     form.on('submit(formDemo)', function(data){
-        //判断在选择非通用优惠券的情况下是否有选择项
-        if(data.field.coupon_type==10){
-            if(data.field.shop_id!=-1&&data.field.group_id!=-1){
-                layer.msg('在选择通用券的情况下无所属连锁品牌和店铺')
-                return false
-            }
-        }else if(data.field.coupon_type==20){
-            if(data.field.shop_id==-1){
-                layer.msg('请选择店铺')
-                return false
-            }
-        }else if(data.field.coupon_type==30){
-            if(data.field.group_id==-1){
-                layer.msg('请选择连锁品牌')
-                return false
-            }
+        //判断在选择非通用代金券的情况下是否有选择项
+        if(data.field.group_id==='-1'&&data.field.shop_id==='-1'){
+            layer.msg('请选择代金券类型');
+            return false
         }
-        else{
-            layer.msg('选择错误，检查值')
+        if(data.field.group_id=="-1"){
+            layer.msg('请选择连锁品牌');
+            return false
+        }
+        if(data.field.shop_id=="-1"){
+            layer.msg('请选择店铺');
             return false
         }
         //转换金额为分
         data.field.amount = (new Decimal(data.field.amount).mul(100).toNumber());
-        //group_id=-1，则表示没有品牌，如果没有品牌，则为空
-        if(data.field.group_id==-1){
-            data.field.group_id=''
-        }
+
         $.ajax({
             url     : `/data/coupon?coupon_id=eq.${data.field.coupon_id}`,
             type    : "PATCH",

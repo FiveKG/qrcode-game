@@ -59,6 +59,24 @@ module.exports = appInfo => {
     ignore:['/api/account/register','/login','/api/tool/get_captcha*','/api/account/login']
   };  
   
+  //设置文件上传模式
+  config.multipart = {
+    mode: 'stream',
+    fileSize: '5mb',
+  };
+
+
+  //oss设置
+  config.oss={
+    client: {
+      accessKeyId: 'accessKeyId',
+      accessKeySecret: 'accessKeySecret',
+      bucket: 'qr-game',
+      endpoint: 'endpoint',
+      timeout: '60s',
+      cname:true
+    }
+  }
 
   config.bodyParser = {
     ignore: /^\/data\//,
@@ -159,7 +177,7 @@ module.exports = appInfo => {
       encrypt  : false             //设置是否对 Cookie 进行加密
         }
       },
-    
+    //下载的二维码
     qrcode:{
         hash_secret:process.env.HASH_SECRET,
         option:{
@@ -175,6 +193,7 @@ module.exports = appInfo => {
             param5:'&seq='
         }
       },
+      //编辑页面的二维码
     shop_agent_qrcode:{
       timeout:10000,
       url_option:{
@@ -183,8 +202,14 @@ module.exports = appInfo => {
         param1: 'shop_or_agent_id=',
         param2: '&scene_type='
       }
+    },
+    //上传图片在oss的命名格式eg:game_img_id=xxxxx
+    upload_img_style:{
+      scale:"?x-oss-process=image/resize,h_100",//将图缩略成宽度为100，高度按比例处理,只要在原url上加上这串字符串即可。参考：https://help.aliyun.com/document_detail/44688.html?spm=a2c4g.11186623.4.1.4c4a1675KwviOb
+      style:{
+        game:"game_img_id=",
+      }
     }
-
   };
 
   return {

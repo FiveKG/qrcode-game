@@ -1,0 +1,97 @@
+<script>
+    function _isImage(upload) {
+            let filepath = upload.val()
+            var extStart = filepath.lastIndexOf(".");
+            var ext = filepath.substring(extStart, filepath.length).toUpperCase();
+            if (ext != ".BMP" && ext != ".PNG" && ext != ".GIF" && ext != ".JPG" && ext != ".WEBP" && ext != ".TIFF") {//目前ali-oss所支持的格式
+                layer.msg("图片只能是bmp,png,gif,jpg,tiff,webp格式");
+                return false;
+            }
+            return true;
+        }
+
+    function _checkFileSize(upload) {
+        let filepath = upload.val()
+        var maxsize = 5 * 1024 * 1024;//2M
+        var errMsg = "上传的文件不能超过5M";
+        var tipMsg = "您的浏览器暂不支持上传头像，确保上传文件不要超过5M，建议使用IE、FireFox、Chrome浏览器。";
+
+        var filesize = 0;
+        var ua = window.navigator.userAgent;
+        if (ua.indexOf("MSIE") >= 1) {
+            //IE
+            var img = new Image();
+            img.src = filepath;
+            filesize = img.fileSize;
+        } else {
+            //file_size = document.getElementById("imageFile").files[0].size;
+            filesize = upload[0].files[0].size; //byte
+        }
+
+        if (filesize > 0 && filesize > maxsize) {
+            layer.msg(errMsg);
+            return false;
+        } else if (filesize == -1) {
+            layer.msg(tipMsg);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param {DOM} upload 
+     * @param {String} id 
+     * @param {String} url
+     */
+    function uploadImg(upload,id,url){
+        return new Promise((resolve,reject)=>{
+            let target_name = upload.val()
+            if(!_isImage(upload)||!_checkFileSize(upload)){
+                return false
+            }  //检查是否图片格式  //检查文件大小
+
+            let loading_index
+            let formData = new FormData(); 
+            
+            formData.append('id',id);
+            formData.append('file',upload[0].files[0]);
+            $.ajax({
+                url:url,
+                type:'POST',
+                data:formData,
+                processData:false,
+                contentType:false,
+                beforeSend:function(){
+                    loading_index = layer.load(1); //风格1的加载
+                },
+                success:function(result){
+                    if(result.success===true){
+                            layer.close(loading_index);
+                            upload.parent().siblings().remove();   
+                            upload.parent().after(`
+                            <img style="display: inline-block; width:auto; height: 100px;" layer-src="${result.data.url}" src='${result.data.url}'>
+                             `)
+                            resolve(result)
+                            //返回的then操作要执行以下操作
+                            // form.render();
+                            // return false
+                    }
+                    else{
+                        layer.close(loading_index); 
+                        reject(result)
+                        //返回的then操作要执行以下操作
+                        //return false
+                    }
+                },
+                error:function(err){
+                    layer.close(loading_index);
+                    reject(result)
+                    //返回的then操作要执行以下操作
+                    //return false
+                }
+            })
+            
+        })
+    }
+</script>

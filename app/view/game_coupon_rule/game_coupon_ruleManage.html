@@ -19,7 +19,7 @@
                     </div>
                 </div>
                 <div class="layui-inline">
-                    <label class="layui-form-label">优惠券名</label>
+                    <label class="layui-form-label">代金券名</label>
                     <div class="layui-input-inline">
                         <select name="coupon_id"  lay-search></select>
                     </div>
@@ -96,7 +96,7 @@
                     }
                 })	
 
-                //获取优惠券
+                //获取代金券
                 $.ajax({
                     url        : `/data/coupon?select=coupon_id,coupon_name`,
                     type       : "GET",
@@ -169,7 +169,7 @@
 					,url:'/api/game_coupon_rule/search'
 					,method: 'post'
 					,toolbar: '#toolgame_coupon_rule' //开启头部工具栏，并为其绑定左侧模板
-					,title: '游戏和优惠券的规则表'
+					,title: '游戏和代金券的规则表'
 					,parseData: function(res) {
 
 						return {
@@ -184,9 +184,9 @@
                         ,{field:'id', title:'主键id', hide:true}
                         ,{field:'rule_name', title:'规则名' }
                         ,{field:'game_id', title:'游戏id', hide:true }
-                        ,{field:'coupon_id', title:'优惠券id',  hide:true}
+                        ,{field:'coupon_id', title:'代金券id',  hide:true}
                         ,{field:'game_name', title:'游戏', }
-						,{field:'coupon_name', title:'优惠券', }
+						,{field:'coupon_name', title:'代金券', }
 						,{field:'score', title:'得分', }
 						,{field:'play_count_range', title:'玩的次数' }
 						,{field:'add_user_id', title:'操作的用户的id',  hide:true}
@@ -279,7 +279,7 @@
                                 }
                                 body.find("select[name='game_id']").val(obj.data.game_id);
                              
-                                //初始化优惠券列表
+                                //初始化代金券列表
                                 for(coupon of coupons){
                                     body.find("select[name='coupon_id']").append(`<option value=${coupon.coupon_id}>${coupon.coupon_name}</option>`);
                                     //console.log("coupon:",coupon)

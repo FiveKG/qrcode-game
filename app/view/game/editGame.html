@@ -2,13 +2,15 @@
 <html>
     {%include "head.html" %}
     {% include 'script.html' %}
+    {% include "js/uploadImg.html"%}
+    {% include "js/uploadCSS.html"%}
     <div class="layui-card">
         <div class="layui-card-body">
                 <form class="layui-form"  action="">
-                    <div class="layui-form-item layui-row"  style="display:none">
+                    <div class="layui-form-item layui-row" style="display: none">
                         <label class="layui-form-label">ID</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="game_id" lay-verify="required"  autocomplete="off" class="layui-input">
+                            <input type="text" id='game_id' name="game_id" lay-verify="required"  autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
@@ -17,16 +19,27 @@
                             <input type="text"  name="game_name"  lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                     </div>
+
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">游戏图片</label>
+                        <div class="layui-input-block ">
+                            <a href="javascript:;" class="file">
+                                    <i class="layui-icon">&#xe67c;</i>上传图片
+                                <input type="file" id="upload" class="">
+                            </a>
+                        </div>
+                    </div>
+
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">游戏大图</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="game_img"  lay-verify="required"  autocomplete="off" class="layui-input">
+                            <input type="text"  name="game_img" disabled lay-verify="required"  autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">游戏小图</label>
                         <div class="layui-input-block ">
-                            <input type="text"  name="game_img_small"   lay-verify="required" autocomplete="off" class="layui-input">
+                            <input type="text"  name="game_img_small" disabled  lay-verify="required" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item layui-row" >
@@ -65,6 +78,31 @@
                 </form>
         </div>
     </div>
+
+    
+    <script>
+        layui.use(['form'], function(){
+            var form = layui.form;
+            $('#upload').bind("change", function(e){
+                let id = $('#game_id').val() //因为异步的关系，id必须是在方法里面
+                let upload = $('#upload');
+                let url = '/api/tool/upload_img_game'
+                uploadImg(upload,id,url)
+                .then(result=>{
+                    layer.msg('上传成功')
+                    $('input[name="game_img"]').val(result.data.url);
+                    $('input[name="game_img_small"]').val(result.data.url_small);
+                    form.render();
+                    return false
+                })
+                .catch(err=>{
+                    layer.msg('上传失败')
+                    console.error(err)
+                    return false
+                })
+            })
+        })
+    </script>
 
 
     <script>

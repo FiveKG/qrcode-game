@@ -8,7 +8,7 @@ module.exports = app => {
   const { router, controller } = app;
 //todo 对众多路由进行分类：https://eggjs.org/zh-cn/basics/router.html
   router.get('/api/test/code', controller.test.test1);
-  router.get('/api/test/test2', controller.test.test2);
+  router.post('/api/test/upload', controller.test.upload);
   router.get('/api/test/test3', controller.test.test3);
   router.get('/api/test/test4',controller.test2.echo);
 
@@ -20,6 +20,8 @@ module.exports = app => {
   router.get('/api/tool/get_captcha',controller.tool.getCaptcha);
   router.get('/api/tool/getJwtInfo',controller.tool.getJwtInfo);
   router.get('/api/tool/get_shop_agent_qrcode',controller.tool.getShopAgentQrcodeByUrl);
+  router.post('/api/tool/upload_img_game', controller.tool.upload_img);
+  router.post('/api/tool/upload_img_coupon',controller.tool.upload_img)
 
   /** ----------------------------Api-account---------------------------- */
   router.post('/api/account/register',controller.v1.sysUser.registerUser);
