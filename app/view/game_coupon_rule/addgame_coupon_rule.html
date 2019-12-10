@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div class="layui-form-item layui-row" >
-                    <label class="layui-form-label">优惠券</label>
+                    <label class="layui-form-label">代金券</label>
                     <div class="layui-input-block">
                     <select id = 'coupon_id' name="coupon_id" lay-search lay-verify="required" >   
                     </select>
@@ -115,7 +115,7 @@
             $('input[name="play_count_range"]').val('[0,50]')
             form.render();
 
-            //游戏和优惠券
+            //游戏和代金券
             Promise.all([getGame(),getCoupon()]).then((res) => {
             const [games,coupons] = res
             //初始化游戏列表
@@ -124,7 +124,7 @@
             // console.log("game:",game)
             }
             $("select[name='game_id']").append(`<option selected value='-1'>请选择</option>`);
-            //初始化优惠券列表
+            //初始化代金券列表
             for(coupon of coupons){
                 $("select[name='coupon_id']").append(`<option value=${coupon.coupon_id}>${coupon.coupon_name}</option>`);
                 //console.log("coupon:",coupon)
@@ -178,7 +178,7 @@
 
     <!-- 提交监听 -->
     <script>
-     //要先检查是否有覆盖，根据游戏和优惠券筛选
+     //要先检查是否有覆盖，根据游戏和代金券筛选
      function check_range(game_id,coupon_id){
         return new Promise((resolve,reject)=>{
             $.ajax({
@@ -200,16 +200,16 @@
             return false
         }
         if(data.field.coupon_id=='-1'){
-            layer.msg('请选择优惠券')
+            layer.msg('请选择代金券')
             return false
         }
         let add_range = eval(data.field.play_count_range)
         let comparison;
-        //先检查该游戏的优惠券的玩的次数区间
+        //先检查该游戏的代金券的玩的次数区间
         check_range(data.field.game_id,data.field.coupon_id)
         .then(result=>{
             if(result.length!==0){
-                /**存在优惠券,检查区间.判断思路:
+                /**存在代金券,检查区间.判断思路:
                  * 1.先判断这个数组是否存在一个一模一样的，存在是允许再添加的
                  * 2.如果区间不相交，要么添加区间的最小值应该大于比较区间的最大值，要么添加区间的最大值小于比较区间的最小值
                  * 只要有存在一个就返回含有该元素的数组，否则返回undefined

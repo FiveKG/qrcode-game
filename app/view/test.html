@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+        {%include "head.html" %}
+        {% include "script.html" %}
+<body>
+ 
+<button type="button" class="layui-btn" id="uploadImg">
+  <i class="layui-icon">&#xe67c;</i>上传图片
+</button>
+
+<img src = 'http://endpoint/game_img_id%3DSV1L-DefHd0-oZ.png'>
+<form method="POST" action="/api/test/upload" enctype="multipart/form-data">
+  title: <input name="title" />
+  file: <input name="file" type="file" />
+  <button type="">Upload</button>
+</form>
+
+
+<script>
+layui.use('upload', function(){
+  var upload = layui.upload;
+   
+  //执行实例
+  var uploadInst = upload.render({
+    elem: '#uploadImg' //绑定元素++
+    ,auto: true  
+    ,url: '/api/test/upload' //上传接口
+    ,method: 'POST'  //可选项。HTTP类型，默认post
+    ,data: {id:'asbv'} //可选项。额外的参数，如：{id: 123, abc: 'xxx'}
+    //,size: 50 //最大允许上传的文件大小
+    ,done: function(res){
+      //上传完毕回调
+      console.log(res)
+    }
+    ,error: function(){
+      //请求异常回调
+      console.log('失败')
+    }
+  });
+});
+</script>
+</body>
+</html>

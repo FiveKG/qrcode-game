@@ -4,6 +4,7 @@
 {% include "script.html" %}
 {% include "js/getGame.html"%}
 {% include "js/is_enable.html"%}
+
 	<body>
 		<div class="page-content-wrap">
 			<form class="layui-form" action="" lay-filter="user-from">
@@ -49,32 +50,42 @@
 			<a class="layui-btn layui-btn-danger layui-btn-xs" name='is_enable' lay-event="is_enable">禁用</a>
 		</script> -->
 
-			<!-- 搜索下拉 -->
-			<script>
-				//获取游戏
-				layui.use('form',function(){
-					var form = layui.form
-					getGame(false)
-					.then((result)=>{
-						if(result){
-						$('select[name="game_id"]').empty()
-						$('select[name="game_id"]').append(`<option value=''  selected>所有</option>`);
-						for(element of result){
-							$('select[name="game_id"]').append(`<option value=${element.game_id}>${element.game_name}</option>`);
-							}
+		<!-- 搜索下拉 -->
+		<script>
+			//获取游戏
+			layui.use('form',function(){
+				var form = layui.form
+				getGame(false)
+				.then((result)=>{
+					if(result){
+					$('select[name="game_id"]').empty()
+					$('select[name="game_id"]').append(`<option value=''  selected>所有</option>`);
+					for(element of result){
+						$('select[name="game_id"]').append(`<option value=${element.game_id}>${element.game_name}</option>`);
 						}
-						form.render()
-					})
-					.catch(err=>{
-						console.log('err:',err);
-						$('select[name="game_id"]').append(`<option value='-1'>获取数据失败</option>`);
-						form.render()
-					})
+					}
+					form.render()
 				})
-			
-			</script>
+				.catch(err=>{
+					console.log('err:',err);
+					$('select[name="game_id"]').append(`<option value='-1'>获取数据失败</option>`);
+					form.render()
+				})
+			})
+		
+		</script>
+
 
 		<script>
+			function show_img(t){
+				console.log('?')
+				console.log('t:',t)
+				layer.photos({
+					photos: `#layer-photos-${key}`
+					,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+				}); 
+			}
+			
 			layui.use(['table', 'dialog', 'jquery'], function() {
 				var table = layui.table;
 				var dialog = layui.dialog;
@@ -89,6 +100,7 @@
 						});
 					}
 				}
+
 
 				var form = layui.form;
 				//初始渲染
@@ -110,8 +122,24 @@
 						{type: 'checkbox', fixed: 'left'}
 						,{field:'game_id', title:'',hide:true }
 						,{field:'game_name', title:'游戏名称', }
-						,{field:'game_img', title:'游戏大图', }
-						,{field:'game_img_small', title:'游戏小图', }
+						,{field:'game_img', title:'游戏大图', align: "center", templet:function(d){
+							//let key = d.game_img.split('http://endpoint/game_img_id%')[1].replace(/-/g,'_').replace(/\./g,'_');
+							let key = d.game_id.replace(/-/g,'_')
+							return `
+								<div id="layer-photos-${key}"  >
+									<img style="display: inline-block; width: 50%; height: 100%;" layer-src="${d.game_img}" src="${d.game_img}">
+								</div>
+							`
+						}}
+						,{field:'game_img_small', title:'游戏小图', templet(d){
+							//let key_small =d.game_img_small.split('http://endpoint/game_img_id%')[1].replace(/-/g,'_').replace(/\./g,'_');
+							let key_small = d.game_id.replace(/-/g,'_')+'_small'
+							return `
+								<div id="layer-photos-${key_small}" >
+									<img style="display: inline-block; width: 50%; height: 100%;" layer-src="${d.game_img_small}" src="${d.game_img_small}">
+								</div>
+							`
+						}}
 						,{field:'price', title:'支付价格(元)',templet:function(d){
 							//转换金额为分
 							return  new Decimal(d.price).div(100).toNumber();
@@ -150,6 +178,20 @@
 							}
 						}}
 					]]
+					,done:function(res, curr, count){
+						layui.each(res.data,function(index,d){
+							let key = d.game_id.replace(/-/g,'_')
+							let key_small = d.game_id.replace(/-/g,'_')+'_small'
+							layer.photos({
+								photos: `#layer-photos-${key}`
+								,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+							}); 
+							layer.photos({
+								photos: `#layer-photos-${key_small}`
+								,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+							}); 
+						})
+					}
 					,id: 'gameTable'
 					,page: true
 				});
@@ -188,7 +230,7 @@
 						//同步更新缓存对应的值 也可以直接重载表格
 						layer.open({
 						type: 2 ,
-						area: ['500px','600px'],
+						area: ['500px','700px'],
 						resize  :false,//是否允许拉伸
 						title:"编辑",
 						content:`/page/edit_game`,
@@ -211,10 +253,7 @@
 							iframe.layui.form.render();
 						},
 						});    
-						// obj.update({
-						// 	username: '123'
-						// 	,title: 'xxx'
-						// });
+
 					}
 				});
 
@@ -224,7 +263,7 @@
 
 					switch(obj.event){
 						case 'add':
-							 
+							
 							layer.open({
 								type: 2 ,
 								area: ['500px','600px'],
@@ -232,7 +271,7 @@
 								content: "/page/add_game",
 								success: function(layero, index){
 									var body = layer.getChildFrame('body', index);
-									body.find("form[class='layui-form']").val(index);
+									var iframe = window['layui-layer-iframe' + index];
 								},
 
 							})

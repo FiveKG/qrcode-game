@@ -7,8 +7,11 @@ const cities = require('../tool/cities.json')
 //@ts-ignore
 const areas = require('../tool/areas.json')
 const Controller = require('egg').Controller;
-
+const path = require("path");
+const sendToWormhole = require('stream-wormhole');
 const qr = require('qr-image');
+const fs = require('fs')
+const tmp = require('tmp')
 /**
  * @description TODO(ToolController工具类)
  * @author woni
@@ -40,7 +43,6 @@ class ToolController extends Controller {
         try{
             const data = await ctx.helper.getJWTInfo()
             if(!data){
-
                 ctx.body = await ctx.helper.messageByCode(400003)
                 ctx.redirect('/login')
                 return
@@ -81,6 +83,33 @@ class ToolController extends Controller {
 
 
     /**
+     * 上传图片到oss，并返回一个url
+     * //以数据主键为图片名字，在ali-oss的命名空间内，如果有相同的名字则会覆盖
+     */
+    async upload_img(){
+        const {ctx,logger} = this
+        try{
+
+            const stream = await ctx.getFileStream();
+            if(!stream.filename||!stream.fields||stream.fields.id=='undefined'){
+                ctx.body = ctx.helper.renderError(400005,'上传图片信息不正确')
+                return
+            }
+
+            let result = await ctx.service.tool.upload_img_oss(stream)
+        
+            if(result&&JSON.stringify(result) !== '{}'){
+                ctx.body =  ctx.helper.renderSuccess(200000,'',result)
+                return
+            }
+            ctx.body = ctx.helper.renderError(400005,'上传图片失败')
+        }catch(err){
+            ctx.body = ctx.helper.renderError(400005,'上传图片错误')
+            logger.error(err)
+            throw err
+        }
+    }
+    /**
      * 店铺和经营商的二维码调用
      */
     async getShopAgentQrcodeByUrl(){
@@ -100,6 +129,8 @@ class ToolController extends Controller {
             throw err
         }
     }
+
+
 
     /**
      * @description 获取省份

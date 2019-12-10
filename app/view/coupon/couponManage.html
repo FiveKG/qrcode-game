@@ -149,21 +149,28 @@
 					}
 					,cols: [[
 						{type: 'checkbox', fixed: 'left'}
-						,{field:'coupon_id', title:'优惠券id', hide:true, }
-						,{field:'coupon_name', title:'优惠券名称', }
-						,{field:'coupon_remark', title:'优惠券备注', }
-						,{field:'logo', title:'优惠券的logo图片', }
-						,{field:'coupon_type', title:'优惠券的类型', templet:function(d){
+						,{field:'coupon_id', title:'代金券id', hide:true, }
+						,{field:'coupon_name', title:'代金券名称', }
+						,{field:'coupon_remark', title:'代金券备注', }
+						,{field:'logo', title:'代金券的logo图片',templet:function(d){
+							let key = d.coupon_id.replace(/-/g,'_')
+							return `
+								<div id="layer-photos-${key}"  >
+									<img style="display: inline-block; width: 50%; height: 100%;" layer-src="${d.logo}" src="${d.logo}">
+								</div>
+							`
+						} }
+						,{field:'coupon_type', title:'代金券的类型', templet:function(d){
                             if(d.coupon_type===10||d.coupon_type==='10'){
-                                return '通用优惠券'
+                                return '通用代金券'
                             }else if(d.coupon_type===20||d.coupon_type==='20'){
-                                return '店铺优惠券'
+                                return '店铺代金券'
                             }
                             else if(d.coupon_type===30||d.coupon_type==='30'){
-                                return '连锁品牌优惠券'
+                                return '连锁品牌代金券'
                             }
                             else{
-                                return '未知优惠券'
+                                return '未知代金券'
                             }
                         }}
 						,{field:'shop_name', title:'所属店铺', }
@@ -199,6 +206,16 @@
 						}}
 					]]
 					,id: 'couponTable'
+					,done:function(res, curr, count){
+						layui.each(res.data,function(index,d){
+							let key = d.coupon_id.replace(/-/g,'_')
+							layer.photos({
+								photos: `#layer-photos-${key}`
+								,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+							}); 
+ 
+						})
+					}
 					,page: true
 				});
 
@@ -266,7 +283,7 @@
 
                         var index=layer.open({
 						type: 2 ,
-						area: ['500px', '550px'],
+						area: ['500px', '670px'],
                         title:"编辑",
                         resize  :false,//是否允许拉伸
 						content:`/page/edit_coupon`,
@@ -280,8 +297,8 @@
                                 body.find("select[name='group_id']").append(`<option  value="-1">请选择</option>`)
                                 iframe.layui.form.render();
 
-                                if(!obj.data.group_id){
-                                    body.find("select[name='group_id']").val("-1");//group_id=-1，则表示没有品牌
+                                if(!obj.data.group_id){//不是连锁店代金券类型
+                                    body.find("select[name='group_id']").val("");//group_id=''，则表示没有品牌
                                     body.find("#group").attr("style","display:none;")
                                 }else{
                                     body.find("select[name='group_id']").val(obj.data.group_id);
@@ -295,14 +312,23 @@
                                 body.find("select[name='shop_id']").append(`<option  value="-1">请选择</option>`)
                                 iframe.layui.form.render();
                                 
-                                if(!obj.data.shop_id){
-                                    body.find("select[name='shop_id']").val("-1");
+                                if(!obj.data.shop_id){//不是店铺代金券类型
+                                    body.find("select[name='shop_id']").val("");
                                     body.find("#shop").attr("style","display:none;")
                                 }else{
                                     body.find("select[name='shop_id']").val(obj.data.shop_id);
                                 }
                                 iframe.layui.form.render();
-                            })
+							})
+
+							if(!obj.data.group_id&&!obj.data.shop_id){
+								//通用类型
+								body.find("select[name='shop_id']").val("");
+								body.find("select[name='group_id']").val("");
+								body.find("#group").attr("style","display:none;");
+								body.find("#shop").attr("style","display:none;");
+								iframe.layui.form.render();
+							}
                             
 							body.find("input[name='coupon_id']").val(obj.data.coupon_id);
 							body.find("input[name='coupon_name']").val(obj.data.coupon_name);
