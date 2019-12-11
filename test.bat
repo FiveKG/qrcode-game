@@ -1,5 +1,0 @@
-accessKeyId
-accessKeySecret
-endpoint
-DB_HOST
-DB_USER
