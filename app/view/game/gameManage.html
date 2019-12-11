@@ -123,7 +123,11 @@
 						,{field:'game_id', title:'',hide:true }
 						,{field:'game_name', title:'游戏名称', }
 						,{field:'game_img', title:'游戏大图', align: "center", templet:function(d){
+<<<<<<< HEAD
 							//let key = d.game_img.split('http://endpoint/game_img_id%')[1].replace(/-/g,'_').replace(/\./g,'_');
+=======
+							//let key = d.game_img.split('http://endpoint/game_img_id%')[1].replace(/-/g,'_').replace(/\./g,'_');
+>>>>>>> 2a74492d390c81417969618d9887ec42efa9fdc7
 							let key = d.game_id.replace(/-/g,'_')
 							return `
 								<div id="layer-photos-${key}"  >
@@ -132,7 +136,11 @@
 							`
 						}}
 						,{field:'game_img_small', title:'游戏小图', templet(d){
+<<<<<<< HEAD
 							//let key_small =d.game_img_small.split('http://endpoint/game_img_id%')[1].replace(/-/g,'_').replace(/\./g,'_');
+=======
+							//let key_small =d.game_img_small.split('http://endpoint/game_img_id%')[1].replace(/-/g,'_').replace(/\./g,'_');
+>>>>>>> 2a74492d390c81417969618d9887ec42efa9fdc7
 							let key_small = d.game_id.replace(/-/g,'_')+'_small'
 							return `
 								<div id="layer-photos-${key_small}" >
