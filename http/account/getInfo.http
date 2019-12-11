@@ -31,11 +31,9 @@ content-type: application/json; charset=UTF-8
 { "user_name":"test1"}
 
 ###update
-<<<<<<< HEAD
+
 PATCH  PROXY_HOSTsys_user?user_id=eq.asdfada2
-=======
-PATCH  PROXY_HOSTsys_user?user_id=eq.asdfada2
->>>>>>> 2a74492d390c81417969618d9887ec42efa9fdc7
+
 
 { "user_name":"test1"}
 
