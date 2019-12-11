@@ -69,10 +69,17 @@ module.exports = appInfo => {
   //oss设置
   config.oss={
     client: {
+<<<<<<< HEAD
       accessKeyId: 'accessKeyId',
       accessKeySecret: 'accessKeySecret',
       bucket: 'qr-game',
       endpoint: 'endpoint',
+=======
+      accessKeyId: 'accessKeyId',
+      accessKeySecret: 'accessKeySecret',
+      bucket: 'qr-game',
+      endpoint: 'endpoint',
+>>>>>>> 2a74492d390c81417969618d9887ec42efa9fdc7
       timeout: '60s',
       cname:true
     }
