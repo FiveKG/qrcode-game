@@ -24,7 +24,7 @@
                         <label class="layui-form-label">游戏图片</label>
                         <div class="layui-input-block ">
                             <a href="javascript:;" class="file">
-                                    <i class="layui-icon">&#xe67c;</i>上传图片
+                                <i class="layui-icon">&#xe67c;</i>上传图片
                                 <input type="file" id="upload" class="">
                             </a>
                         </div>
@@ -110,6 +110,11 @@
     layui.use('form', function(){
     var form = layui.form;
     form.on('submit(formDemo)', function(data){
+        //判断url
+        if(!data.field.game_img_small===''||!data.field.game_img){
+            layer.msg('请上传图片');
+            return false
+        }
         let layer_index = $("form[class='layui-form']").val()
        //转换金额为分
        data.field.price = (new Decimal(data.field.price).mul(100).toNumber());

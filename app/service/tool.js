@@ -45,17 +45,18 @@ class ToolService extends Service {
      * 
      */
     async upload_img_oss(stream){
-        const {ctx,config} = this
+        const {ctx,config,logger} = this
 
         try {
             let type = '.'+stream.mimeType.split('/')[1]
-            let name = config.upload_img_style.style.game+stream.fields.id+type;
+            let name = config.upload_img_style.style.game+stream.fields.id+type;//eg:game_img_id=OTR0-B-cnxyhBe.png
              
-            //上传云服务
-           let result = await ctx.oss.putStream(name, stream);
-           let url = result.url
-           //判断是游戏还是代金券的
-           let style = ctx.path.split('/api/tool/upload_img_')[1]
+                //上传云服务
+            let result = await ctx.oss.putStream(name, stream);
+            let url = result.url
+            //判断是游戏还是代金券的
+            let style = ctx.path.split('/api/tool/upload_img_')[1]
+            logger.debug('upload to ali-oss result:',result.res)
 
           // 必须将上传的文件流消费掉，要不然浏览器响应会卡死
            await sendToWormhole(stream);
@@ -65,6 +66,9 @@ class ToolService extends Service {
                 return {url,url_small}
            }
            else if(style==='coupon'){
+                return {url}
+           }
+           else if(style==='shop'){
                 return {url}
            }
            else{

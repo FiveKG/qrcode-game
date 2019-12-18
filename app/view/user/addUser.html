@@ -61,7 +61,6 @@
     //监听提交
     form.on('submit(formDemo)', function(data){
         let layer_index = $("form[class='layui-form']").val()
-        console.log(data)
         $.ajax({
             url     : `/api/account/register`,
             type    : "POST",

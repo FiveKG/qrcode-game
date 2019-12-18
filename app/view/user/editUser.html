@@ -63,7 +63,6 @@
     var form = layui.form;
     //监听提交
     form.on('submit(formDemo)', function(data){
-        console.log(data.field)
         $.ajax({
             url     : `/data/sys_user?user_id=eq.${data.field.user_id}`,
             type    : "PATCH",

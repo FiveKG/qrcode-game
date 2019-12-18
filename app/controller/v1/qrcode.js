@@ -24,12 +24,12 @@ class QrcodeController extends Controller {
         await ctx.render('/qrcode/downloadQrcode.html');
     }
 
-    async GenerateQrcode(){
+    async generateQrcode(){
         const {logger,service,ctx } = this;
         try{
             const reqData = ctx.query;
             logger.debug('请求参数：%j', reqData);
-            const result = await service.qrcode.GenerateQrcode(reqData);
+            const result = await service.qrcode.generateQrcode(reqData);
             if (!result) {
                 ctx.body = await ctx.helper.renderError(500000, '系统出错');
             } else {
@@ -41,6 +41,25 @@ class QrcodeController extends Controller {
             ctx.body = await ctx.helper.renderError(500000, '系统出错'); 
         }
     }
+
+    async test_qrcode(){
+        const {logger,service,ctx} = this;
+        try{
+            const reqData = ctx.query;
+            logger.debug('请求参数：%j', reqData);
+            const result = await service.qrcode.test_qrcode(reqData);
+            if (!result) {
+                ctx.body = await ctx.helper.renderError(500000, '系统出错');
+            } else {
+                //图片格式直接返回数据，不用REST格式
+                ctx.body = result;
+            }
+        }catch(e){
+            logger.error(e);
+            ctx.body = await ctx.helper.renderError(500000, '系统出错'); 
+        }
+    }
+
     async getQrcode() {
         const { ctx, service, logger } = this;
         try {

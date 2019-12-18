@@ -47,6 +47,7 @@
     function uploadImg(upload,id,url){
         return new Promise((resolve,reject)=>{
             let target_name = upload.val()
+            if(!target_name)return false
             if(!_isImage(upload)||!_checkFileSize(upload)){
                 return false
             }  //检查是否图片格式  //检查文件大小
@@ -70,7 +71,7 @@
                             layer.close(loading_index);
                             upload.parent().siblings().remove();   
                             upload.parent().after(`
-                            <img style="display: inline-block; width:auto; height: 100px;" layer-src="${result.data.url}" src='${result.data.url}'>
+                            <img style="display: inline-block; width:auto; height: 100px;" layer-src="${result.data.url}" src='${result.data.url}?${Math.random()}'>
                              `)
                             resolve(result)
                             //返回的then操作要执行以下操作
@@ -86,7 +87,7 @@
                 },
                 error:function(err){
                     layer.close(loading_index);
-                    reject(result)
+                    reject(err)
                     //返回的then操作要执行以下操作
                     //return false
                 }

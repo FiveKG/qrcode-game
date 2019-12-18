@@ -4,6 +4,8 @@
     {% include 'script.html' %}
     {% include "js/getShopGroup.html" %}
     {% include "js/getPCAscript.html"%}
+    {% include "js/uploadImg.html"%}
+    {% include "js/uploadCSS.html"%}
     <div class="layui-card">
         <div class="layui-card-body">
                 <fieldset class="layui-elem-field" style="text-align:center;" >
@@ -16,13 +18,28 @@
                     <div class="layui-form-item"  style="display:none" >
                         <label class="layui-form-label">ID</label>
                         <div class="layui-input-block">
-                        <input type="text" name="shop_id" disabled   lay-verify="required"  autocomplete="off" class="layui-input">
+                        <input type="text" name="shop_id" disabled id='shop_id'  lay-verify="required"  autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">店铺名</label>
                         <div class="layui-input-block">
                             <input type="text" name="name"    lay-verify="required"  autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">店铺图片</label>
+                        <div class="layui-input-block " >
+                            <a href="javascript:;" class="file">
+                                <i class="layui-icon">&#xe67c;</i>上传图片
+                                <input type="file" id="upload" class="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">店铺图片url</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="shop_logo"  disabled autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-form" lay-filter="province">
@@ -106,26 +123,6 @@
         layui.use('form', function(){
         var form = layui.form;
 
-        //品牌，仅is_enable=1
-        getShopGroup()
-        .then(result=>{
-            if(result){
-                for(element of result){
-                    $('#group_id').append(`<option value=${element.group_id}>${element.group_name}</option>`)
-                }
-                $('#group_id').append(`<option selected value='-1'>请选择</option>`)
-                $('#group_id').append(`<option selected value=''>无所属品牌</option>`)//group_id=''，则表示没有品牌
-                form.render()
-            }
-            
-        })
-        .catch(err=>{
-            $('select[name="group_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
-            form.render();
-            console.error(err)
-        })
-
-        
         //获得省
         get_province()
         .then(result=>{
@@ -180,7 +177,27 @@
             console.error(err)
             })
         });   
-  
+
+        //上传图片
+        $('#upload').bind("change", function(e){
+            let id = $('#shop_id').val() //因为异步的关系，id必须是在方法里面
+            let upload_img = $('#upload');
+            let url = '/api/tool/upload_img_shop'
+
+            uploadImg(upload_img,id,url)
+            .then(result=>{
+                layer.msg('上传成功')
+                $('input[name="shop_logo"]').val(result.data.url);
+                form.render();
+                return false
+            })
+            .catch(err=>{
+                layer.msg('上传失败')
+                console.error(err)
+                return false
+            })
+    })
+
   });
     </script>
 
@@ -202,7 +219,12 @@
             return false
         }
         if(data.field.group_id==='-1'){
-            layer.msg('请选择怕品牌');
+            layer.msg('请选择品牌');
+            return false
+        }
+        //判断url
+        if(data.field.shop_logo===''){
+            layer.msg('请上传图片');
             return false
         }
         

@@ -7,15 +7,20 @@ class IndexController extends Controller {
     async login(){
         const { ctx } = this;
         const locals = {
-            title:'后台登录'
+            title:'扫码游戏系统--后台登录'
         }
         await ctx.render('login.html',locals);
     }
     async index() {
         const { ctx,logger } = this;
-        const jwtInfo = await ctx.helper.getJWTInfo();
+        const jwtInfo = await ctx.helper.getJWTInfo()
+        if(!jwtInfo){
+            ctx.body = await ctx.helper.messageByCode(400003)
+            ctx.redirect('/login')
+            return
+        }
         const locals = {
-            title:'扫码游戏平台--管理后台',
+            title:'扫码游戏系统--管理后台',
             ...jwtInfo
         }
         await ctx.render('index.html',locals);

@@ -78,6 +78,7 @@
 					,method: 'post'
 					,toolbar: '#toolpay_order' //开启头部工具栏，并为其绑定左侧模板
 					,title: '支付订单表'
+					,height: 'full-160'
 					,parseData: function(res) {
 						return {
 							"code": res['code'],
@@ -87,7 +88,7 @@
 						}
 					}
 					,cols: [[
-						{type: 'checkbox', fixed: 'left'}
+						 {type: 'numbers', title: '序号'}
 						,{field:'pay_order_id', title:'id',hide:true }
 						,{field:'wx_open_id', title:'微信用户id', hide:true}
 						,{field:'pay_type', title:'支付订单类型', templet:function(d){

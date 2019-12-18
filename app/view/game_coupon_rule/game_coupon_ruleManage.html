@@ -28,6 +28,7 @@
 					<label class="layui-form-label">状态</label>
 					<div class="layui-input-inline">
 						<select name="is_enable" lay-search="">
+							<option value="">所有</option>
 							<option value="true">启用</option>
 							<option value="false">禁用</option>
 						</select>
@@ -168,6 +169,7 @@
 					elem: '#game_coupon_ruleTable'
 					,url:'/api/game_coupon_rule/search'
 					,method: 'post'
+					,height: 'full-160'
 					,toolbar: '#toolgame_coupon_rule' //开启头部工具栏，并为其绑定左侧模板
 					,title: '游戏和代金券的规则表'
 					,parseData: function(res) {
@@ -180,7 +182,7 @@
 						}
 					}
 					,cols: [[
-						{type: 'checkbox', fixed: 'left'}
+						 {type: 'numbers', title: '序号'}
                         ,{field:'id', title:'主键id', hide:true}
                         ,{field:'rule_name', title:'规则名' }
                         ,{field:'game_id', title:'游戏id', hide:true }
@@ -195,15 +197,15 @@
 						,{field:'add_user_name', title:'录入人', }
 						,{field:'is_enable', title:'是否启用', templet: function(d){
 							if(d.is_enable===true){
-								return '是'
+								return `<input type="checkbox" name="is_enable" lay-skin="switch" disabled checked lay-text="ON|OFF">`
 							}else if(d.is_enable===false){
-								return 	'否'
+								return 	`<input type="checkbox" name="is_enable" lay-skin="switch" disabled  lay-text="ON|OFF">`
 							}
 						}}
 						,{field:'add_time', title:'添加时间', templet:function(d){
 							return dateFns.format(d.add_time,'YYYY-MM-DD HH:mm')
 						} }
-						,{fixed:'right', title: "操作", align:'center', templet:function(d){
+						,{fixed:'right', title: "操作", align:'center', minWidth:120,templet:function(d){
 							
 							if(d.is_enable===true){
 								return `<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>

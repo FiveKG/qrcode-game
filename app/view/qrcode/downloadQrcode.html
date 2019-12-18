@@ -88,7 +88,7 @@ function makePdf(pdfName) {
                 //未生成pdf的html页面高度
                 var leftHeight = contentHeight;
                 //页面偏移
-                var position = 20;//整数向下移动，负数向上
+                var position = -20;//整数向下移动，负数向上
                 //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
                 var imgWidth = 595.28;
                 var imgHeight = 592.28/contentWidth * contentHeight;
@@ -112,7 +112,6 @@ function makePdf(pdfName) {
                         }
                     }
                 }
-                
                 pdf.save(pdfName+".pdf");
                 let layer = layui.layer;
                 resolve('下载成功!')
@@ -130,34 +129,55 @@ function makePdf(pdfName) {
         form.on('submit(formDemo)', function(data){
             if(data.field.shop_id==='-1'){
                 layer.msg('请选择店铺')
-                return false
+                return false    
             }
+            // layer.open({
+            //     type: 1, 
+            //     area:'650px',
+            //     content: '传入任意的文本或html' //这里content是一个普通的String
+            // })
             const loading_index = layer.load(); //风格1的加载
 
             function download_qrcode(){
                 return new Promise((resolve,reject)=>{
                      //目前做法是根据用户店铺id搜索出所有二维码，包括不同经营商，所以打印出来的二维码是包括不同经营商的，需注意
                 $.ajax({
-                url : `/data/qrcode_view?select=qrcode_id&is_enable=eq.1&shop_name=eq.${data.field.shop_name}`,
+                url : `/data/qrcode_view?select=qrcode_id,shop_name&is_enable=eq.1&shop_id=eq.${data.field.shop_id}`,
                 type:"GET",
                 success:function(result){
+                    console.log('!!!!',result)
                     if(result.length>0){
-                        $('#img_rows').empty();
+                        $('#img_container').empty();
+                        data.field.shop_name = result[0].shop_name
                         result.map((value,index)=>{
+                
                             /**算法：每页9个二维码，当前个数除以9向上取证即是当前页数。
                              * 每新的一页头部'(index+1)%9===1'和尾部'(index+1)%9===0)'都要加上空白以保证分页的时候不会把二维码切分掉，
                              * 具体数量多少，以下数值是经过无数次测试得出。
-                             * 目前打印一两百个二维码都不会出错
+                             * 目前同一家店铺打印七百个二维码都不会出错
                              */
                             let page = Math.ceil((index+1)/9)
                             if((index+1)%9===1){
                                 $('#img_container').append(
                                     `
-                                    <div class="layui-row layui-col-space10" id='page${page}'>
+                                    <div class="layui-row layui-col-space10" '>
                                         <div style="background:white;contain:paint" >
-                                            <p style="margin: 39px" >&nbsp&nbsp</p>
+                                            <p style="margin: 44px" >&nbsp&nbsp</p>
                                         </div>
-
+                                    </div>
+                                    <div class="layui-row layui-col-space10" id='page${page}'>
+                                        
+                                    </div>
+                                    `
+                                    )
+                            }
+                            if((index+1)%9===0){
+                                $('#img_container').append(
+                                    `
+                                    <div class="layui-row layui-col-space10">
+                                        <div style="background:white;contain:paint" >
+                                            <p style="margin:44px" >&nbsp&nbsp</p>
+                                        </div>
                                     </div>
                                     `
                                     )
@@ -166,43 +186,24 @@ function makePdf(pdfName) {
                                 `<div class="layui-col-md4 layui-col-xs4 layui-col-sm4" style="text-align:center"  >
                                     <img src="/api/qrcode/generate_qr_code?qrcode_id=${value.qrcode_id}&t=${Math.random()}"  alt="二维码编号:${index+1}">
                                     <br/>
-                                    <b>${data.field.shop_name}&nbsp&nbsp序号:${index+1}</b>
+                                    <b>${value.shop_name}-${index+1}</b>
                                 </div>`
                             )
-                            //每页9个,9个以后顶白到第二页
-                            if((index+1)%9===0){
-
-                                if(page==1){
-
-                                    $(`#page${page}`).append(
-                                    `
-                                    <div style="background:white;contain:paint" >
-                                        <p style="margin: 51px">&nbsp&nbsp</p>
-                                    </div>
-                                    `
-                                    )
-                                }else{
-                                $(`#page${page}`).append(
-                                    `
-                                    <div style="background:white;contain:paint" >
-                                        <p style="margin: 71px">&nbsp&nbsp</p>
-                                    </div>
-                                    `
-                                    )
-                                }
-                            }
                         })    
                         makePdf(data.field.shop_name)
-                        .then(res=>{resolve(res)});}
+                        .then(res=>{resolve(res)});
+                    }
                     else{
-                        $('#img_rows').empty();
-                        $('#img_rows').append(
+                        layer.close(loading_index);
+                        $('#img_container').empty();
+                        $('#img_container').append(
                             `
                             <div style="text-align:center">
                             <b>请先为此店铺添加二维码</b>
                             </div>
                             `
-                            )
+                        )
+                        return false
                     }
                 }
                 })
@@ -212,10 +213,9 @@ function makePdf(pdfName) {
             const result =Promise.race([
                 download_qrcode(),
                 new Promise(function(resolve,reject){
-                    setTimeout(() => reject('超时，请重试'), 15000)
+                    setTimeout(() => reject('超时，请重试'), 30000)
                 })
             ])
-
             result
             .then(res=>{
                 layer.close(loading_index);

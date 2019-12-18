@@ -12,19 +12,20 @@
 				<div class="layui-inline">
 					<label class="layui-form-label">员工名</label>
 					<div class="layui-input-inline">
-						<select name="shop_staff_id" layui-search></select>
+						<select name="shop_staff_id" lay-search></select>
 					</div>
 				</div>
 				<div class="layui-inline">
 					<label class="layui-form-label">所属店铺</label>
 					<div class="layui-input-inline">
-						<select name="shop_id" layui-search></select>
+						<select name="shop_id" lay-search></select>
 					</div>
 				</div>
 				<div class="layui-inline">
 					<label class="layui-form-label">状态</label>
 					<div class="layui-input-inline">
-						<select name="is_enable" lay-search="">
+						<select name="is_enable" lay-search>
+							<option value="">所有</option>
 							<option value="true">启用</option>
 							<option value="false">禁用</option>
 						</select>
@@ -68,6 +69,7 @@
 						form.render();
 
 					})
+					
 				
 				//获取店铺
 				getShop(true)
@@ -86,25 +88,7 @@
 					$('select[name="shop_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
 					form.render();
 				})
-				
-				//获取品牌
-				getShopGroup(true)
-				.then(result=>{
-					if(result){
-						$('select[name="group_id"]').empty();
-						$('select[name="group_id"]').append(`<option value=''  selected>所有</option>`);
-						for(element of result){
-							$('select[name="group_id"]').append(`<option value=${element.group_id}>${element.group_name}</option>`);
-						}
-					}
-					form.render();
-				})
-				.catch(err=>{
-					console.error(err)
-					$('select[name="group_id"]').append(`<option value='-1' disable>获取数据失败</option>`);
-					form.render();
-				})
-
+						
 			}) 
 		</script>
 		
@@ -141,7 +125,7 @@
 						}
 					}
 					,cols: [[
-						{type: 'checkbox', fixed: 'left'}
+						 {type: 'numbers', title: '序号'}
 						,{field:'shop_staff_id', title:'员工id', hide:true}
 						,{field:'staff_name', title:'员工的名称', }
 						,{field:'user_id', title:'用户id', hide:true}
@@ -162,15 +146,15 @@
 						,{field:'add_user_name', title:'录入人', }
 						,{field:'is_enable', title:'是否启用', templet: function(d){
 							if(d.is_enable===true){
-								return '是'
+								return `<input type="checkbox" name="is_enable" lay-skin="switch" disabled checked lay-text="ON|OFF">`
 							}else if(d.is_enable===false){
-								return 	'否'
+								return 	`<input type="checkbox" name="is_enable" lay-skin="switch" disabled  lay-text="ON|OFF">`
 							}
 						}}
 						,{field:'add_time', title:'添加时间', templet:function(d){
 							return dateFns.format(d.add_time,'YYYY-MM-DD HH:mm')
 						} }
-						,{fixed:'right', title: "操作", align:'center', templet:function(d){
+						,{fixed:'right', title: "操作", align:'center', minWidth:120,templet:function(d){
 							
 							if(d.is_enable===true){
 								return `<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>

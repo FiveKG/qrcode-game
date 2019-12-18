@@ -32,6 +32,7 @@
 					<label class="layui-form-label">状态</label>
 					<div class="layui-input-inline">
 						<select name="is_enable" lay-search="">
+							<option value="">所有</option>
 							<option value="true">启用</option>
 							<option value="false">禁用</option>
 						</select>
@@ -141,6 +142,7 @@
 					elem: '#qrcodeTable'
 					,url:'/api/qrcode/search'
 					,method: 'post'
+					,height: 'full-160'
 					,toolbar: '#toolqrcode' //开启头部工具栏，并为其绑定左侧模板
 					,title: '用户数据表'
 					,parseData: function(res) {
@@ -152,7 +154,7 @@
 						}
 					}
 					,cols: [[
-						{type: 'checkbox', fixed: 'left'}
+						 {type: 'numbers', title: '序号'}
 						,{field:'qrcode_id', title:'主键',hide:true }
 						,{field:'scan_action', title:'扫码后的动作',templet(d){
                             return JSON.stringify(d.scan_action)
@@ -169,15 +171,15 @@
 						,{field:'add_user_name', title:'录入人', }
 						,{field:'is_enable', title:'是否启用', templet: function(d){
 							if(d.is_enable===true){
-								return '是'
+								return `<input type="checkbox" name="is_enable" lay-skin="switch" disabled checked lay-text="ON|OFF">`
 							}else if(d.is_enable===false){
-								return 	'否'
+								return 	`<input type="checkbox" name="is_enable" lay-skin="switch" disabled  lay-text="ON|OFF">`
 							}
 						}}
 						,{field:'add_time', title:'添加时间', templet:function(d){
 							return dateFns.format(d.add_time,'YYYY-MM-DD HH:mm')
 						} }
-						,{fixed:'right', title: "操作", align:'center', templet:function(d){
+						,{fixed:'right', title: "操作", align:'center', minWidth:120,templet:function(d){
 							
 							if(d.is_enable===true){
 								return `
@@ -279,7 +281,7 @@
 							 
 							layer.open({
 								type: 2 ,
-								area: ['500px', '450px'],
+								area: ['500px', '400px'],
 								title:"添加",
 								content: "/page/add_qrcode",
 								success: function(layero, index){

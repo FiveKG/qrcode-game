@@ -7,11 +7,7 @@ const cities = require('../tool/cities.json')
 //@ts-ignore
 const areas = require('../tool/areas.json')
 const Controller = require('egg').Controller;
-const path = require("path");
-const sendToWormhole = require('stream-wormhole');
-const qr = require('qr-image');
-const fs = require('fs')
-const tmp = require('tmp')
+
 /**
  * @description TODO(ToolController工具类)
  * @author woni
@@ -91,6 +87,7 @@ class ToolController extends Controller {
         try{
 
             const stream = await ctx.getFileStream();
+            logger.debug('upload_img数据流信息:',stream)
             if(!stream.filename||!stream.fields||stream.fields.id=='undefined'){
                 ctx.body = ctx.helper.renderError(400005,'上传图片信息不正确')
                 return

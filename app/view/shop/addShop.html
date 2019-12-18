@@ -4,6 +4,8 @@
     {% include "script.html" %}
     {% include "js/getShopGroup.html" %}
     {% include "js/getPCAscript.html"%}
+    {% include "js/uploadImg.html"%}
+    {% include "js/uploadCSS.html"%}
     <div class="layui-card">
         <div class="layui-card-body">
         <form class="layui-form"  action="">
@@ -19,6 +21,24 @@
                         <input type="text" name="name"   lay-verify="required"  autocomplete="off" class="layui-input">
                     </div>
                 </div>
+
+                <div class="layui-form-item layui-row" >
+                    <label class="layui-form-label">店铺图片</label>
+                    <div class="layui-input-block " >
+                        <a href="javascript:;" class="file">
+                            <i class="layui-icon">&#xe67c;</i>上传图片
+                            <input type="file" id="upload" class="">
+                        </a>
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-row" >
+                    <label class="layui-form-label">店铺图片url</label>
+                    <div class="layui-input-block ">
+                        <input type="text"  name="shop_logo"  disabled autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
                 <div class="layui-form" lay-filter="province">
                     <label class="layui-form-label">省份</label>
                     <div class="layui-input-block">
@@ -191,6 +211,25 @@
                 console.error(err)
                 })
             });  
+
+                //上传图片
+            $('#upload').bind("change", function(e){
+                let id = $('#shop_id').val() //因为异步的关系，id必须是在方法里面
+                let upload_img = $('#upload');
+                let url = '/api/tool/upload_img_shop'
+                uploadImg(upload_img,id,url)
+                .then(result=>{
+                    layer.msg('上传成功')
+                    $('input[name="shop_logo"]').val(result.data.url);
+                    form.render();
+                    return false
+                })
+                .catch(err=>{
+                    layer.msg('上传失败')
+                    console.error(err)
+                    return false
+                })
+            })
    
 
          });
@@ -200,6 +239,7 @@
     <script>
     layui.use('form', function(){
     var form = layui.form;
+
     //监听提交
     form.on('submit(formDemo)', function(data){
         //判断省份
@@ -219,6 +259,11 @@
             layer.msg('请选择品牌');
             return false
         }
+        //判断url
+        if(data.field.shop_logo===''){
+            layer.msg('请上传图片');
+            return false
+        }
 
         var province =  $('#province').find("option:selected").text();
         var city =  $('#city').find("option:selected").text();
@@ -232,6 +277,7 @@
 
         insert['p_c_a_text'] = p_c_a_text;
         insert['p_c_a_id'] = p_c_a_id;
+
         $.ajax({
             url        : `/data/shop`,
             type       : "POST",

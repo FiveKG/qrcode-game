@@ -32,7 +32,7 @@ class QrcodeService extends Service {
                 params.push(`${search['shop_id']}`);
                 i ++;
             }
-            if (search['qrcode_view.is_enable']) {
+            if (search['is_enable']) {
                 joinStr += ` AND is_enable = $${i}`;
                 let isEnable = false;
                 if (search['is_enable'] === 'true') {
@@ -121,7 +121,7 @@ class QrcodeService extends Service {
      * 给img返回二维码
      * @param {object} data 
      */
-    async GenerateQrcode(data){
+    async generateQrcode(data){
         const { logger,ctx,config} = this;
         try{
             let sql = ` SELECT 
@@ -131,6 +131,24 @@ class QrcodeService extends Service {
 
             const url =await  ctx.helper.qrcode_url(rows.pop())
             const qrcode = qr.image(url,config.qrcode.option)
+            return qrcode            
+        }catch(e){
+            logger.error(e);
+            return false; 
+        }
+    }
+
+    /**
+     * 测试用二维码
+     * @param {object} data
+     */
+    async test_qrcode(data){
+        const { logger,ctx,config} = this;
+        try{
+            const qrcode = qr.image(data.test_url,{
+                size:5,//二维码的大小，从1-5.仅支持调整npg和svg格式，详情：https://www.npmjs.com/package/qr-image 
+                margin :4,//白色边框，png默认是4，其他为1
+              })
             return qrcode            
         }catch(e){
             logger.error(e);

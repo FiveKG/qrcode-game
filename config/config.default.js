@@ -74,7 +74,8 @@ module.exports = appInfo => {
       bucket: 'qr-game',
       endpoint: 'endpoint',
       timeout: '60s',
-      cname:true
+      secure:false,//true使用https
+      cname:true//使用自己的域名
     }
   }
 

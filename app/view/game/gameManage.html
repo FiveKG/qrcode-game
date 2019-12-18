@@ -29,6 +29,7 @@
 					<label class="layui-form-label">状态</label>
 					<div class="layui-input-inline">
 						<select name="is_enable" lay-search="">
+							<option value="">所有</option>
 							<option value="true">启用</option>
 							<option value="false">禁用</option>
 						</select>
@@ -78,8 +79,6 @@
 
 		<script>
 			function show_img(t){
-				console.log('?')
-				console.log('t:',t)
 				layer.photos({
 					photos: `#layer-photos-${key}`
 					,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
@@ -108,6 +107,7 @@
 					elem: '#gameTable'
 					,url:'/api/game/search'
 					,method: 'post'
+					,height: 'full-160'
 					,toolbar: '#toolgame' //开启头部工具栏，并为其绑定左侧模板
 					,title: '用户数据表'
 					,parseData: function(res) {
@@ -119,7 +119,7 @@
 						}
 					}
 					,cols: [[
-						{type: 'checkbox', fixed: 'left'}
+						 {type: 'numbers', title: '序号'}
 						,{field:'game_id', title:'',hide:true }
 						,{field:'game_name', title:'游戏名称', }
 						,{field:'game_img', title:'游戏大图', align: "center", templet:function(d){
@@ -156,18 +156,17 @@
 						,{field:'add_time', title:'添加时间',hide:true }
 						,{field:'is_enable', title:'是否启用',hide:true }
 						,{field:'user_name', title:'录入人',}
-						,{field:'is_enable', title:'是否启用', templet: function(d){
-
+						,{field:'is_enable', title:'是否启用',unresize: true, templet: function(d){
 							if(d.is_enable===true){
-								return '是'
+								return `<input type="checkbox" name="is_enable" lay-skin="switch" disabled checked lay-text="ON|OFF">`
 							}else if(d.is_enable===false){
-								return 	'否'
+								return 	`<input type="checkbox" name="is_enable" lay-skin="switch" disabled  lay-text="ON|OFF">`
 							}
 						}}
 						,{field:'add_time', title:'添加时间', templet:function(d){
 							return dateFns.format(d.add_time,'YYYY-MM-DD HH:mm')
 						} }
-						,{fixed:'right', title: "操作", align:'center', templet:function(d){
+						,{fixed:'right', title: "操作", align:'center', minWidth:120,templet:function(d){
 							
 							if(d.is_enable===true){
 								return `<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
@@ -190,12 +189,13 @@
 								photos: `#layer-photos-${key_small}`
 								,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
 							}); 
-						})
+						});
 					}
 					,id: 'gameTable'
 					,page: true
 				});
-		
+			
+				
 				//监听表单提交
 				form.on('submit(user-from)', function(data){
 					//console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
@@ -205,14 +205,18 @@
 
 				//监听行工具事件
 				table.on('tool(game_table)', function(obj){
+					
 					const url = `/data/game?game_id=eq.${obj.data.game_id}`;
+
+
+				
 					var layEvent = obj.event; //获得 lay-event 对应的值
 					if(layEvent === 'detail'){ //查看
 						layer.msg('查看');
 						//弹出层引入用户详情页面
 					} 
-					else if(layEvent === 'is_enable'){ //删除
-						
+					else if(layEvent === 'is_enable'){ //状态
+
 						if(obj.data.is_enable==true){
 						layer.confirm(`禁用游戏：${obj.data.game_name}`, function(index){
 							is_enable(url,false,'gameTable')
@@ -266,7 +270,7 @@
 							
 							layer.open({
 								type: 2 ,
-								area: ['500px','600px'],
+								area: ['500px','650px'],
 								title:"添加",
 								content: "/page/add_game",
 								success: function(layero, index){

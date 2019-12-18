@@ -128,6 +128,24 @@ class SysUserController extends Controller {
         }
     }
 
+    async logout(){
+        const { ctx, service, logger,app } = this;
+        try{
+            const jwtInfo = await ctx.helper.getJWTInfo()
+            if(!jwtInfo){
+                ctx.body = await ctx.helper.messageByCode(400003)
+                ctx.redirect('/login')
+                return
+            }
+            
+            await ctx.helper.removeJWT()
+            ctx.redirect('/login')
+            logger.debug(`用户${jwtInfo.user_name}登出成功`);
+        }catch(err){
+            logger.error(err);
+            ctx.body = await ctx.helper.renderError(500000, '系统出错');
+        }
+    }
     async editUser(){
         const { ctx } = this;
         await ctx.render('/user/editUser.html');

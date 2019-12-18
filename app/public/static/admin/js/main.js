@@ -9,9 +9,13 @@ layui.use(['layer', 'form', 'element', 'jquery'], function() {
                 content: '<iframe data-frameid="'+id+'" scrolling="auto" frameborder="0" src="'+url+'" width="100%" height="100%" name="iframe" class="iframe"></iframe>',
                 id: id
             })
-            active.tabChange(id);
+            active.tabChange(id,true);
         },
-        tabChange: function (id) {
+        tabChange: function (id, flag) {
+            if (!flag) {
+                let url = $(`[data-frameid='${id}']`).attr('src');
+                $(`[data-frameid='${id}']`).attr('src', url);
+            }
             element.tabChange('main-tab', id);
         },
         tabDelete: function (id) {

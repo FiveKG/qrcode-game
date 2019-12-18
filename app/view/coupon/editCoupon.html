@@ -32,17 +32,19 @@
                     </div>
                     
                     <div class="layui-form-item layui-row" >
-                        <label class="layui-form-label">代金券备注</label>
-                        <div class="layui-input-block ">
-                            <input type="text"  name="coupon_remark"   autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">代金券的logo图片</label>
                         <div class="layui-input-block ">
                             <input type="text"  name="logo"  disabled autocomplete="off" class="layui-input">
                         </div>
                     </div>
+
+                    <div class="layui-form-item layui-row" >
+                        <label class="layui-form-label">代金券备注</label>
+                        <div class="layui-input-block ">
+                            <input type="text"  name="coupon_remark"   autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    
 
                     <div class="layui-form-item layui-row" >
                         <label class="layui-form-label">代金券的类型</label>
@@ -179,6 +181,12 @@
             layer.msg('请选择店铺');
             return false
         }
+        //判断url
+        if(!data.field.logo){
+            layer.msg('请上传图片');
+            return false
+        }
+
         //转换金额为分
         data.field.amount = (new Decimal(data.field.amount).mul(100).toNumber());
 

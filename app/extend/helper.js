@@ -157,11 +157,11 @@ module.exports = {
         const host             = config.shop_agent_qrcode.url_option.host;
         const shop_or_agent_id = config.shop_agent_qrcode.url_option.param1+reqData.shop_or_agent_id||null;
         const scene_type       = config.shop_agent_qrcode.url_option.param2+reqData.scene_type||null;
-        const qrcodeUrl = host+shop_or_agent_id+scene_type;
+        const qrcodeUrl        = host+shop_or_agent_id+scene_type;
         return qrcodeUrl
     },
     /**
-     * 
+     * 设置用户jwt Token
      * @param {Object} accountInfo
      */
     async setJWTToken(accountInfo){
@@ -170,6 +170,7 @@ module.exports = {
         this.ctx.cookies.set(jwt_key,token,cookies_options)
     },
     /**
+     * 返回用户的JWT
      * @returns {Promise<string>}
      */
     async getJWTToken(){
@@ -178,6 +179,7 @@ module.exports = {
         return jwtToken
     },
     /**
+     * 返回用户jwt里的解密信息
      * @returns {Promise<Object>}
      */
     async getJWTInfo(){
@@ -187,6 +189,14 @@ module.exports = {
             return jwtInfo
         }
         return false
-
+    },
+    /**
+     * 清除jwt
+     */
+    async removeJWT(){
+        const {ctx} = this;
+        const {jwt_key} = this.config.cookies
+        const count = ctx.cookies.set(jwt_key, null);
+        ctx.status = 204;
     }
 }

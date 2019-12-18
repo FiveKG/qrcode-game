@@ -27,6 +27,7 @@
 					<label class="layui-form-label">状态</label>
 					<div class="layui-input-inline">
 						<select name="is_enable" lay-search="">
+							<option value="">所有</option>
 							<option value="true">启用</option>
 							<option value="false">禁用</option>
 						</select>
@@ -104,6 +105,7 @@
 					elem: '#agent_staffTable'
 					,url:'/api/agent_staff/search'
 					,method: 'post'
+					,height: 'full-160'
 					,toolbar: '#toolagent_staff' //开启头部工具栏，并为其绑定左侧模板
 					,title: '用户数据表'
 					,parseData: function(res) {
@@ -115,7 +117,7 @@
 						}
 					}
 					,cols: [[
-						{type: 'checkbox', fixed: 'left'}
+						 {type: 'numbers', title: '序号'}
 						,{field:'agent_staff_id', title:'',hide:true }
 						,{field:'user_name', title:'用户名', }
 						,{field:'agent_name', title:'所属经销商', }
@@ -130,7 +132,7 @@
                             if(d.can_withdraw==true){
                                 return "是"
                             }else{
-                                return '否'
+                                return 	`<input type="checkbox" name="is_enable" lay-skin="switch" disabled  lay-text="ON|OFF">`
                             }
                         }}
 						,{field:'is_enable', title:'是否启用', hide:true }
@@ -139,15 +141,15 @@
 						,{field:'add_user_name', title:'录入人', }
 						,{field:'is_enable', title:'是否启用', templet: function(d){
 							if(d.is_enable===true){
-								return '是'
+								return `<input type="checkbox" name="is_enable" lay-skin="switch" disabled checked lay-text="ON|OFF">`
 							}else if(d.is_enable===false){
-								return 	'否'
+								return 	`<input type="checkbox" name="is_enable" lay-skin="switch" disabled  lay-text="ON|OFF">`
 							}
 						}}
 						,{field:'add_time', title:'添加时间', templet:function(d){
 							return dateFns.format(d.add_time,'YYYY-MM-DD HH:mm')
 						} }
-						,{fixed:'right', title: "操作", align:'center', templet:function(d){
+						,{fixed:'right', title: "操作", align:'center', minWidth:120,templet:function(d){
 							
 							if(d.is_enable===true){
 								return `<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>

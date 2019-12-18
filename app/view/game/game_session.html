@@ -15,6 +15,7 @@
 					<label class="layui-form-label">状态</label>
 					<div class="layui-input-inline">
 						<select name="is_enable" lay-search="">
+								<option value="">所有</option>
 							<option value="true">启用</option>
 							<option value="false">禁用</option>
 						</select>
@@ -69,17 +70,17 @@
 						}
 					}
 					,cols: [[
-						{type: 'checkbox', fixed: 'left'}
+						 {type: 'numbers', title: '序号'}	
 						,{field:'session_id', title:'会话id', hide:true}
 						,{field:'scan_id', title:'扫描记录id', }
                         ,{field:'game_id', title:'游戏id',hide:true }
                         ,{field:'game_name', title:'游戏', }
 						,{field:'is_payed', title:'是否支付',templet:function(d){
                             if(d.is_payed===true){
-                                return '是'
+                                return `<input type="checkbox" name="is_enable" lay-skin="switch" disabled checked lay-text="ON|OFF">`
                             }
                             else{
-                                return '否'
+                                return 	`<input type="checkbox" name="is_enable" lay-skin="switch" disabled  lay-text="ON|OFF">`
                             }
                         } }
 						,{field:'pay_time', title:'支付时间',templet:function(d){
@@ -95,17 +96,17 @@
 						} }
 						,{field:'is_win', title:'是否赢了此局',templet:function(d){
                             if(d.is_payed===true){
-                                return '是'
+                                return `<input type="checkbox" name="is_enable" lay-skin="switch" disabled checked lay-text="ON|OFF">`
                             }
                             else{
-                                return '否'
+                                return 	`<input type="checkbox" name="is_enable" lay-skin="switch" disabled  lay-text="ON|OFF">`
                             }
                         } }
 						,{field:'add_time', title:'记录添加时间',hide:true }
 						,{field:'add_time', title:'添加时间', templet:function(d){
 							return dateFns.format(d.add_time,'YYYY-MM-DD HH:mm')
 						} }
-						,{fixed:'right', title: "操作", align:'center', templet:function(d){
+						,{fixed:'right', title: "操作", align:'center', minWidth:120,templet:function(d){
 							
 							if(d.is_enable===true){
 								return `<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
