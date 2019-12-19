@@ -69,10 +69,10 @@ module.exports = appInfo => {
   //oss设置
   config.oss={
     client: {
-      accessKeyId: 'accessKeyId',
-      accessKeySecret: 'accessKeySecret',
+      accessKeyId: 'LTAI4FvhnVvRuFKC9S4Tpx55',
+      accessKeySecret: 'ZC1iQmvSLHO9u1cjJqasKGirXFgmyw',
       bucket: 'qr-game',
-      endpoint: 'endpoint',
+      endpoint: 's.qrcode.isecsp.com',
       timeout: '60s',
       secure:false,//true使用https
       cname:true//使用自己的域名

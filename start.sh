@@ -1,15 +1,15 @@
 #!/bin/bash
 #Description: run admin-site service
-export DB_HOST=DB_HOST
+export DB_HOST=121.9.227.91
 export DB_PORT=12432
-export DB_USER=DB_USER
-export DB_PWD=DB_PWD
-export DB_NAME=DB_USER_db
-export REDIS_HOST=DB_HOST
-export REDIS_PORT=REDIS_PORT
+export DB_USER=qrcode_game
+export DB_PWD=pass_2019
+export DB_NAME=qrcode_game_db
+export REDIS_HOST=121.9.227.91
+export REDIS_PORT=20179
 export REDIS_DB=6
-export JWT_SECRET=JWT_SECRET
-export HASH_SECRET=HASH_SECRET
-export PROXY_HOST=PROXY_HOST
-export REDIS_PWD=REDIS_PWD
+export JWT_SECRET=scangamenjkuz
+export HASH_SECRET=scangamesha256
+export PROXY_HOST=http://postgrest.qrcode.isecsp.com/
+export REDIS_PWD=pass@2019
 npm start 

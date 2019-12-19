@@ -2,10 +2,10 @@
 var pg = require('pg');
 // 数据库配置
 var config = { 
-    user:"DB_USER",
-    database:"DB_USER_db",
-    password:"DB_PWD",
-    host:'DB_HOST',
+    user:"qrcode_game",
+    database:"qrcode_game_db",
+    password:"pass_2019",
+    host:'121.9.227.91',
     port:12432,
     
     // 扩展属性
