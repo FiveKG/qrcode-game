@@ -102,12 +102,15 @@ class QrcodeService extends Service {
         const {rows:group} = await this.app.pg.query(get_shop_group);
         let group_id = group.pop().group_id;
 
-        //赋值hash和url
-        const hash_str  = await ctx.helper.getHashStr(JSON.stringify(data))
-
-        for( let i= max+1;i<=(parseInt(data.seq)+max);i++){
+        //一共需要添加多少条
+        let amount = parseInt(data.seq)
+        for( let i = max+1;i<=amount+max;i++){
+        
             let qrcode_id = await ctx.helper.getPrimaryKey()
             data['qrcode_id'] = qrcode_id
+            data.seq = i;
+            //赋值hash和url
+            const hash_str  = await ctx.helper.getHashStr(JSON.stringify(data))
             await this.app.pg.query(insert_sql, [qrcode_id,data.scan_action,data.agent_id,data.shop_id,group_id,hash_str,data.add_user_id,i]);
         }
         return true
