@@ -1,5 +1,5 @@
-accessKeyId
-accessKeySecret
-endpoint
-DB_HOST
-DB_USER
+LTAI4FvhnVvRuFKC9S4Tpx55
+ZC1iQmvSLHO9u1cjJqasKGirXFgmyw
+s.qrcode.isecsp.com
+121.9.227.91
+qrcode_game

@@ -129,7 +129,7 @@
 						,{field:'user_id', title:'ID' ,hide:true, }
 						,{field:'name', title:'店铺名', }
 						,{field:'shop_logo', title:'店铺logo', align: "center", templet:function(d){
-							//let key = d.game_img.split('http://endpoint/game_img_id%')[1].replace(/-/g,'_').replace(/\./g,'_');
+							//let key = d.game_img.split('http://s.qrcode.isecsp.com/game_img_id%')[1].replace(/-/g,'_').replace(/\./g,'_');
 							let key = d.shop_id.replace(/-/g,'_')
 							return `
 								<div id="layer-photos-${key}">

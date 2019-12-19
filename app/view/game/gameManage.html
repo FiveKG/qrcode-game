@@ -123,7 +123,7 @@
 						,{field:'game_id', title:'',hide:true }
 						,{field:'game_name', title:'游戏名称', }
 						,{field:'game_img', title:'游戏大图', align: "center", templet:function(d){
-							//let key = d.game_img.split('http://endpoint/game_img_id%')[1].replace(/-/g,'_').replace(/\./g,'_');
+							//let key = d.game_img.split('http://s.qrcode.isecsp.com/game_img_id%')[1].replace(/-/g,'_').replace(/\./g,'_');
 							let key = d.game_id.replace(/-/g,'_')
 							return `
 								<div id="layer-photos-${key}"  >
@@ -132,7 +132,7 @@
 							`
 						}}
 						,{field:'game_img_small', title:'游戏小图', templet(d){
-							//let key_small =d.game_img_small.split('http://endpoint/game_img_id%')[1].replace(/-/g,'_').replace(/\./g,'_');
+							//let key_small =d.game_img_small.split('http://s.qrcode.isecsp.com/game_img_id%')[1].replace(/-/g,'_').replace(/\./g,'_');
 							let key_small = d.game_id.replace(/-/g,'_')+'_small'
 							return `
 								<div id="layer-photos-${key_small}" >
